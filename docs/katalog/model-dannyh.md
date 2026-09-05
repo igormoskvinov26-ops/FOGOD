@@ -131,7 +131,7 @@
 |---|---|---|
 | `rashod_min`, `rashod_max` | м³/ч | 3–9300 |
 | `rashod_nom` | м³/ч | |
-| `tonkost_min`, `tonkost_max` | мкм | 25–3000 |
+| `tonkost_min`, `tonkost_max` | мкм | от 25; верхний предел гидродинамических не указан — вопрос 9 |
 | `tonkost_tip` | номинальная / абсолютная | вопрос 3 |
 | `davlenie_rab` | **бар** | 2–25 |
 | `davlenie_max` | **бар** | |
