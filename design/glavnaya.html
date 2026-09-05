@@ -1,0 +1,977 @@
+<title>ФОГОД — промышленные фильтры</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+
+<style>
+  :root {
+    /* нейтрали со сдвигом в сталь */
+    --paper:      #F4F6F9;
+    --surface:    #FFFFFF;
+    --sunk:       #EAEFF4;
+    --ink:        #101F31;
+    --ink-2:      #4B5F76;
+    --ink-3:      #7488A0;
+    --rule:       #CFDAE5;
+    --rule-soft:  #E2E9F0;
+    /* фирменные */
+    --navy:       #123A63;
+    --navy-deep:  #0B2440;
+    --blue:       #1268C3;
+    --blue-ink:   #0F58A6;
+    --blue-wash:  #E6F0FA;
+    --gold:       #E0A92A;
+    --gold-ink:   #8F6708;
+    --red:        #D0322B;
+    /* на тёмном */
+    --on-dark:    #E8EFF7;
+    --on-dark-2:  #9FB6CE;
+    --on-dark-3:  #6E88A4;
+    --dark-rule:  #24405F;
+
+    --measure: 62ch;
+    --page: 1240px;
+    --gut: 32px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:#08141F; --surface:#0E1F2E; --sunk:#152A3C;
+      --ink:#E2ECF5; --ink-2:#9FB4C8; --ink-3:#7A8EA4;
+      --rule:#24384C; --rule-soft:#1A2B3C;
+      --navy:#0B1B2B; --navy-deep:#060F1A;
+      --blue:#59A4EC; --blue-ink:#7EBBF5; --blue-wash:#12283C;
+      --gold:#E4BA5C; --gold-ink:#E4BA5C;
+      --red:#E1554E;
+      --on-dark:#E2ECF5; --on-dark-2:#95AEC7; --on-dark-3:#65809C;
+      --dark-rule:#1E3550;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#08141F; --surface:#0E1F2E; --sunk:#152A3C;
+    --ink:#E2ECF5; --ink-2:#9FB4C8; --ink-3:#7A8EA4;
+    --rule:#24384C; --rule-soft:#1A2B3C;
+    --navy:#0B1B2B; --navy-deep:#060F1A;
+    --blue:#59A4EC; --blue-ink:#7EBBF5; --blue-wash:#12283C;
+    --gold:#E4BA5C; --gold-ink:#E4BA5C;
+    --red:#E1554E;
+    --on-dark:#E2ECF5; --on-dark-2:#95AEC7; --on-dark-3:#65809C;
+    --dark-rule:#1E3550;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .shell { max-width: var(--page); margin: 0 auto; padding: 0 var(--gut); }
+
+  h1, h2, h3, .cond {
+    font-family: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    text-wrap: balance;
+  }
+
+  .mono, .label {
+    font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .label {
+    font-size: 10.5px; font-weight: 500; letter-spacing: .15em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+
+  a { color: inherit; text-decoration: none; }
+  a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible {
+    outline: 2px solid var(--blue); outline-offset: 2px;
+  }
+
+  /* ══════ Хедер ══════ */
+
+  .topbar { background: var(--navy-deep); color: var(--on-dark-2); }
+  .topbar .shell {
+    display: flex; align-items: center; gap: 26px;
+    height: 40px; font-size: 13px;
+  }
+  .topbar a { color: var(--on-dark-2); }
+  .topbar a:hover { color: var(--on-dark); }
+  .topbar .sep { margin-left: auto; }
+  .topbar .city { color: var(--on-dark); font-weight: 500; }
+  .topbar .drop::after { content: "▾"; margin-left: 5px; font-size: 10px; opacity: .7; }
+
+  header.main {
+    background: var(--surface);
+    border-bottom: 1px solid var(--rule);
+    position: relative; z-index: 5;
+  }
+  header.main .shell {
+    display: flex; align-items: center; gap: 40px; height: 80px;
+  }
+
+  .logo { display: flex; align-items: baseline; gap: 9px; }
+  .logo .word {
+    font-family: "IBM Plex Sans Condensed", sans-serif;
+    font-weight: 700; font-size: 30px; letter-spacing: .01em;
+    color: var(--navy); line-height: 1;
+  }
+  :root[data-theme="dark"] .logo .word,
+  :root:not([data-theme="light"]) .logo .word { color: var(--ink); }
+  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .logo .word { color: var(--navy); } }
+  .logo .tm { font-size: 10px; color: var(--ink-3); font-family: "IBM Plex Mono", monospace; }
+  .logo .sub {
+    display: block; font-size: 10.5px; letter-spacing: .13em; text-transform: uppercase;
+    color: var(--ink-3); font-family: "IBM Plex Mono", monospace; margin-top: 3px;
+  }
+
+  nav.primary { display: flex; gap: 26px; font-size: 15px; }
+  nav.primary a { color: var(--ink-2); padding: 4px 0; border-bottom: 2px solid transparent; }
+  nav.primary a:hover { color: var(--ink); border-bottom-color: var(--blue); }
+
+  .head-right { margin-left: auto; display: flex; align-items: center; gap: 22px; }
+  .head-phone { text-align: right; line-height: 1.25; }
+  .head-phone .num {
+    font-family: "IBM Plex Sans Condensed", sans-serif; font-weight: 700;
+    font-size: 19px; color: var(--ink); white-space: nowrap;
+  }
+  .head-phone .cap { font-size: 11.5px; color: var(--ink-3); }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 46px; padding: 0 22px; border: 0; cursor: pointer;
+    font-family: "IBM Plex Sans", sans-serif; font-size: 15px; font-weight: 600;
+    background: var(--blue); color: #FFFFFF; white-space: nowrap;
+    transition: background .12s ease;
+  }
+  .btn:hover { background: var(--blue-ink); }
+  .btn.ghost {
+    background: transparent; color: var(--ink);
+    box-shadow: inset 0 0 0 1px var(--rule);
+  }
+  .btn.ghost:hover { box-shadow: inset 0 0 0 1px var(--ink-3); background: transparent; }
+  .btn.on-dark {
+    background: transparent; color: var(--on-dark);
+    box-shadow: inset 0 0 0 1px var(--dark-rule);
+  }
+  .btn.on-dark:hover { box-shadow: inset 0 0 0 1px var(--on-dark-3); }
+  .btn.lg { height: 54px; padding: 0 30px; font-size: 16px; }
+
+  @media (max-width: 1080px) {
+    nav.primary { display: none; }
+    .topbar .shell { gap: 16px; overflow-x: auto; }
+  }
+
+  /* ══════ Герой ══════ */
+
+  .hero { background: var(--surface); border-bottom: 1px solid var(--rule); }
+  .hero .shell {
+    display: grid; grid-template-columns: minmax(0,1fr) 430px;
+    gap: 56px; padding-top: 60px; padding-bottom: 56px; align-items: center;
+  }
+  .hero .eyebrow {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+  }
+  .hero .eyebrow .bar { width: 26px; height: 2px; background: var(--red); }
+  .hero h1 {
+    font-size: clamp(32px, 3.5vw, 46px); line-height: 1.06; margin: 0 0 20px;
+    color: var(--ink);
+  }
+  .hero h1 .thin { font-weight: 600; color: var(--ink-2); }
+  .hero .lede {
+    font-size: 18px; color: var(--ink-2); max-width: 50ch; margin: 0 0 30px;
+  }
+  .hero .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 34px; }
+
+  .hero-specs {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid var(--rule);
+  }
+  .hero-specs div { padding: 16px 18px 0 0; }
+  .hero-specs .v {
+    font-family: "IBM Plex Sans Condensed", sans-serif; font-weight: 700;
+    font-size: 27px; color: var(--navy); line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  :root[data-theme="dark"] .hero-specs .v, :root:not([data-theme="light"]) .hero-specs .v { color: var(--ink); }
+  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .hero-specs .v { color: var(--navy); } }
+  .hero-specs .u { font-family: "IBM Plex Mono", monospace; font-size: 12.5px; color: var(--ink-2); }
+  .hero-specs .k { margin-top: 4px; }
+
+  .hero-fig { position: relative; }
+  .hero-fig svg { width: 100%; height: auto; display: block; }
+  .fig-note {
+    margin-top: 14px; font-family: "IBM Plex Mono", monospace;
+    font-size: 11px; color: var(--ink-3); text-align: center;
+  }
+
+  @media (max-width: 980px) {
+    .hero .shell { grid-template-columns: 1fr; gap: 36px; }
+    .hero-fig { max-width: 420px; }
+    .hero-specs { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ══════ Подбор ══════ */
+
+  .picker { background: var(--navy); color: var(--on-dark); }
+  .picker .shell { padding: 46px 32px 50px; }
+  .picker .head { display: flex; align-items: flex-end; gap: 24px; margin-bottom: 26px; flex-wrap: wrap; }
+  .picker h2 { font-size: 32px; margin: 0; color: #FFFFFF; }
+  .picker .head p { margin: 0; color: var(--on-dark-2); font-size: 15px; max-width: 46ch; }
+  .picker .label { color: var(--on-dark-3); }
+
+  .form-row {
+    display: grid; grid-template-columns: repeat(3, minmax(0,1fr)) auto;
+    gap: 16px; align-items: end;
+  }
+  .field label {
+    display: block; font-family: "IBM Plex Mono", monospace;
+    font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--on-dark-3); margin-bottom: 7px;
+  }
+  .field select, .field input {
+    width: 100%; height: 50px; padding: 0 14px;
+    background: var(--navy-deep); color: var(--on-dark);
+    border: 1px solid var(--dark-rule); border-radius: 0;
+    font-family: "IBM Plex Sans", sans-serif; font-size: 15.5px;
+    appearance: none;
+  }
+  .field input::placeholder { color: var(--on-dark-3); }
+  .field select { background-image: none; cursor: pointer; }
+  .field .unit {
+    float: right; font-family: "IBM Plex Mono", monospace;
+    font-size: 10.5px; color: var(--on-dark-3); letter-spacing: .05em;
+  }
+  .picker .btn { height: 50px; }
+
+  .results { margin-top: 30px; border-top: 1px solid var(--dark-rule); padding-top: 8px; }
+  .res-row {
+    display: grid; grid-template-columns: minmax(0,1fr) 150px 150px 150px;
+    gap: 20px; align-items: center;
+    padding: 16px 0; border-bottom: 1px solid var(--dark-rule);
+  }
+  .res-row .nm { font-weight: 600; font-size: 16.5px; color: #FFFFFF; }
+  .res-row .nm em {
+    display: block; font-style: normal; font-weight: 400;
+    font-size: 13px; color: var(--on-dark-3); margin-top: 2px;
+  }
+  .res-row .cell {
+    font-family: "IBM Plex Mono", monospace; font-size: 13px;
+    color: var(--on-dark-2); font-variant-numeric: tabular-nums;
+  }
+  .res-row .cell b { color: #FFFFFF; font-weight: 500; }
+  .res-row .cell.nd { color: var(--gold); }
+  .res-head { padding: 10px 0 8px; border-bottom: 1px solid var(--dark-rule); }
+  .res-head span {
+    font-family: "IBM Plex Mono", monospace; font-size: 10px;
+    letter-spacing: .13em; text-transform: uppercase; color: var(--on-dark-3);
+  }
+  .res-note {
+    margin-top: 22px; padding: 18px 20px;
+    background: var(--navy-deep); border-left: 3px solid var(--gold);
+  }
+  .res-note b { color: #FFFFFF; }
+  .res-note p { margin: 0; color: var(--on-dark-2); font-size: 14.5px; }
+  .res-empty { padding: 26px 0 6px; color: var(--on-dark-2); }
+
+  @media (max-width: 900px) {
+    .form-row { grid-template-columns: 1fr 1fr; }
+    .res-row { grid-template-columns: 1fr; gap: 6px; }
+    .res-head { display: none; }
+  }
+
+  /* ══════ Секции ══════ */
+
+  section.band { padding: 78px 0; border-bottom: 1px solid var(--rule); background: var(--surface); }
+  section.band.alt { background: var(--paper); }
+
+  .sec-head { margin-bottom: 38px; }
+  .sec-head .label { display: block; margin-bottom: 12px; }
+  .sec-head h2 { font-size: clamp(28px, 3.2vw, 40px); margin: 0 0 12px; color: var(--ink); }
+  .sec-head p { margin: 0; font-size: 17px; color: var(--ink-2); max-width: var(--measure); }
+
+  /* Семейства */
+  .fam-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--rule); border-left: 1px solid var(--rule);
+  }
+  .fam {
+    border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+    padding: 26px 26px 24px; display: block; background: var(--surface);
+    transition: background .12s ease;
+  }
+  section.band.alt .fam { background: var(--paper); }
+  .fam:hover { background: var(--blue-wash); }
+  .fam .n {
+    font-family: "IBM Plex Mono", monospace; font-size: 11px;
+    color: var(--blue); letter-spacing: .1em;
+  }
+  .fam h3 { font-size: 22px; margin: 10px 0 8px; color: var(--ink); }
+  .fam p { margin: 0 0 16px; font-size: 14.5px; color: var(--ink-2); }
+  .fam .spec {
+    font-family: "IBM Plex Mono", monospace; font-size: 12px;
+    color: var(--ink-3); border-top: 1px solid var(--rule-soft); padding-top: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+  .fam .spec b { color: var(--ink); font-weight: 500; }
+  @media (max-width: 940px) { .fam-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 620px) { .fam-grid { grid-template-columns: 1fr; } }
+
+  /* График потерь */
+  .loss-wrap { display: grid; grid-template-columns: minmax(0,1fr) 340px; gap: 56px; align-items: start; }
+  .chart { margin-top: 4px; }
+  .chart-row { padding: 18px 0; border-bottom: 1px solid var(--rule-soft); }
+  .chart-row:first-child { border-top: 1px solid var(--rule); }
+  .chart-top { display: flex; align-items: baseline; gap: 12px; margin-bottom: 9px; }
+  .chart-top .nm { font-size: 16px; font-weight: 600; color: var(--ink); }
+  .chart-top .val {
+    margin-left: auto; font-family: "IBM Plex Sans Condensed", sans-serif;
+    font-weight: 700; font-size: 24px; color: var(--ink); font-variant-numeric: tabular-nums;
+  }
+  .chart-top .val small { font-family: "IBM Plex Mono", monospace; font-size: 12px; font-weight: 400; color: var(--ink-2); }
+  .track { height: 12px; background: var(--sunk); position: relative; }
+  .bar { height: 12px; background: var(--blue); border-radius: 0 3px 3px 0; }
+  .bar.zero { width: 3px; background: var(--ink); border-radius: 0; }
+  .chart-axis {
+    display: flex; justify-content: space-between; margin-top: 10px;
+    font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--ink-3);
+  }
+  .loss-aside { border-left: 2px solid var(--rule); padding-left: 26px; }
+  .loss-aside h3 { font-size: 21px; margin: 0 0 12px; color: var(--ink); }
+  .loss-aside p { margin: 0 0 12px; font-size: 15px; color: var(--ink-2); }
+  .loss-aside p:last-child { margin: 0; }
+  @media (max-width: 940px) {
+    .loss-wrap { grid-template-columns: 1fr; gap: 30px; }
+    .loss-aside { border-left: 0; border-top: 2px solid var(--rule); padding-left: 0; padding-top: 22px; }
+  }
+
+  /* Принцип работы */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 34px; }
+  .step .num {
+    font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--blue);
+    letter-spacing: .1em; margin-bottom: 14px;
+  }
+  .step svg { width: 100%; height: auto; display: block; margin-bottom: 18px; }
+  .step h3 { font-size: 19px; margin: 0 0 8px; color: var(--ink); }
+  .step p { margin: 0; font-size: 14.5px; color: var(--ink-2); }
+  @media (max-width: 860px) { .steps { grid-template-columns: 1fr; gap: 30px; } }
+
+  /* Применение */
+  .apply { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  .apply div { background: var(--surface); padding: 20px 20px 22px; }
+  section.band.alt .apply div { background: var(--paper); }
+  .apply .t { font-size: 15.5px; font-weight: 600; color: var(--ink); line-height: 1.35; }
+  .apply .m { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--ink-3); margin-top: 7px; }
+  @media (max-width: 940px) { .apply { grid-template-columns: repeat(2, 1fr); } }
+
+  /* Производство */
+  .prod { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+  .prod ul { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--rule); }
+  .prod li {
+    padding: 15px 0; border-bottom: 1px solid var(--rule-soft);
+    display: grid; grid-template-columns: 24px minmax(0,1fr); gap: 14px;
+    font-size: 15.5px; color: var(--ink-2);
+  }
+  .prod li .tick { color: var(--blue); font-family: "IBM Plex Mono", monospace; font-size: 13px; padding-top: 2px; }
+  .prod li b { color: var(--ink); font-weight: 600; }
+  .cycle { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .cycle span {
+    font-family: "IBM Plex Mono", monospace; font-size: 12px;
+    padding: 6px 12px; background: var(--sunk); color: var(--ink-2);
+  }
+  @media (max-width: 860px) { .prod { grid-template-columns: 1fr; gap: 32px; } }
+
+  /* Заявка */
+  .quote { background: var(--navy-deep); color: var(--on-dark); }
+  .quote .shell { padding: 62px 32px 66px; display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+  .quote h2 { font-size: clamp(30px, 3.4vw, 42px); margin: 0 0 16px; color: #FFFFFF; }
+  .quote p { margin: 0 0 8px; color: var(--on-dark-2); font-size: 16.5px; max-width: 44ch; }
+  .qform { display: grid; gap: 14px; }
+  .qform input, .qform textarea {
+    width: 100%; padding: 15px 16px; background: rgba(255,255,255,.05);
+    border: 1px solid var(--dark-rule); color: var(--on-dark);
+    font-family: "IBM Plex Sans", sans-serif; font-size: 15.5px; border-radius: 0;
+  }
+  .qform textarea { min-height: 96px; resize: vertical; }
+  .qform input::placeholder, .qform textarea::placeholder { color: var(--on-dark-3); }
+  .qform .fine { font-size: 12.5px; color: var(--on-dark-3); margin: 0; }
+  .qform .btn { width: 100%; }
+  @media (max-width: 860px) { .quote .shell { grid-template-columns: 1fr; gap: 34px; } }
+
+  /* Футер */
+  footer.site { background: var(--navy); color: var(--on-dark-2); }
+  footer.site .shell { padding: 54px 32px 30px; }
+  .foot-top { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.2fr; gap: 40px; }
+  .foot-col h4 {
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px; font-weight: 600;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--on-dark-3);
+    margin: 0 0 16px;
+  }
+  .foot-col a, .foot-col p { color: var(--on-dark-2); font-size: 14.5px; }
+  .foot-col ul { list-style: none; margin: 0; padding: 0; }
+  .foot-col li { margin-bottom: 9px; }
+  .foot-col a:hover { color: #FFFFFF; }
+  .office { margin-bottom: 18px; }
+  .office .c { color: #FFFFFF; font-weight: 600; font-size: 14.5px; }
+  .office .p { font-family: "IBM Plex Mono", monospace; font-size: 13.5px; color: var(--on-dark-2); }
+  .foot-bottom {
+    margin-top: 44px; padding-top: 22px; border-top: 1px solid var(--dark-rule);
+    display: flex; flex-wrap: wrap; gap: 10px 28px; align-items: center;
+    font-family: "IBM Plex Mono", monospace; font-size: 11.5px; color: var(--on-dark-3);
+  }
+  .foot-bottom .certs { margin-left: auto; }
+  @media (max-width: 940px) { .foot-top { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .foot-top { grid-template-columns: 1fr; } }
+
+  /* пометка макета */
+  .slot-note {
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--gold-ink); border: 1px dashed var(--gold);
+    padding: 3px 8px; display: inline-block;
+  }
+</style>
+
+<div class="topbar">
+  <div class="shell">
+    <span class="city drop">Ростов-на-Дону</span>
+    <a href="tel:+78633010045">+7 (863) 301-00-45 доб. 4003</a>
+    <a href="mailto:filt@fogod.ru">filt@fogod.ru</a>
+    <span class="sep"></span>
+    <a href="#">VK</a>
+    <a href="#">WhatsApp</a>
+    <a href="#">RuTube</a>
+  </div>
+</div>
+
+<header class="main">
+  <div class="shell">
+    <a class="logo" href="#">
+      <span>
+        <span class="word">ФОГОД</span>
+        <span class="sub">промышленные фильтры</span>
+      </span>
+      <span class="tm">ТМ</span>
+    </a>
+    <nav class="primary">
+      <a href="#katalog">Каталог</a>
+      <a href="#podbor">Подбор</a>
+      <a href="#princip">Принцип работы</a>
+      <a href="#primenenie">Применение</a>
+      <a href="#proizvodstvo">Производство</a>
+    </nav>
+    <div class="head-right">
+      <div class="head-phone">
+        <div class="num">+7 (863) 301-00-45</div>
+        <div class="cap">пн–пт 9:00–18:00</div>
+      </div>
+      <a class="btn" href="#zayavka">Запросить КП</a>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="shell">
+    <div>
+      <div class="eyebrow">
+        <span class="bar"></span>
+        <span class="label">Отечественный производитель · более 25 лет на рынке</span>
+      </div>
+      <h1>Самоочищающиеся фильтры,<br><span class="thin">которые не останавливают процесс</span></h1>
+      <p class="lede">Единственный в России производитель гидродинамических фильтров ТМ ФОГОД. Очистка воды, масла и СОЖ от механических примесей — серийные решения и изготовление по вашему ТЗ.</p>
+      <div class="cta">
+        <a class="btn lg" href="#podbor">Подобрать фильтр</a>
+        <a class="btn lg ghost" href="#katalog">Смотреть каталог</a>
+      </div>
+      <div class="hero-specs">
+        <div>
+          <div class="v">3–8000<span class="u"> м³/ч</span></div>
+          <div class="label k">Производительность</div>
+        </div>
+        <div>
+          <div class="v">до 25<span class="u"> мкм</span></div>
+          <div class="label k">Тонкость фильтрации</div>
+        </div>
+        <div>
+          <div class="v">2–25<span class="u"> бар</span></div>
+          <div class="label k">Рабочее давление</div>
+        </div>
+        <div>
+          <div class="v">24/7<span class="u"></span></div>
+          <div class="label k">Без остановок</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-fig">
+      <svg viewBox="0 0 460 520" role="img" aria-label="Схема гидродинамического фильтра ОВГД: тангенциальный вход, фильтроэлемент, шламовая камера">
+        <g fill="none" stroke="var(--navy)" stroke-width="2" vector-effect="non-scaling-stroke">
+          <!-- вход -->
+          <path d="M40 148 h74" />
+          <path d="M40 178 h74" />
+          <rect x="34" y="142" width="8" height="42" fill="var(--navy)" stroke="none"/>
+          <!-- корпус -->
+          <path d="M114 118 h182" />
+          <path d="M114 118 v250" />
+          <path d="M296 118 v250" />
+          <path d="M114 96 q91 -26 182 0 v22 h-182 z" fill="var(--sunk)"/>
+          <!-- выход -->
+          <path d="M296 148 h84" />
+          <path d="M296 178 h84" />
+          <rect x="380" y="142" width="8" height="42" fill="var(--navy)" stroke="none"/>
+          <!-- конус -->
+          <path d="M114 368 L176 438" />
+          <path d="M296 368 L234 438" />
+          <!-- шламовая камера -->
+          <path d="M176 438 v44 h58 v-44" />
+          <path d="M176 482 h58" />
+          <rect x="196" y="482" width="18" height="16" fill="var(--navy)" stroke="none"/>
+        </g>
+
+        <!-- фильтроэлемент -->
+        <g stroke="var(--red)" stroke-width="1.5" fill="none">
+          <rect x="152" y="150" width="106" height="196" fill="none"/>
+          <path d="M152 150 L258 346 M258 150 L152 346" opacity=".28"/>
+          <path d="M168 150 v196 M186 150 v196 M204 150 v196 M222 150 v196 M240 150 v196" opacity=".38"/>
+        </g>
+
+        <!-- поток -->
+        <g stroke="var(--blue)" stroke-width="2.5" fill="none" stroke-linecap="round">
+          <path d="M58 163 h40" />
+          <path d="M90 155 l10 8 l-10 8" />
+          <path d="M318 163 h40" />
+          <path d="M350 155 l10 8 l-10 8" />
+          <path d="M205 372 v46" opacity=".85"/>
+          <path d="M197 410 l8 10 l8 -10" opacity=".85"/>
+        </g>
+
+        <!-- выносные линии -->
+        <g stroke="var(--ink-3)" stroke-width="1" fill="none" stroke-dasharray="3 3">
+          <path d="M296 248 h96" />
+          <path d="M234 460 h158" />
+        </g>
+        <g stroke="var(--red)" stroke-width="1" fill="none" stroke-dasharray="3 3" opacity=".7">
+          <path d="M152 310 h-96" />
+        </g>
+        <g fill="var(--ink-3)" font-family="IBM Plex Mono, monospace" font-size="11">
+          <text x="398" y="243">Ø корпуса</text>
+          <text x="398" y="256">DN 50…600</text>
+          <text x="398" y="456">шламовая</text>
+          <text x="398" y="469">камера</text>
+          <text x="46" y="136">вход</text>
+          <text x="318" y="136">выход</text>
+        </g>
+        <g fill="var(--red)" font-family="IBM Plex Mono, monospace" font-size="11">
+          <text x="4" y="306">фильтроэлемент</text>
+          <text x="4" y="319">сетка тканая нерж.</text>
+        </g>
+      </svg>
+      <p class="fig-note"><span class="slot-note">место под фоторендер продукта</span></p>
+    </div>
+  </div>
+</div>
+
+<div class="picker" id="podbor">
+  <div class="shell">
+    <div class="head">
+      <div>
+        <span class="label" style="display:block;margin-bottom:10px">Подбор оборудования</span>
+        <h2>Три параметра — и мы покажем, что подходит</h2>
+      </div>
+      <p>Если под ваши условия ничего не подошло — это не отказ. Изготовление под конкретное ТЗ у нас обычная практика.</p>
+    </div>
+
+    <div class="form-row">
+      <div class="field">
+        <label for="f-sreda">Рабочая среда</label>
+        <select id="f-sreda">
+          <option value="voda">Вода</option>
+          <option value="maslo">Масло</option>
+          <option value="sozh">СОЖ</option>
+          <option value="agr">Агрессивная среда</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-q">Расход <span class="unit">м³/ч</span></label>
+        <input id="f-q" type="number" min="0" step="1" value="120" inputmode="numeric">
+      </div>
+      <div class="field">
+        <label for="f-mkm">Тонкость фильтрации <span class="unit">мкм</span></label>
+        <input id="f-mkm" type="number" min="1" step="1" value="100" inputmode="numeric">
+      </div>
+      <button class="btn" id="f-go" type="button">Подобрать</button>
+    </div>
+
+    <div class="results" id="results"></div>
+  </div>
+</div>
+
+<section class="band" id="katalog">
+  <div class="shell">
+    <div class="sec-head">
+      <span class="label">Продуктовая линейка</span>
+      <h2>Шесть семейств под разные среды и режимы</h2>
+      <p>Гидродинамические — собственная запатентованная разработка. Остальные пять закрывают задачи, где нужна другая физика очистки или другое энергоснабжение.</p>
+    </div>
+
+    <div class="fam-grid">
+      <a class="fam" href="#">
+        <div class="n">01</div>
+        <h3>Гидродинамические</h3>
+        <p>Полно- и неполнопоточные исполнения, фильтр-гидроциклон. Самоочистка без движущихся узлов.</p>
+        <div class="spec"><b>3–8000</b> м³/ч · до <b>25</b> мкм · <b>2–25</b> бар</div>
+      </a>
+      <a class="fam" href="#">
+        <div class="n">02</div>
+        <h3>С обратной промывкой</h3>
+        <p>Щётки с электроприводом. Управление по времени, по перепаду давления или вручную.</p>
+        <div class="spec"><b>25–9300</b> м³/ч · <b>80–3000</b> мкм · <b>2–25</b> бар</div>
+      </a>
+      <a class="fam" href="#">
+        <div class="n">03</div>
+        <h3>Дисковые</h3>
+        <p>Пакет плотно сжатых полимерных дисков. При самопромывке диски разжимаются и поток смывает загрязнения.</p>
+        <div class="spec">низкий расход воды · небольшие габариты</div>
+      </a>
+      <a class="fam" href="#">
+        <div class="n">04</div>
+        <h3>Насыпные</h3>
+        <p>Слой гранулированной загрузки: кварцевый песок, антрацит. Удаляют ил, ржавчину, водоросли.</p>
+        <div class="spec">объёмная фильтрация · промывка без остановки</div>
+      </a>
+      <a class="fam" href="#">
+        <div class="n">05</div>
+        <h3>Гидравлические</h3>
+        <p>Работают на энергии потока. Подвод электропитания на объекте не требуется.</p>
+        <div class="spec">расход на очистку <b>≈1 %</b> от объёма</div>
+      </a>
+      <a class="fam" href="#">
+        <div class="n">06</div>
+        <h3>Специальные</h3>
+        <p>Агрессивные среды, рукавные и корзинчатые. Материальное исполнение под среду заказчика.</p>
+        <div class="spec">нержавеющая сталь · PVDF</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="band alt">
+  <div class="shell">
+    <div class="sec-head">
+      <span class="label">Экономика очистки</span>
+      <h2>Сколько жидкости уходит на самоочистку</h2>
+      <p>Параметр, который заказчик считает в экономике объекта, а конкуренты обычно не публикуют.</p>
+    </div>
+
+    <div class="loss-wrap">
+      <div class="chart">
+        <div class="chart-row">
+          <div class="chart-top">
+            <span class="nm">ОВГД полнопоточный</span>
+            <span class="val">0<small> %</small></span>
+          </div>
+          <div class="track"><div class="bar zero" title="потерь нет"></div></div>
+        </div>
+        <div class="chart-row">
+          <div class="chart-top">
+            <span class="nm">Гидравлические</span>
+            <span class="val">≈1<small> %</small></span>
+          </div>
+          <div class="track"><div class="bar" style="width:10%" title="≈1 % от объёма"></div></div>
+        </div>
+        <div class="chart-row">
+          <div class="chart-top">
+            <span class="nm">ОВГД неполнопоточный</span>
+            <span class="val">до 10<small> %</small></span>
+          </div>
+          <div class="track"><div class="bar" style="width:100%" title="до 10 % на смыв со шламом"></div></div>
+        </div>
+        <div class="chart-axis"><span>0</span><span>5 %</span><span>10 % от объёма</span></div>
+      </div>
+
+      <div class="loss-aside">
+        <h3>Почему полнопоточный не теряет ничего</h3>
+        <p>Очистка идёт за счёт гидродинамики самого потока: движущихся узлов и механизмов в фильтре нет, промывочная вода и воздух не нужны. Шлам отводится периодически.</p>
+        <p>Неполнопоточное исполнение компактнее в обвязке, но до 10 % жидкости уходит на постоянный смыв.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="princip">
+  <div class="shell">
+    <div class="sec-head">
+      <span class="label">Принцип работы</span>
+      <h2>Отделение частиц центробежной силой</h2>
+      <p>Фильтр-гидроциклон идёт в составе ОВГД или как отдельный аппарат.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="num">01</div>
+        <svg viewBox="0 0 300 170" role="img" aria-label="Вода подаётся по касательной и создаёт вихрь">
+          <g fill="none" stroke="var(--rule)" stroke-width="2"><circle cx="150" cy="85" r="62"/></g>
+          <g fill="none" stroke="var(--blue)" stroke-width="2.5" stroke-linecap="round">
+            <path d="M18 40 h74 a62 62 0 0 1 40 22"/>
+            <path d="M84 32 l10 8 l-10 8"/>
+          </g>
+          <g fill="none" stroke="var(--blue)" stroke-width="1.6" opacity=".55">
+            <path d="M150 30 a55 55 0 1 1 -40 17 a40 40 0 1 0 32 -12"/>
+          </g>
+        </svg>
+        <h3>Тангенциальная подача</h3>
+        <p>Вода подаётся по касательной и создаёт вращающийся вихрь внутри корпуса.</p>
+      </div>
+      <div class="step">
+        <div class="num">02</div>
+        <svg viewBox="0 0 300 170" role="img" aria-label="Тяжёлые частицы отбрасываются к стенкам">
+          <g fill="none" stroke="var(--rule)" stroke-width="2"><circle cx="150" cy="85" r="62"/></g>
+          <g fill="var(--red)">
+            <circle cx="150" cy="27" r="4"/><circle cx="203" cy="55" r="3.4"/>
+            <circle cx="207" cy="108" r="4"/><circle cx="160" cy="145" r="3.4"/>
+            <circle cx="100" cy="132" r="4"/><circle cx="90" cy="60" r="3.4"/>
+          </g>
+          <g fill="none" stroke="var(--red)" stroke-width="1.8" opacity=".5" stroke-linecap="round">
+            <path d="M150 60 v-22"/><path d="M177 74 l20 -12"/><path d="M177 97 l22 8"/>
+            <path d="M150 112 v22"/><path d="M122 100 l-18 20"/><path d="M122 70 l-22 -6"/>
+          </g>
+        </svg>
+        <h3>Песок и окалина — к стенкам</h3>
+        <p>Тяжёлые механические частицы отбрасываются центробежной силой к стенкам корпуса.</p>
+      </div>
+      <div class="step">
+        <div class="num">03</div>
+        <svg viewBox="0 0 300 170" role="img" aria-label="Частицы оседают в шламовой камере, чистая вода выходит вверх">
+          <g fill="none" stroke="var(--rule)" stroke-width="2">
+            <path d="M92 14 h116 v52 l-38 44 v46 h-40 v-46 l-38 -44 z"/>
+          </g>
+          <g fill="none" stroke="var(--blue)" stroke-width="2.5" stroke-linecap="round">
+            <path d="M150 92 v-66"/><path d="M141 36 l9 -10 l9 10"/>
+          </g>
+          <g fill="var(--red)"><rect x="132" y="128" width="36" height="26"/></g>
+          <g fill="none" stroke="var(--red)" stroke-width="2.5" stroke-linecap="round">
+            <path d="M150 100 v18"/><path d="M143 111 l7 8 l7 -8"/>
+          </g>
+        </svg>
+        <h3>Шлам вниз, чистая вода вверх</h3>
+        <p>Частицы опускаются в шламовую камеру, очищенная вода поднимается и выходит через выходное отверстие.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band alt" id="primenenie">
+  <div class="shell">
+    <div class="sec-head">
+      <span class="label">Область применения</span>
+      <h2>Оборотные циклы и технологические жидкости</h2>
+      <p>Очистка воды оборотных циклов предприятий, нефтепродуктов, масел и СОЖ.</p>
+    </div>
+
+    <div class="apply">
+      <div><div class="t">До и после градирен и прокатных станов</div><div class="m">металлургия</div></div>
+      <div><div class="t">При охлаждении доменных печей</div><div class="m">металлургия</div></div>
+      <div><div class="t">Перед теплообменниками, котлами и парогенераторами</div><div class="m">энергетика</div></div>
+      <div><div class="t">При водоподготовке и очистке сточных вод</div><div class="m">ЖКХ, промышленность</div></div>
+      <div><div class="t">На водозаборных станциях</div><div class="m">водоснабжение</div></div>
+      <div><div class="t">Целлюлозно-бумажная промышленность</div><div class="m">ЦБП</div></div>
+      <div><div class="t">Системы орошения — защита оборудования</div><div class="m">агропром</div></div>
+      <div><div class="t">Очистка нефтепродуктов, масел и СОЖ</div><div class="m">машиностроение</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="proizvodstvo">
+  <div class="shell">
+    <div class="sec-head">
+      <span class="label">Производство</span>
+      <h2>Полный цикл на собственных мощностях</h2>
+    </div>
+
+    <div class="prod">
+      <div>
+        <ul>
+          <li><span class="tick">01</span><span><b>Российское производство</b> — полный цикл изготовления на собственных мощностях</span></li>
+          <li><span class="tick">02</span><span><b>Собственная запатентованная разработка</b> самоочищающихся фильтров ТМ ФОГОД</span></li>
+          <li><span class="tick">03</span><span><b>Индивидуальный подход</b> — серийные решения и изготовление по вашему ТЗ</span></li>
+          <li><span class="tick">04</span><span><b>Обязательные заводские испытания</b> и полный комплект документов</span></li>
+          <li><span class="tick">05</span><span><b>Поставки по всей России</b> и в ближнее зарубежье</span></li>
+        </ul>
+        <div class="cycle">
+          <span>проектирование</span><span>производство</span><span>заводские испытания</span><span>шеф-монтаж и ПНР</span><span>сервис</span>
+        </div>
+      </div>
+      <div>
+        <p class="slot-note" style="margin-bottom:14px">место под 2 фотографии производства</p>
+        <p style="color:var(--ink-2);font-size:15.5px;margin:0">Оборудование изготавливается на собственном производстве и проходит заводские испытания перед отгрузкой. Каждая поставка комплектуется паспортом, руководством по эксплуатации и сертификатами.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="quote" id="zayavka">
+  <div class="shell">
+    <div>
+      <h2>Подберём решение под вашу задачу</h2>
+      <p>Расчёт и изготовление по техническому заданию. Пришлите параметры — вернёмся с предложением и опросным листом.</p>
+    </div>
+    <form class="qform" onsubmit="return false">
+      <input type="text" placeholder="Имя" aria-label="Имя">
+      <input type="tel" placeholder="Телефон" aria-label="Телефон">
+      <input type="email" placeholder="Email" aria-label="Email">
+      <textarea placeholder="Параметры объекта: среда, расход, тонкость, давление" aria-label="Параметры объекта"></textarea>
+      <button class="btn" type="submit">Отправить запрос</button>
+      <p class="fine">Нажимая кнопку, вы соглашаетесь с политикой обработки персональных данных.</p>
+    </form>
+  </div>
+</div>
+
+<footer class="site">
+  <div class="shell">
+    <div class="foot-top">
+      <div class="foot-col">
+        <h4>Головной офис</h4>
+        <div class="office">
+          <div class="c">Ростов-на-Дону</div>
+          <div class="p">+7 (863) 301-00-45 доб. 4003</div>
+          <a href="mailto:filt@fogod.ru">filt@fogod.ru</a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h4>Филиалы</h4>
+        <div class="office">
+          <div class="c">Москва</div>
+          <div class="p">+7 (495) 968-90-45</div>
+          <a href="mailto:msc@fogod.ru">msc@fogod.ru</a>
+        </div>
+        <div class="office">
+          <div class="c">Санкт-Петербург</div>
+          <div class="p">+7 (812) 982-00-45</div>
+          <a href="mailto:spb@fogod.ru">spb@fogod.ru</a>
+        </div>
+        <div class="office">
+          <div class="c">Екатеринбург</div>
+          <div class="p">+7 (343) 266-36-45</div>
+          <a href="mailto:ekb@fogod.ru">ekb@fogod.ru</a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h4>Каталог</h4>
+        <ul>
+          <li><a href="#">Гидродинамические</a></li>
+          <li><a href="#">С обратной промывкой</a></li>
+          <li><a href="#">Дисковые</a></li>
+          <li><a href="#">Насыпные</a></li>
+          <li><a href="#">Гидравлические</a></li>
+          <li><a href="#">Специальные</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Компания</h4>
+        <ul>
+          <li><a href="#podbor">Подбор оборудования</a></li>
+          <li><a href="#princip">Принцип работы</a></li>
+          <li><a href="#primenenie">Область применения</a></li>
+          <li><a href="#proizvodstvo">Производство</a></li>
+          <li><a href="#">Блог и выставки</a></li>
+          <li><a href="#">Контакты</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot-bottom">
+      <span>© <span id="god">2026</span> ООО «ФОГОД»</span>
+      <a href="#">Политика обработки персональных данных</a>
+      <span class="certs">ГОСТ Р ИСО 9001-2015 · ТР ТС 010/2011 · ТР ТС 004/2011 · ТР ТС 032/2013 · ТР ТС 020/2011</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('god').textContent = new Date().getFullYear();
+
+  var SEMEYSTVA = [
+    { nm:'Гидродинамические', sub:'ОВГД полно- и неполнопоточные, гидроциклон',
+      q:[3,8000], mkm:[25,null], bar:[2,25], sredy:['voda','maslo','sozh'], poteri:'0 / до 10 %' },
+    { nm:'С обратной промывкой', sub:'Щётки с электроприводом',
+      q:[25,9300], mkm:[80,3000], bar:[2,25], sredy:['voda','maslo','sozh'], poteri:'н/д' },
+    { nm:'Дисковые', sub:'Пакет полимерных дисков',
+      q:null, mkm:null, bar:null, sredy:['voda'], poteri:'низкий расход' },
+    { nm:'Насыпные', sub:'Гранулированная загрузка',
+      q:null, mkm:null, bar:null, sredy:['voda'], poteri:'небольшой объём' },
+    { nm:'Гидравлические', sub:'Без подвода электроэнергии',
+      q:null, mkm:null, bar:null, sredy:['voda'], poteri:'≈1 %' },
+    { nm:'Специальные', sub:'Рукавные, корзинчатые, для агрессивных сред',
+      q:null, mkm:null, bar:null, sredy:['agr','voda'], poteri:'н/д' }
+  ];
+
+  function rng(a, suffix) {
+    if (!a) return '<span class="cell nd">уточняется</span>';
+    if (a[1] === null) return '<span class="cell">от <b>' + a[0] + '</b> ' + suffix + '</span>';
+    return '<span class="cell"><b>' + a[0] + '–' + a[1] + '</b> ' + suffix + '</span>';
+  }
+
+  function podobrat() {
+    var sreda = document.getElementById('f-sreda').value;
+    var q = parseFloat(document.getElementById('f-q').value);
+    var mkm = parseFloat(document.getElementById('f-mkm').value);
+
+    var podhodyat = [], utochnit = [];
+
+    SEMEYSTVA.forEach(function (s) {
+      if (s.sredy.indexOf(sreda) === -1) return;
+      if (!s.q || !s.mkm) { utochnit.push(s); return; }
+      if (!isNaN(q) && (q < s.q[0] || q > s.q[1])) return;
+      if (!isNaN(mkm)) {
+        if (mkm < s.mkm[0]) return;
+        if (s.mkm[1] !== null && mkm > s.mkm[1]) return;
+      }
+      podhodyat.push(s);
+    });
+
+    var html = '';
+
+    if (podhodyat.length) {
+      html += '<div class="res-head" style="display:grid;grid-template-columns:minmax(0,1fr) 150px 150px 150px;gap:20px">' +
+              '<span>Подходит</span><span>Расход, м³/ч</span><span>Тонкость, мкм</span><span>Потери</span></div>';
+      podhodyat.forEach(function (s) {
+        html += '<div class="res-row">' +
+          '<div class="nm">' + s.nm + '<em>' + s.sub + '</em></div>' +
+          rng(s.q, '') + rng(s.mkm, '') +
+          '<span class="cell"><b>' + s.poteri + '</b></span>' +
+        '</div>';
+      });
+    } else {
+      html += '<div class="res-empty">Под эти параметры готовой позиции в линейке нет.</div>';
+    }
+
+    if (utochnit.length) {
+      html += '<div class="res-head" style="display:grid;grid-template-columns:minmax(0,1fr) 150px 150px 150px;gap:20px;margin-top:26px">' +
+              '<span>Требуют уточнения характеристик</span><span>Расход, м³/ч</span><span>Тонкость, мкм</span><span>Потери</span></div>';
+      utochnit.forEach(function (s) {
+        html += '<div class="res-row">' +
+          '<div class="nm">' + s.nm + '<em>' + s.sub + '</em></div>' +
+          rng(s.q, '') + rng(s.mkm, '') +
+          '<span class="cell"><b>' + s.poteri + '</b></span>' +
+        '</div>';
+      });
+    }
+
+    html += '<div class="res-note"><p><b>Не нашлось точного совпадения?</b> Изготовление под конкретное ТЗ — наша обычная практика, а не исключение. Оставьте параметры объекта, и мы посчитаем нестандартное исполнение.</p></div>';
+
+    document.getElementById('results').innerHTML = html;
+  }
+
+  document.getElementById('f-go').addEventListener('click', podobrat);
+  ['f-sreda','f-q','f-mkm'].forEach(function (id) {
+    document.getElementById(id).addEventListener('change', podobrat);
+  });
+  podobrat();
+</script>
