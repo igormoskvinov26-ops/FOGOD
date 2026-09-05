@@ -1,58 +1,78 @@
-# Термины таксономий каталога wfogod.ru
-# Этап 1, черновик. Требует проверки инженером.
+# Термины каталога wfogod.ru — ревизия 2
+# Обновлено после разбора пяти презентаций от 05.09.2026.
 #
-# status: confirmed — взято из CLAUDE.md или текущего каталога
-#         inferred  — выведено по смыслу отрасли, ПОДТВЕРДИТЬ
+# status: confirmed — подтверждено презентациями компании
+#         inferred  — выведено по смыслу, ПОДТВЕРДИТЬ
 #
-# Поле `iz` показывает, из какой нынешней категории /shop/katalog-filtrov/
-# приходит термин — основа карты редиректов для Этапа 3.
+# `iz` — из какой нынешней категории /shop/katalog-filtrov/ приходит термин.
 
+# --- Уровень 1: семейства. Основная навигация, язык компании ---
+semeystva:
+  nazvanie: Семейство
+  posadochnaya: true
+  uroven: 1
+  terminy:
+    - slug: gidrodinamicheskie
+      nazvanie: Гидродинамические
+      status: confirmed
+      iz: [ovgd-polnopotochnye, ovgd-nepolnopotochnye, gidrocziklony]
+      opisanie: Полно- и неполнопоточные исполнения, гидроциклон
+    - slug: s-obratnoj-promyvkoj
+      nazvanie: С обратной промывкой
+      status: confirmed
+      iz: [s-obratnoj-promyvkoj]
+      opisanie: Щётки с электроприводом, 80–3000 мкм
+    - slug: diskovye
+      nazvanie: Дисковые
+      status: confirmed
+      iz: [diskovye]
+      opisanie: Пакет полимерных дисков, низкий расход воды
+    - slug: nasypnye
+      nazvanie: Насыпные
+      status: confirmed
+      iz: [nasypnye]
+      opisanie: Гранулированная загрузка, объёмная фильтрация
+    - slug: gidravlicheskie
+      nazvanie: Гидравлические
+      status: confirmed
+      iz: [gidravlicheskie]
+      opisanie: Без подвода электроэнергии
+    - slug: specialnye
+      nazvanie: Специальные
+      status: confirmed
+      iz: [dlya-agressivnyh-sred]
+      opisanie: Агрессивные среды, рукавные, корзинчатые
+
+# --- Уровень 2: ортогональные оси. Подбор и сквозные посадочные ---
 seriya:
   nazvanie: Серия
   posadochnaya: true
   terminy:
-    - slug: ovgd
-      nazvanie: ОВГД
-      status: confirmed
-      iz: [ovgd-polnopotochnye, ovgd-nepolnopotochnye]
+    - {slug: ovgd, nazvanie: ОВГД, status: confirmed}
     - slug: osgd
       nazvanie: ОСГД
-      status: confirmed
+      status: inferred
+      prim: не встречается ни в одной из пяти презентаций — вопрос 2
     - slug: omgd
       nazvanie: ОМГД
-      status: confirmed
+      status: inferred
+      prim: не встречается ни в одной из пяти презентаций — вопрос 2
 
 princip:
   nazvanie: Принцип фильтрации
   posadochnaya: true
   terminy:
-    - slug: gidrodinamicheskie
-      nazvanie: Гидродинамические самоочищающиеся
-      status: confirmed
-      prim: собственная запатентованная разработка, ядро продуктовой линейки
-    - slug: setchatye
-      nazvanie: Сетчатые
-      status: inferred
-    - slug: diskovye
-      nazvanie: Дисковые
-      status: confirmed
-      iz: [diskovye]
-    - slug: nasypnye
-      nazvanie: Насыпные
-      status: confirmed
-      iz: [nasypnye]
-      prim: зернистая загрузка
-    - slug: gidrociklony
-      nazvanie: Гидроциклоны
+    - {slug: gidrodinamicheskij, nazvanie: Гидродинамический самоочищающийся, status: confirmed}
+    - {slug: setchatyj,   nazvanie: Сетчатый,   status: confirmed}
+    - {slug: diskovyj,    nazvanie: Дисковый,   status: confirmed}
+    - {slug: nasypnoj,    nazvanie: Насыпной,   status: confirmed}
+    - slug: gidrociklonnyj
+      nazvanie: Гидроциклонный
       status: confirmed
       iz: [gidrocziklony]
-      prim: слаг исправлен, czy -> ci, нужен 301
-    - slug: kartridzhnye
-      nazvanie: Картриджные
-      status: inferred
-    - slug: magnitnye
-      nazvanie: Магнитные
-      status: inferred
+      prim: слаг исправлен czy -> ci; в новой структуре это исполнение внутри гидродинамических, нужен 301
+    - {slug: rukavnyj,    nazvanie: Рукавный (мешочный), status: confirmed}
+    - {slug: korzinchatyj, nazvanie: Корзинчатый, status: confirmed}
 
 shema:
   nazvanie: Схема включения
@@ -62,67 +82,66 @@ shema:
       nazvanie: Полнопоточные
       status: confirmed
       iz: [ovgd-polnopotochnye]
+      prim: 100 % жидкости на выходе, потерь нет, отвод шлама периодически
     - slug: nepolnopotochnye
       nazvanie: Неполнопоточные
       status: confirmed
       iz: [ovgd-nepolnopotochnye]
-      prim: они же байпасные; в герое главной слаг fogod-nepolnopotochnye, в футере ovgd-nepolnopotochnye — свести к одному
+      prim: >
+        90–95 % на выходе, до 10 % на смыв, отвод шлама постоянно.
+        В герое главной слаг fogod-nepolnopotochnye, в футере
+        ovgd-nepolnopotochnye — свести к одному
 
 regeneraciya:
   nazvanie: Регенерация
   posadochnaya: true
   terminy:
-    - slug: samoochistka
-      nazvanie: Самоочистка потоком
-      status: confirmed
-    - slug: obratnaya-promyvka
-      nazvanie: Обратная промывка
+    - {slug: samoochistka, nazvanie: Самоочистка потоком, status: confirmed}
+    - slug: promyvka-schetkami
+      nazvanie: Обратная промывка щётками
       status: confirmed
       iz: [s-obratnoj-promyvkoj]
-    - slug: ruchnaya
-      nazvanie: Ручная разборка
-      status: inferred
-    - slug: smennyj-element
-      nazvanie: Сменный элемент
-      status: inferred
+    - {slug: promyvka-diskov, nazvanie: Обратная промывка разжатием дисков, status: confirmed}
+    - {slug: ruchnaya, nazvanie: Ручная разборка, status: inferred}
+    - {slug: smennyj-element, nazvanie: Сменный элемент, status: inferred}
+
+# --- Новая ось. Ответ на вопрос 1 ---
+privod:
+  nazvanie: Привод очистки
+  posadochnaya: true
+  prim: >
+    Появилась после разбора презентаций. «Гидравлические» — это не среда и не
+    принцип, а источник энергии для механизма очистки.
+  terminy:
+    - {slug: bez-mehanizma, nazvanie: Без механизма, status: confirmed, prim: гидродинамические — самоочистка конструкцией}
+    - {slug: energiya-potoka, nazvanie: Энергия потока, status: confirmed, iz: [gidravlicheskie], prim: расход на очистку ≈1 %}
+    - {slug: elektroprivod, nazvanie: Электропривод, status: confirmed, prim: щётки в фильтрах с обратной промывкой}
+    - {slug: ruchnoj, nazvanie: Ручной, status: inferred, prim: корзинчатые, рукавные}
 
 sreda:
   nazvanie: Рабочая среда
   posadochnaya: true
   mnozhestvennaya: true
   terminy:
-    - slug: voda
-      nazvanie: Вода
-      status: confirmed
-      deti:
-        - {slug: voda-tehnicheskaya, nazvanie: Техническая, status: inferred}
-        - {slug: voda-oborotnaya,    nazvanie: Оборотная,   status: inferred}
-        - {slug: voda-rechnaya,      nazvanie: Речная,      status: inferred}
-    - slug: maslo
-      nazvanie: Масло
-      status: confirmed
-    - slug: sozh
-      nazvanie: СОЖ
-      status: confirmed
+    - {slug: voda,  nazvanie: Вода,  status: confirmed}
+    - {slug: maslo, nazvanie: Масло, status: confirmed}
+    - {slug: sozh,  nazvanie: СОЖ,   status: confirmed}
+    - {slug: nefteprodukty, nazvanie: Нефтепродукты, status: confirmed}
     - slug: agressivnye
       nazvanie: Агрессивные среды
       status: confirmed
       iz: [dlya-agressivnyh-sred]
-      prim: пересечение с осью ispolnenie, не самостоятельная категория
+    - {slug: rastvoriteli, nazvanie: Растворители алифатические и ароматические, status: confirmed}
+    - {slug: schelochnye, nazvanie: Щелочные и высокощелочные, status: confirmed}
+    - {slug: kislotnye, nazvanie: Кислотные и высококислотные, status: confirmed}
 
 ispolnenie:
   nazvanie: Исполнение
   posadochnaya: true
   terminy:
-    - slug: uglerodistaya-stal
-      nazvanie: Углеродистая сталь
-      status: inferred
-    - slug: nerzhaveyuschaya-stal
-      nazvanie: Нержавеющая сталь
-      status: inferred
-    - slug: s-pokrytiem
-      nazvanie: С покрытием или футеровкой
-      status: inferred
+    - {slug: uglerodistaya-stal, nazvanie: Углеродистая сталь с антикоррозионным покрытием, status: confirmed}
+    - {slug: nerzhaveyuschaya-stal, nazvanie: Нержавеющая сталь, status: confirmed}
+    - {slug: pvdf, nazvanie: PVDF, status: confirmed}
 
 otrasl:
   nazvanie: Отрасль
@@ -131,13 +150,37 @@ otrasl:
     - {slug: mashinostroenie, nazvanie: Машиностроение, status: confirmed}
     - {slug: energetika,      nazvanie: Энергетика,     status: confirmed}
     - {slug: metallurgiya,    nazvanie: Металлургия,    status: confirmed}
+    - {slug: cbp, nazvanie: Целлюлозно-бумажная промышленность, status: confirmed}
+    - {slug: himicheskaya, nazvanie: Химическая промышленность, status: confirmed}
 
-# Не разложено по осям — см. voprosy-inzheneru.md, вопрос 1
-nerazobrannoe:
-  - slug: gidravlicheskie
-    iz: [gidravlicheskie]
-    problema: >
-      Непонятно, какая это ось. Возможные прочтения: фильтры для
-      гидросистем (то есть ось sreda = масло), либо гидравлические по
-      принципу действия (ось princip), либо по типу привода промывки.
-      До ответа термин никуда не переносится.
+# --- Ось-кандидат. Вводить после первых посадочных ---
+primenenie:
+  nazvanie: Узел применения
+  posadochnaya: true
+  status_osi: kandidat
+  prim: >
+    Не отрасль, а узел технологической схемы. Список взят со слайда
+    «Область применения».
+  terminy:
+    - {slug: gradirni, nazvanie: До и после градирен, status: confirmed}
+    - {slug: prokatnye-stany, nazvanie: Прокатные станы, status: confirmed}
+    - {slug: domennye-pechi, nazvanie: Охлаждение доменных печей, status: confirmed}
+    - {slug: teploobmenniki, nazvanie: Перед теплообменниками, котлами и парогенераторами, status: confirmed}
+    - {slug: vodozabor, nazvanie: Водозаборные станции, status: confirmed}
+    - {slug: oroshenie, nazvanie: Системы орошения, status: confirmed}
+    - {slug: stochnye-vody, nazvanie: Очистка сточных вод, status: confirmed}
+
+# --- Отдельный тип записи, не таксономия ---
+sistemy:
+  nazvanie: Системы и опции
+  tip_zapisi: Система
+  terminy:
+    - slug: sof
+      nazvanie: Система СОФ
+      rasshifrovka: Система Очистки Фильтроэлемента
+      status: confirmed
+      sovmestimost: [ovgd]
+      prim: >
+        Дооснащение существующих фильтров ударно-волновой очисткой.
+        Нет ни в CLAUDE.md, ни на сайте. Заявление об обеззараживании
+        требует проверки — вопрос 8.
