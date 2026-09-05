@@ -1,0 +1,143 @@
+# Термины таксономий каталога wfogod.ru
+# Этап 1, черновик. Требует проверки инженером.
+#
+# status: confirmed — взято из CLAUDE.md или текущего каталога
+#         inferred  — выведено по смыслу отрасли, ПОДТВЕРДИТЬ
+#
+# Поле `iz` показывает, из какой нынешней категории /shop/katalog-filtrov/
+# приходит термин — основа карты редиректов для Этапа 3.
+
+seriya:
+  nazvanie: Серия
+  posadochnaya: true
+  terminy:
+    - slug: ovgd
+      nazvanie: ОВГД
+      status: confirmed
+      iz: [ovgd-polnopotochnye, ovgd-nepolnopotochnye]
+    - slug: osgd
+      nazvanie: ОСГД
+      status: confirmed
+    - slug: omgd
+      nazvanie: ОМГД
+      status: confirmed
+
+princip:
+  nazvanie: Принцип фильтрации
+  posadochnaya: true
+  terminy:
+    - slug: gidrodinamicheskie
+      nazvanie: Гидродинамические самоочищающиеся
+      status: confirmed
+      prim: собственная запатентованная разработка, ядро продуктовой линейки
+    - slug: setchatye
+      nazvanie: Сетчатые
+      status: inferred
+    - slug: diskovye
+      nazvanie: Дисковые
+      status: confirmed
+      iz: [diskovye]
+    - slug: nasypnye
+      nazvanie: Насыпные
+      status: confirmed
+      iz: [nasypnye]
+      prim: зернистая загрузка
+    - slug: gidrociklony
+      nazvanie: Гидроциклоны
+      status: confirmed
+      iz: [gidrocziklony]
+      prim: слаг исправлен, czy -> ci, нужен 301
+    - slug: kartridzhnye
+      nazvanie: Картриджные
+      status: inferred
+    - slug: magnitnye
+      nazvanie: Магнитные
+      status: inferred
+
+shema:
+  nazvanie: Схема включения
+  posadochnaya: true
+  terminy:
+    - slug: polnopotochnye
+      nazvanie: Полнопоточные
+      status: confirmed
+      iz: [ovgd-polnopotochnye]
+    - slug: nepolnopotochnye
+      nazvanie: Неполнопоточные
+      status: confirmed
+      iz: [ovgd-nepolnopotochnye]
+      prim: они же байпасные; в герое главной слаг fogod-nepolnopotochnye, в футере ovgd-nepolnopotochnye — свести к одному
+
+regeneraciya:
+  nazvanie: Регенерация
+  posadochnaya: true
+  terminy:
+    - slug: samoochistka
+      nazvanie: Самоочистка потоком
+      status: confirmed
+    - slug: obratnaya-promyvka
+      nazvanie: Обратная промывка
+      status: confirmed
+      iz: [s-obratnoj-promyvkoj]
+    - slug: ruchnaya
+      nazvanie: Ручная разборка
+      status: inferred
+    - slug: smennyj-element
+      nazvanie: Сменный элемент
+      status: inferred
+
+sreda:
+  nazvanie: Рабочая среда
+  posadochnaya: true
+  mnozhestvennaya: true
+  terminy:
+    - slug: voda
+      nazvanie: Вода
+      status: confirmed
+      deti:
+        - {slug: voda-tehnicheskaya, nazvanie: Техническая, status: inferred}
+        - {slug: voda-oborotnaya,    nazvanie: Оборотная,   status: inferred}
+        - {slug: voda-rechnaya,      nazvanie: Речная,      status: inferred}
+    - slug: maslo
+      nazvanie: Масло
+      status: confirmed
+    - slug: sozh
+      nazvanie: СОЖ
+      status: confirmed
+    - slug: agressivnye
+      nazvanie: Агрессивные среды
+      status: confirmed
+      iz: [dlya-agressivnyh-sred]
+      prim: пересечение с осью ispolnenie, не самостоятельная категория
+
+ispolnenie:
+  nazvanie: Исполнение
+  posadochnaya: true
+  terminy:
+    - slug: uglerodistaya-stal
+      nazvanie: Углеродистая сталь
+      status: inferred
+    - slug: nerzhaveyuschaya-stal
+      nazvanie: Нержавеющая сталь
+      status: inferred
+    - slug: s-pokrytiem
+      nazvanie: С покрытием или футеровкой
+      status: inferred
+
+otrasl:
+  nazvanie: Отрасль
+  posadochnaya: true
+  terminy:
+    - {slug: mashinostroenie, nazvanie: Машиностроение, status: confirmed}
+    - {slug: energetika,      nazvanie: Энергетика,     status: confirmed}
+    - {slug: metallurgiya,    nazvanie: Металлургия,    status: confirmed}
+
+# Не разложено по осям — см. voprosy-inzheneru.md, вопрос 1
+nerazobrannoe:
+  - slug: gidravlicheskie
+    iz: [gidravlicheskie]
+    problema: >
+      Непонятно, какая это ось. Возможные прочтения: фильтры для
+      гидросистем (то есть ось sreda = масло), либо гидравлические по
+      принципу действия (ось princip), либо по типу привода промывки.
+      До ответа термин никуда не переносится.
