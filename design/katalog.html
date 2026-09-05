@@ -1,0 +1,865 @@
+<title>Каталог фильтров ФОГОД</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap">
+
+<style>
+  :root {
+    /* нейтрали со сдвигом в сталь */
+    --paper:      #F4F6F9;
+    --surface:    #FFFFFF;
+    --sunk:       #EAEFF4;
+    --ink:        #101F31;
+    --ink-2:      #4B5F76;
+    --ink-3:      #7488A0;
+    --rule:       #CFDAE5;
+    --rule-soft:  #E2E9F0;
+    /* фирменные */
+    --navy:       #123A63;
+    --navy-deep:  #0B2440;
+    --blue:       #1268C3;
+    --blue-ink:   #0F58A6;
+    --blue-wash:  #E6F0FA;
+    --gold:       #E0A92A;
+    --gold-ink:   #8F6708;
+    --red:        #D0322B;
+    --logo:       #0D4C8B;   /* синий с логотипа — темнее акцентного, уточнить по исходнику */
+    /* на тёмном */
+    --on-dark:    #E8EFF7;
+    --on-dark-2:  #9FB6CE;
+    --on-dark-3:  #6E88A4;
+    --dark-rule:  #24405F;
+
+    --measure: 62ch;
+    --page: 1240px;
+    --gut: 32px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:#08141F; --surface:#0E1F2E; --sunk:#152A3C;
+      --ink:#E2ECF5; --ink-2:#9FB4C8; --ink-3:#7A8EA4;
+      --rule:#24384C; --rule-soft:#1A2B3C;
+      --navy:#0B1B2B; --navy-deep:#060F1A;
+      --blue:#59A4EC; --blue-ink:#7EBBF5; --blue-wash:#12283C;
+      --gold:#E4BA5C; --gold-ink:#E4BA5C;
+      --red:#E1554E; --logo:#DCE8F4;
+      --on-dark:#E2ECF5; --on-dark-2:#95AEC7; --on-dark-3:#65809C;
+      --dark-rule:#1E3550;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#08141F; --surface:#0E1F2E; --sunk:#152A3C;
+    --ink:#E2ECF5; --ink-2:#9FB4C8; --ink-3:#7A8EA4;
+    --rule:#24384C; --rule-soft:#1A2B3C;
+    --navy:#0B1B2B; --navy-deep:#060F1A;
+    --blue:#59A4EC; --blue-ink:#7EBBF5; --blue-wash:#12283C;
+    --gold:#E4BA5C; --gold-ink:#E4BA5C;
+    --red:#E1554E; --logo:#DCE8F4;
+    --on-dark:#E2ECF5; --on-dark-2:#95AEC7; --on-dark-3:#65809C;
+    --dark-rule:#1E3550;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .shell { max-width: var(--page); margin: 0 auto; padding: 0 var(--gut); }
+
+  h1, h2, h3, .cond {
+    font-family: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    text-wrap: balance;
+  }
+
+  .mono, .label {
+    font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .label {
+    font-size: 10.5px; font-weight: 500; letter-spacing: .15em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+
+  a { color: inherit; text-decoration: none; }
+  a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible {
+    outline: 2px solid var(--blue); outline-offset: 2px;
+  }
+
+  /* ══════ Хедер ══════ */
+
+  .topbar { background: var(--navy-deep); color: var(--on-dark-2); }
+  .topbar .shell {
+    display: flex; align-items: center; gap: 26px;
+    height: 40px; font-size: 13px;
+  }
+  .topbar a { color: var(--on-dark-2); }
+  .topbar a:hover { color: var(--on-dark); }
+  .topbar .sep { margin-left: auto; }
+  .topbar .city { color: var(--on-dark); font-weight: 500; }
+  .topbar .drop::after { content: "▾"; margin-left: 5px; font-size: 10px; opacity: .7; }
+
+  header.main {
+    background: var(--surface);
+    border-bottom: 1px solid var(--rule);
+    position: relative; z-index: 5;
+  }
+  header.main .shell {
+    display: flex; align-items: center; gap: 40px; height: 80px;
+  }
+
+  .logo { display: flex; align-items: center; gap: 13px; }
+  .logo .mark { width: 46px; height: 46px; flex: 0 0 46px; }
+  .logo .mark svg { width: 100%; height: 100%; display: block; }
+  .logo .word {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 300; font-size: 31px; letter-spacing: .05em;
+    color: var(--logo); line-height: 1; display: block;
+  }
+  .logo .sub {
+    display: block; font-size: 9.5px; letter-spacing: .17em; text-transform: uppercase;
+    color: var(--ink-3); font-family: "IBM Plex Mono", monospace; margin-top: 5px;
+  }
+
+  nav.primary { display: flex; gap: 26px; font-size: 15px; }
+  nav.primary a { color: var(--ink-2); padding: 4px 0; border-bottom: 2px solid transparent; white-space: nowrap; }
+  nav.primary a:hover { color: var(--ink); border-bottom-color: var(--blue); }
+
+  .head-right { margin-left: auto; display: flex; align-items: center; gap: 22px; }
+  .head-phone { text-align: right; line-height: 1.25; }
+  .head-phone .num {
+    font-family: "IBM Plex Sans Condensed", sans-serif; font-weight: 700;
+    font-size: 19px; color: var(--ink); white-space: nowrap;
+  }
+  .head-phone .cap { font-size: 11.5px; color: var(--ink-3); }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 46px; padding: 0 22px; border: 0; cursor: pointer;
+    font-family: "IBM Plex Sans", sans-serif; font-size: 15px; font-weight: 600;
+    background: var(--blue); color: #FFFFFF; white-space: nowrap;
+    transition: background .12s ease;
+  }
+  .btn:hover { background: var(--blue-ink); }
+  .btn.ghost {
+    background: transparent; color: var(--ink);
+    box-shadow: inset 0 0 0 1px var(--rule);
+  }
+  .btn.ghost:hover { box-shadow: inset 0 0 0 1px var(--ink-3); background: transparent; }
+  .btn.on-dark {
+    background: transparent; color: var(--on-dark);
+    box-shadow: inset 0 0 0 1px var(--dark-rule);
+  }
+  .btn.on-dark:hover { box-shadow: inset 0 0 0 1px var(--on-dark-3); }
+  .btn.lg { height: 54px; padding: 0 30px; font-size: 16px; }
+
+  @media (max-width: 1080px) {
+    nav.primary { display: none; }
+    .topbar .shell { gap: 16px; overflow-x: auto; }
+  }
+
+  
+  /* ══════ Каталог ══════ */
+
+  nav.primary a.is-active { color: var(--ink); border-bottom-color: var(--blue); }
+
+  .crumbs { background: var(--surface); border-bottom: 1px solid var(--rule-soft); }
+  .crumbs .shell {
+    display: flex; gap: 10px; align-items: center; height: 42px;
+    font-family: "IBM Plex Mono", monospace; font-size: 11.5px; color: var(--ink-3);
+  }
+  .crumbs a:hover { color: var(--ink-2); }
+  .crumbs .sl { opacity: .55; }
+
+  .cat-head { background: var(--surface); border-bottom: 1px solid var(--rule); }
+  .cat-head .shell { padding: 40px 32px 34px; }
+  .cat-head h1 {
+    font-size: clamp(30px, 3.4vw, 42px); margin: 0 0 12px; color: var(--ink);
+  }
+  .cat-head p { margin: 0; font-size: 17px; color: var(--ink-2); max-width: var(--measure); }
+
+  /* уровень 1: семейства */
+  .fams { border-top: 1px solid var(--rule-soft); background: var(--surface); }
+  .fams .shell { display: flex; gap: 0; overflow-x: auto; }
+  .fam-tab {
+    flex: 0 0 auto; padding: 15px 20px 13px; cursor: pointer;
+    border: 0; background: transparent; border-bottom: 3px solid transparent;
+    font-family: "IBM Plex Sans", sans-serif; font-size: 15px; color: var(--ink-2);
+    white-space: nowrap; display: flex; align-items: baseline; gap: 9px;
+  }
+  .fam-tab:first-child { padding-left: 0; }
+  .fam-tab .cnt {
+    font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .fam-tab:hover { color: var(--ink); }
+  .fam-tab[aria-pressed="true"] {
+    color: var(--ink); font-weight: 600; border-bottom-color: var(--blue);
+  }
+  .fam-tab[aria-pressed="true"] .cnt { color: var(--blue); }
+
+  /* рабочая область */
+  .work { padding: 34px 0 80px; }
+  .work .shell { display: grid; grid-template-columns: 268px minmax(0,1fr); gap: 40px; align-items: start; }
+
+  /* фасетный рейл */
+  .rail { position: sticky; top: 20px; }
+  .rail-top {
+    display: flex; align-items: baseline; gap: 12px;
+    padding-bottom: 12px; border-bottom: 2px solid var(--ink);
+  }
+  .rail-top .t {
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px; font-weight: 600;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--ink);
+  }
+  .rail-top button {
+    margin-left: auto; border: 0; background: transparent; cursor: pointer;
+    font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--blue);
+    padding: 0;
+  }
+  .rail-top button:hover { color: var(--blue-ink); text-decoration: underline; }
+  .rail-top button[disabled] { color: var(--ink-3); cursor: default; text-decoration: none; }
+
+  .fgroup { border-bottom: 1px solid var(--rule-soft); padding: 16px 0 14px; }
+  .fgroup > h3 {
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px; font-weight: 500;
+    letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3);
+    margin: 0 0 11px; letter-spacing: .13em;
+  }
+  .opt {
+    display: grid; grid-template-columns: 16px minmax(0,1fr) auto;
+    gap: 10px; align-items: start; padding: 5px 0; cursor: pointer;
+    font-size: 14px; color: var(--ink-2); line-height: 1.4;
+  }
+  .opt:hover { color: var(--ink); }
+  .opt input { margin: 3px 0 0; accent-color: var(--blue); width: 15px; height: 15px; }
+  .opt .n {
+    font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--ink-3);
+    font-variant-numeric: tabular-nums; padding-top: 2px;
+  }
+  .opt.off { color: var(--ink-3); cursor: default; }
+  .opt.off input { opacity: .4; }
+
+  .num { display: grid; grid-template-columns: minmax(0,1fr) 62px; gap: 10px; align-items: center; margin-bottom: 9px; }
+  .num label { font-size: 13.5px; color: var(--ink-2); }
+  .num label em { font-style: normal; font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--ink-3); display: block; }
+  .num input {
+    width: 100%; height: 34px; padding: 0 9px; border: 1px solid var(--rule);
+    background: var(--surface); color: var(--ink); border-radius: 0;
+    font-family: "IBM Plex Mono", monospace; font-size: 13px; text-align: right;
+  }
+
+  /* панель результатов */
+  .toolbar {
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    padding-bottom: 14px; border-bottom: 2px solid var(--ink);
+  }
+  .toolbar .found {
+    font-family: "IBM Plex Sans Condensed", sans-serif; font-weight: 700;
+    font-size: 21px; color: var(--ink);
+  }
+  .toolbar .found span { color: var(--ink-3); font-weight: 400; font-size: 15px; }
+  .toolbar .sortwrap { margin-left: auto; display: flex; align-items: center; gap: 9px; }
+  .toolbar .sortwrap span { font-family: "IBM Plex Mono", monospace; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+  .toolbar select {
+    height: 34px; padding: 0 10px; border: 1px solid var(--rule); background: var(--surface);
+    color: var(--ink); font-family: "IBM Plex Sans", sans-serif; font-size: 14px; border-radius: 0;
+  }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+    border: 1px solid var(--rule); background: var(--surface);
+    padding: 5px 10px; font-size: 13px; color: var(--ink);
+  }
+  .chip:hover { border-color: var(--ink-3); }
+  .chip b { font-weight: 400; color: var(--ink-3); font-family: "IBM Plex Mono", monospace; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; }
+  .chip .x { color: var(--ink-3); font-family: "IBM Plex Mono", monospace; }
+
+  /* строки выдачи */
+  .rows { margin-top: 6px; }
+  .row {
+    display: grid; grid-template-columns: minmax(0,1fr) 132px;
+    gap: 24px; align-items: start;
+    padding: 22px 0; border-bottom: 1px solid var(--rule-soft);
+  }
+  .row .nm {
+    font-family: "IBM Plex Sans Condensed", sans-serif; font-weight: 700;
+    font-size: 21px; color: var(--ink); margin: 0 0 4px;
+  }
+  .row .nm a:hover { color: var(--blue); }
+  .row .fam {
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
+    letter-spacing: .11em; text-transform: uppercase; color: var(--blue);
+    margin-bottom: 7px;
+  }
+  .row .sub { font-size: 14.5px; color: var(--ink-2); margin: 0 0 13px; max-width: 62ch; }
+  .specs {
+    display: flex; flex-wrap: wrap; gap: 0;
+    border-top: 1px solid var(--rule-soft);
+  }
+  .specs div {
+    padding: 9px 22px 0 0; min-width: 116px;
+  }
+  .specs .k {
+    font-family: "IBM Plex Mono", monospace; font-size: 9.5px;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3);
+    display: block; margin-bottom: 2px;
+  }
+  .specs .v {
+    font-family: "IBM Plex Mono", monospace; font-size: 13.5px; color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .specs .v.nd { color: var(--gold-ink); }
+  .row .act { display: grid; gap: 8px; }
+  .row .act .btn { height: 40px; font-size: 14px; padding: 0 14px; }
+
+  .zone-head {
+    display: flex; align-items: baseline; gap: 12px;
+    margin: 34px 0 0; padding-bottom: 10px; border-bottom: 1px solid var(--rule);
+  }
+  .zone-head h2 {
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px; font-weight: 600;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); margin: 0;
+  }
+  .zone-head .n { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--ink-3); margin-left: auto; }
+  .zone-note { margin: 12px 0 0; font-size: 13.5px; color: var(--ink-3); max-width: var(--measure); }
+
+  .empty {
+    border: 1px solid var(--rule); background: var(--surface);
+    padding: 30px 32px; margin-top: 22px;
+  }
+  .empty h3 { font-size: 22px; margin: 0 0 10px; color: var(--ink); }
+  .empty p { margin: 0 0 18px; color: var(--ink-2); max-width: 56ch; }
+
+  .tz {
+    margin-top: 34px; background: var(--navy); color: var(--on-dark);
+    padding: 28px 32px; display: grid; grid-template-columns: minmax(0,1fr) auto;
+    gap: 26px; align-items: center;
+  }
+  .tz h3 { font-size: 23px; margin: 0 0 8px; color: #FFFFFF; }
+  .tz p { margin: 0; color: var(--on-dark-2); font-size: 15px; max-width: 58ch; }
+
+  @media (max-width: 1000px) {
+    .work .shell { grid-template-columns: 1fr; gap: 26px; }
+    .rail { position: static; }
+    .row { grid-template-columns: 1fr; }
+    .row .act { grid-auto-flow: column; justify-content: start; }
+    .tz { grid-template-columns: 1fr; }
+  }
+  /* Футер */
+  footer.site { background: var(--navy); color: var(--on-dark-2); }
+  footer.site .shell { padding: 54px 32px 30px; }
+  .foot-top { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.2fr; gap: 40px; }
+  .foot-col h4 {
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px; font-weight: 600;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--on-dark-3);
+    margin: 0 0 16px;
+  }
+  .foot-col a, .foot-col p { color: var(--on-dark-2); font-size: 14.5px; }
+  .foot-col ul { list-style: none; margin: 0; padding: 0; }
+  .foot-col li { margin-bottom: 9px; }
+  .foot-col a:hover { color: #FFFFFF; }
+  .office { margin-bottom: 18px; }
+  .office .c { color: #FFFFFF; font-weight: 600; font-size: 14.5px; }
+  .office .p { font-family: "IBM Plex Mono", monospace; font-size: 13.5px; color: var(--on-dark-2); }
+  .foot-bottom {
+    margin-top: 44px; padding-top: 22px; border-top: 1px solid var(--dark-rule);
+    display: flex; flex-wrap: wrap; gap: 10px 28px; align-items: center;
+    font-family: "IBM Plex Mono", monospace; font-size: 11.5px; color: var(--on-dark-3);
+  }
+  .foot-bottom .certs { margin-left: auto; }
+  @media (max-width: 940px) { .foot-top { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .foot-top { grid-template-columns: 1fr; } }
+
+  /* пометка макета */
+  .slot-note {
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--gold-ink); border: 1px dashed var(--gold);
+    padding: 3px 8px; display: inline-block;
+  }
+</style>
+
+<div class="topbar">
+  <div class="shell">
+    <span class="city drop">Ростов-на-Дону</span>
+    <a href="tel:+78633010045">+7 (863) 301-00-45 доб. 4003</a>
+    <a href="mailto:filt@fogod.ru">filt@fogod.ru</a>
+    <span class="sep"></span>
+    <a href="#">VK</a>
+    <a href="#">WhatsApp</a>
+    <a href="#">RuTube</a>
+  </div>
+</div>
+
+<header class="main">
+  <div class="shell">
+    <a class="logo" href="#" aria-label="ФОГОД — промышленные фильтры">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 100 100">
+          <g fill="none" stroke="var(--logo)" stroke-width="2.6">
+            <circle cx="50" cy="50" r="38"/>
+            <ellipse cx="50" cy="50" rx="17" ry="38"/>
+            <path d="M14.5 37 h71 M14.5 63 h71"/>
+          </g>
+          <g fill="none" stroke="var(--logo)" stroke-width="2.6">
+            <path d="M6 62 L94 34 L94 48 L6 76 Z" fill="var(--surface)"/>
+          </g>
+        </svg>
+      </span>
+      <span>
+        <span class="word">ФОГОД</span>
+        <span class="sub">промышленные фильтры</span>
+      </span>
+    </a>
+    <nav class="primary">
+      <a href="#" class="is-active">Каталог</a>
+      <a href="glavnaya.html#podbor">Подбор</a>
+      <a href="glavnaya.html#princip">Принцип работы</a>
+      <a href="glavnaya.html#primenenie">Применение</a>
+      <a href="glavnaya.html#proizvodstvo">Производство</a>
+    </nav>
+    <div class="head-right">
+      <div class="head-phone">
+        <div class="num">+7 (863) 301-00-45</div>
+        <div class="cap">пн–пт 9:00–18:00</div>
+      </div>
+      <a class="btn" href="glavnaya.html#zayavka">Запросить КП</a>
+    </div>
+  </div>
+</header>
+
+
+<div class="crumbs">
+  <div class="shell">
+    <a href="glavnaya.html">Главная</a><span class="sl">/</span><span>Каталог</span>
+  </div>
+</div>
+
+<div class="cat-head">
+  <div class="shell">
+    <h1>Каталог промышленных фильтров</h1>
+    <p>Шесть семейств и десять исполнений. Отберите по среде и параметрам объекта — или начните с семейства, если знаете, какая физика очистки вам нужна.</p>
+  </div>
+</div>
+
+<div class="fams">
+  <div class="shell" id="fams"></div>
+</div>
+
+<div class="work">
+  <div class="shell">
+
+    <aside class="rail">
+      <div class="rail-top">
+        <span class="t">Отбор</span>
+        <button type="button" id="reset" disabled>сбросить всё</button>
+      </div>
+      <div id="facets"></div>
+    </aside>
+
+    <div>
+      <div class="toolbar">
+        <div class="found" id="found"></div>
+        <div class="sortwrap">
+          <span>Сортировка</span>
+          <select id="sort">
+            <option value="fam">по семействам</option>
+            <option value="q">по расходу</option>
+            <option value="mkm">по тонкости</option>
+          </select>
+        </div>
+      </div>
+      <div class="chips" id="chips"></div>
+      <div id="out"></div>
+    </div>
+
+  </div>
+</div>
+<footer class="site">
+  <div class="shell">
+    <div class="foot-top">
+      <div class="foot-col">
+        <h4>Головной офис</h4>
+        <div class="office">
+          <div class="c">Ростов-на-Дону</div>
+          <div class="p">+7 (863) 301-00-45 доб. 4003</div>
+          <a href="mailto:filt@fogod.ru">filt@fogod.ru</a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h4>Филиалы</h4>
+        <div class="office">
+          <div class="c">Москва</div>
+          <div class="p">+7 (495) 968-90-45</div>
+          <a href="mailto:msc@fogod.ru">msc@fogod.ru</a>
+        </div>
+        <div class="office">
+          <div class="c">Санкт-Петербург</div>
+          <div class="p">+7 (812) 982-00-45</div>
+          <a href="mailto:spb@fogod.ru">spb@fogod.ru</a>
+        </div>
+        <div class="office">
+          <div class="c">Екатеринбург</div>
+          <div class="p">+7 (343) 266-36-45</div>
+          <a href="mailto:ekb@fogod.ru">ekb@fogod.ru</a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h4>Каталог</h4>
+        <ul>
+          <li><a href="#">Гидродинамические</a></li>
+          <li><a href="#">С обратной промывкой</a></li>
+          <li><a href="#">Дисковые</a></li>
+          <li><a href="#">Насыпные</a></li>
+          <li><a href="#">Гидравлические</a></li>
+          <li><a href="#">Специальные</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Компания</h4>
+        <ul>
+          <li><a href="#podbor">Подбор оборудования</a></li>
+          <li><a href="#princip">Принцип работы</a></li>
+          <li><a href="#primenenie">Область применения</a></li>
+          <li><a href="#proizvodstvo">Производство</a></li>
+          <li><a href="#">Блог и выставки</a></li>
+          <li><a href="#">Контакты</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot-bottom">
+      <span>© <span id="god">2026</span> ООО «ФОГОД»</span>
+      <a href="#">Политика обработки персональных данных</a>
+      <span class="certs">ГОСТ Р ИСО 9001-2015 · ТР ТС 010/2011 · ТР ТС 004/2011 · ТР ТС 032/2013 · ТР ТС 020/2011</span>
+    </div>
+  </div>
+</footer>
+
+
+<script>
+  document.getElementById('god').textContent = new Date().getFullYear();
+
+  /* Десять исполнений из презентаций компании. Артикулы не выдуманы:
+     типоразмеры появятся, когда придут машиночитаемые ТТХ. */
+  var DATA = [
+    { id:'ovgd-pp', nm:'ОВГД полнопоточный', fam:'Гидродинамические',
+      sub:'Весь поток через фильтр, самоочистка гидродинамикой. Отвод шлама периодический, потерь жидкости нет.',
+      princip:'Гидродинамический', shema:'Полнопоточная', regen:'Самоочистка потоком', privod:'Без механизма',
+      sredy:['Вода','Масло','СОЖ'], ispoln:['Углеродистая сталь','Нержавеющая сталь'],
+      q:[3,8000], mkm:[25,null], bar:[2,25], poteri:'нет' },
+
+    { id:'ovgd-npp', nm:'ОВГД неполнопоточный', fam:'Гидродинамические',
+      sub:'Очищается часть потока в контуре. Компактнее в обвязке, отвод шлама постоянный.',
+      princip:'Гидродинамический', shema:'Неполнопоточная', regen:'Самоочистка потоком', privod:'Без механизма',
+      sredy:['Вода','Масло','СОЖ'], ispoln:['Углеродистая сталь','Нержавеющая сталь'],
+      q:[3,8000], mkm:[25,null], bar:[2,25], poteri:'до 10 %' },
+
+    { id:'gc', nm:'Фильтр-гидроциклон', fam:'Гидродинамические',
+      sub:'Отделение песка и окалины центробежной силой. В составе ОВГД или как отдельный аппарат.',
+      princip:'Гидроциклонный', shema:null, regen:'Самоочистка потоком', privod:'Без механизма',
+      sredy:['Вода'], ispoln:['Углеродистая сталь','Нержавеющая сталь'],
+      q:null, mkm:null, bar:null, poteri:null },
+
+    { id:'schetki', nm:'Фильтр со щётками', fam:'С обратной промывкой',
+      sub:'Загрязнения остаются на поверхности сетки, набор щёток снимает их электроприводом. Управление по времени, по перепаду давления или вручную.',
+      princip:'Сетчатый', shema:'Полнопоточная', regen:'Обратная промывка щётками', privod:'Электропривод',
+      sredy:['Вода','Масло','СОЖ'], ispoln:['Углеродистая сталь','Нержавеющая сталь'],
+      q:[25,9300], mkm:[80,3000], bar:[2,25], poteri:null },
+
+    { id:'disk', nm:'Дисковый фильтр', fam:'Дисковые',
+      sub:'Пакет плотно сжатых полимерных дисков. При самопромывке диски разжимаются, обратный поток смывает загрязнения — подача не прерывается.',
+      princip:'Дисковый', shema:'Полнопоточная', regen:'Обратная промывка разжатием дисков', privod:null,
+      sredy:['Вода'], ispoln:null,
+      q:null, mkm:null, bar:null, poteri:'низкий расход' },
+
+    { id:'nasyp', nm:'Насыпной фильтр', fam:'Насыпные',
+      sub:'Слой гранулированной загрузки — кварцевый песок, антрацит. Удаляет взвешенные вещества, ил, ржавчину, водоросли.',
+      princip:'Насыпной', shema:'Полнопоточная', regen:'Обратная промывка', privod:null,
+      sredy:['Вода'], ispoln:null,
+      q:null, mkm:null, bar:null, poteri:'небольшой объём' },
+
+    { id:'gidravl', nm:'Гидравлический фильтр', fam:'Гидравлические',
+      sub:'Работает на энергии потока: подвод электропитания на объекте не требуется, специальное основание не нужно.',
+      princip:'Сетчатый', shema:'Полнопоточная', regen:'Обратная промывка', privod:'Энергия потока',
+      sredy:['Вода'], ispoln:null,
+      q:null, mkm:null, bar:null, poteri:'≈1 %' },
+
+    { id:'agr', nm:'Для агрессивных сред', fam:'Специальные',
+      sub:'Материальное исполнение — нержавеющая сталь или PVDF. Для химических и других производств с агрессивными средами.',
+      princip:'Сетчатый', shema:null, regen:null, privod:null,
+      sredy:['Агрессивные среды'], ispoln:['Нержавеющая сталь','PVDF'],
+      q:null, mkm:null, bar:null, poteri:null },
+
+    { id:'rukav', nm:'Рукавный (мешочный)', fam:'Специальные',
+      sub:'Водные среды, алифатические и ароматические растворители, щелочные и высокощелочные среды, кислотные и высококислотные растворы.',
+      princip:'Рукавный', shema:null, regen:'Сменный элемент', privod:'Ручной',
+      sredy:['Вода','Агрессивные среды'], ispoln:['Нержавеющая сталь','PVDF'],
+      q:null, mkm:null, bar:null, poteri:null },
+
+    { id:'korzina', nm:'Корзинчатый', fam:'Специальные',
+      sub:'Фильтрующая корзина съёмная относительно корпуса — удобный доступ к внутренней полости и лёгкое удаление осадка.',
+      princip:'Корзинчатый', shema:null, regen:'Ручная разборка', privod:'Ручной',
+      sredy:['Вода'], ispoln:['Нержавеющая сталь'],
+      q:null, mkm:null, bar:null, poteri:null }
+  ];
+
+  var FAMS = ['Гидродинамические','С обратной промывкой','Дисковые','Насыпные','Гидравлические','Специальные'];
+
+  /* Отрасль в фасеты не входит: по модели каталога это ось для посадочных
+     страниц, а не для подбора. */
+  var GROUPS = [
+    { key:'princip', t:'Принцип фильтрации', multi:false },
+    { key:'shema',   t:'Схема включения',    multi:false },
+    { key:'regen',   t:'Регенерация',        multi:false },
+    { key:'privod',  t:'Привод очистки',     multi:false },
+    { key:'sredy',   t:'Рабочая среда',      multi:true  },
+    { key:'ispoln',  t:'Исполнение',         multi:true  }
+  ];
+
+  var state = { fam:null, f:{}, q:'', mkm:'', bar:'', sort:'fam' };
+  GROUPS.forEach(function (g) { state.f[g.key] = []; });
+
+  function termsOf(key) {
+    var multi = GROUPS.filter(function(g){return g.key===key;})[0].multi, out = [];
+    DATA.forEach(function (r) {
+      var v = r[key]; if (!v) return;
+      (multi ? v : [v]).forEach(function (t) { if (out.indexOf(t) === -1) out.push(t); });
+    });
+    return out;
+  }
+
+  function hits(r, key, chosen) {
+    if (!chosen.length) return true;
+    var v = r[key]; if (!v) return false;
+    var arr = Array.isArray(v) ? v : [v];
+    return chosen.some(function (c) { return arr.indexOf(c) !== -1; });
+  }
+
+  /* Числовые условия: known — прошёл проверку, unknown — данных нет.
+     Неизвестное не выбрасывается молча, а уходит в отдельную зону. */
+  function numeric(r) {
+    var q = parseFloat(state.q), m = parseFloat(state.mkm), b = parseFloat(state.bar);
+    var asked = !isNaN(q) || !isNaN(m) || !isNaN(b);
+    if (!asked) return 'known';
+    var unknown = false;
+    if (!isNaN(q)) { if (!r.q) unknown = true; else if (q < r.q[0] || q > r.q[1]) return 'no'; }
+    if (!isNaN(m)) { if (!r.mkm) unknown = true;
+                     else { if (m < r.mkm[0]) return 'no';
+                            if (r.mkm[1] !== null && m > r.mkm[1]) return 'no'; } }
+    if (!isNaN(b)) { if (!r.bar) unknown = true; else if (b < r.bar[0] || b > r.bar[1]) return 'no'; }
+    return unknown ? 'unknown' : 'known';
+  }
+
+  function passesFacets(r) {
+    if (state.fam && r.fam !== state.fam) return false;
+    return GROUPS.every(function (g) { return hits(r, g.key, state.f[g.key]); });
+  }
+
+  function split() {
+    var known = [], unknown = [];
+    DATA.forEach(function (r) {
+      if (!passesFacets(r)) return;
+      var n = numeric(r);
+      if (n === 'known') known.push(r);
+      else if (n === 'unknown') unknown.push(r);
+    });
+    var by = state.sort;
+    function cmp(a, b) {
+      if (by === 'q')   return (a.q ? a.q[0] : 1e9) - (b.q ? b.q[0] : 1e9);
+      if (by === 'mkm') return (a.mkm ? a.mkm[0] : 1e9) - (b.mkm ? b.mkm[0] : 1e9);
+      return FAMS.indexOf(a.fam) - FAMS.indexOf(b.fam);
+    }
+    return { known: known.sort(cmp), unknown: unknown.sort(cmp) };
+  }
+
+  function countFor(key, term) {
+    return DATA.filter(function (r) {
+      if (state.fam && r.fam !== state.fam) return false;
+      var ok = GROUPS.every(function (g) {
+        if (g.key === key) return true;
+        return hits(r, g.key, state.f[g.key]);
+      });
+      if (!ok) return false;
+      var v = r[key]; if (!v) return false;
+      return (Array.isArray(v) ? v : [v]).indexOf(term) !== -1;
+    }).length;
+  }
+
+  function esc(x) { return String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+  function fmt(a, unit) {
+    if (!a) return '<span class="v nd">уточняется</span>';
+    if (a[1] === null) return '<span class="v">от ' + a[0] + ' ' + unit + '</span>';
+    return '<span class="v">' + a[0] + '–' + a[1] + ' ' + unit + '</span>';
+  }
+
+  function rowHTML(r) {
+    return '<div class="row">' +
+      '<div>' +
+        '<div class="fam">' + esc(r.fam) + '</div>' +
+        '<h3 class="nm"><a href="#">' + esc(r.nm) + '</a></h3>' +
+        '<p class="sub">' + esc(r.sub) + '</p>' +
+        '<div class="specs">' +
+          '<div><span class="k">Расход</span>' + fmt(r.q, 'м³/ч') + '</div>' +
+          '<div><span class="k">Тонкость</span>' + fmt(r.mkm, 'мкм') + '</div>' +
+          '<div><span class="k">Давление</span>' + fmt(r.bar, 'бар') + '</div>' +
+          '<div><span class="k">Потери на очистку</span>' +
+            (r.poteri ? '<span class="v">' + esc(r.poteri) + '</span>' : '<span class="v nd">уточняется</span>') +
+          '</div>' +
+          '<div><span class="k">Привод</span>' +
+            (r.privod ? '<span class="v">' + esc(r.privod) + '</span>' : '<span class="v nd">уточняется</span>') +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="act">' +
+        '<a class="btn" href="glavnaya.html#zayavka">Запросить КП</a>' +
+        '<a class="btn ghost" href="#">Подробнее</a>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function renderFams() {
+    var fh = '<button class="fam-tab" type="button" data-fam="" aria-pressed="' + (!state.fam) + '">Все семейства <span class="cnt">' + DATA.length + '</span></button>';
+    FAMS.forEach(function (f) {
+      var n = DATA.filter(function (r) { return r.fam === f; }).length;
+      fh += '<button class="fam-tab" type="button" data-fam="' + esc(f) + '" aria-pressed="' + (state.fam === f) + '">' + esc(f) + ' <span class="cnt">' + n + '</span></button>';
+    });
+    document.getElementById('fams').innerHTML = fh;
+  }
+
+  function renderFacets() {
+    var gh = '';
+    GROUPS.forEach(function (g) {
+      var terms = termsOf(g.key);
+      if (!terms.length) return;
+      gh += '<div class="fgroup"><h3>' + esc(g.t) + '</h3>';
+      terms.forEach(function (t) {
+        var n = countFor(g.key, t), on = state.f[g.key].indexOf(t) !== -1;
+        gh += '<label class="opt' + (n === 0 && !on ? ' off' : '') + '">' +
+                '<input type="checkbox" data-g="' + g.key + '" value="' + esc(t) + '"' +
+                  (on ? ' checked' : '') + (n === 0 && !on ? ' disabled' : '') + '>' +
+                '<span>' + esc(t) + '</span><span class="n">' + n + '</span>' +
+              '</label>';
+      });
+      gh += '</div>';
+    });
+    gh += '<div class="fgroup"><h3>Параметры объекта</h3>' +
+      '<div class="num"><label for="n-q">Расход<em>м³/ч</em></label><input id="n-q" type="number" min="0" value="' + state.q + '"></div>' +
+      '<div class="num"><label for="n-mkm">Тонкость<em>мкм</em></label><input id="n-mkm" type="number" min="0" value="' + state.mkm + '"></div>' +
+      '<div class="num"><label for="n-bar">Давление<em>бар</em></label><input id="n-bar" type="number" min="0" value="' + state.bar + '"></div>' +
+    '</div>';
+    document.getElementById('facets').innerHTML = gh;
+  }
+
+  function renderChips() {
+    var chips = [];
+    if (state.fam) chips.push({ g:'fam', v:state.fam, t:'семейство' });
+    GROUPS.forEach(function (g) {
+      state.f[g.key].forEach(function (v) { chips.push({ g:g.key, v:v, t:g.t }); });
+    });
+    if (state.q)   chips.push({ g:'q',   v:state.q + ' м³/ч', t:'расход' });
+    if (state.mkm) chips.push({ g:'mkm', v:state.mkm + ' мкм', t:'тонкость' });
+    if (state.bar) chips.push({ g:'bar', v:state.bar + ' бар', t:'давление' });
+
+    document.getElementById('chips').innerHTML = chips.map(function (c) {
+      return '<button class="chip" type="button" data-cg="' + c.g + '" data-cv="' + esc(c.v) + '">' +
+             '<b>' + esc(c.t) + '</b>' + esc(c.v) + '<span class="x">×</span></button>';
+    }).join('');
+    document.getElementById('reset').disabled = chips.length === 0;
+  }
+
+  function renderResults() {
+    var r = split(), html = '';
+    var n = r.known.length;
+    var word = (n % 10 === 1 && n % 100 !== 11) ? 'исполнение' :
+               ([2,3,4].indexOf(n % 10) !== -1 && [12,13,14].indexOf(n % 100) === -1) ? 'исполнения' : 'исполнений';
+    document.getElementById('found').innerHTML = n + ' ' + word +
+      (r.unknown.length ? ' <span>+ ' + r.unknown.length + ' требуют уточнения</span>' : '');
+
+    if (n) {
+      html += '<div class="rows">' + r.known.map(rowHTML).join('') + '</div>';
+    } else {
+      html += '<div class="empty">' +
+        '<h3>Под заданные параметры готового исполнения нет</h3>' +
+        '<p>Это не отказ. Изготовление под конкретное ТЗ — обычная практика ФОГОД, а не исключение: пришлите параметры объекта, и мы посчитаем нестандартное исполнение.</p>' +
+        '<a class="btn" href="glavnaya.html#zayavka">Рассчитать под ТЗ</a>' +
+      '</div>';
+    }
+
+    if (r.unknown.length) {
+      html += '<div class="zone-head"><h2>Характеристики уточняются</h2>' +
+              '<span class="n">' + r.unknown.length + '</span></div>' +
+              '<p class="zone-note">По этим исполнениям числовые характеристики не опубликованы, поэтому автоматически проверить их по вашим параметрам нельзя. Инженер подтвердит применимость по опросному листу.</p>' +
+              '<div class="rows">' + r.unknown.map(rowHTML).join('') + '</div>';
+    }
+
+    html += '<div class="tz">' +
+      '<div><h3>Не нашли подходящего исполнения?</h3>' +
+      '<p>Расчёт и изготовление по вашему техническому заданию. Пришлите среду, расход, тонкость и рабочее давление — вернёмся с предложением и опросным листом.</p></div>' +
+      '<a class="btn" href="glavnaya.html#zayavka">Отправить параметры</a>' +
+    '</div>';
+
+    document.getElementById('out').innerHTML = html;
+  }
+
+  function render()     { renderFams(); renderFacets(); renderChips(); renderResults(); }
+  /* ввод числа не должен пересобирать рейл: иначе теряется фокус и каретка */
+  function renderSoft() { renderChips(); renderResults(); }
+
+  document.addEventListener('click', function (e) {
+    var tab = e.target.closest('.fam-tab');
+    if (tab) { state.fam = tab.dataset.fam || null; render(); return; }
+
+    var chip = e.target.closest('.chip');
+    if (chip) {
+      var g = chip.dataset.cg;
+      if (g === 'fam') { state.fam = null; render(); return; }
+      if (g === 'q' || g === 'mkm' || g === 'bar') {
+        state[g] = '';
+        var el = document.getElementById('n-' + g);
+        if (el) el.value = '';
+        renderSoft(); return;
+      }
+      state.f[g] = state.f[g].filter(function (v) { return v !== chip.dataset.cv; });
+      render(); return;
+    }
+
+    if (e.target.id === 'reset') {
+      state.fam = null; state.q = state.mkm = state.bar = '';
+      GROUPS.forEach(function (g) { state.f[g.key] = []; });
+      render();
+    }
+  });
+
+  document.addEventListener('change', function (e) {
+    var t = e.target;
+    if (t.dataset && t.dataset.g) {
+      var arr = state.f[t.dataset.g];
+      if (t.checked) { if (arr.indexOf(t.value) === -1) arr.push(t.value); }
+      else state.f[t.dataset.g] = arr.filter(function (v) { return v !== t.value; });
+      render();
+    }
+    if (t.id === 'sort') { state.sort = t.value; renderResults(); }
+  });
+
+  /* input, а не change: иначе фильтр применяется только по потере фокуса */
+  document.addEventListener('input', function (e) {
+    var t = e.target, map = { 'n-q':'q', 'n-mkm':'mkm', 'n-bar':'bar' };
+    if (map[t.id]) { state[map[t.id]] = t.value; renderSoft(); }
+  });
+
+  render();
+</script>
