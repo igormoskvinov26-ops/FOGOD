@@ -27,6 +27,28 @@ h1,h2,h3{font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:700;margin
 a{color:inherit}
 .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
 
+/* ── фоновые слои ──────────────────────────────────── */
+.fx{position:fixed;inset:0;z-index:1;pointer-events:none;display:none}
+body.fx-grid  #grid {display:block}
+body.fx-drops #drops{display:block}
+body.fx-both  #grid,body.fx-both #drops{display:block}
+/* плёнка эффекта лежит НАД фоновой графикой, но под текстом */
+.top,section.band,footer{position:relative;z-index:2}
+.hero{position:relative}
+.hero-bg{z-index:0}
+.hero .shell{z-index:3}
+
+/* временный переключатель — только чтобы сравнить, в бой не идёт */
+.fxpick{position:fixed;left:20px;bottom:20px;z-index:60;display:flex;align-items:center;gap:0;
+        background:rgba(5,11,20,.9);border:1px solid var(--line);backdrop-filter:blur(8px)}
+.fxpick-l{padding:0 12px;font:500 10px/1 "IBM Plex Mono",monospace;letter-spacing:.14em;
+          text-transform:uppercase;color:var(--gold)}
+.fxpick button{background:none;border:0;border-left:1px solid var(--line);cursor:pointer;
+               color:var(--ink-3);padding:9px 13px;font:500 12px/1 "IBM Plex Mono",monospace}
+.fxpick button:hover{color:var(--ink)}
+.fxpick button[aria-pressed="true"]{background:var(--blue-deep);color:#fff}
+@media (max-width:720px){.fxpick{left:10px;right:10px;bottom:10px;justify-content:center}}
+
 /* ── шапка ─────────────────────────────────────────── */
 .top{position:fixed;inset:0 0 auto 0;z-index:40;transition:background .25s ease,border-color .25s ease;
      border-bottom:1px solid transparent}
@@ -44,7 +66,7 @@ a{color:inherit}
 
 /* ── герой ─────────────────────────────────────────── */
 .hero{position:relative;min-height:100vh;display:flex;align-items:center;
-      padding:108px 0 56px;overflow:hidden;background:var(--ground)}
+      padding:108px 0 56px;overflow:hidden;background:transparent}
 /* шевроны — фирменная графика из презентаций, а не декор. Кадрирую так,
    чтобы читались вершины стрелок, и веду медленный дрейф вправо: стрелки
    и так указывают вправо, движение по их направлению = поток */
@@ -54,8 +76,8 @@ a{color:inherit}
              animation:drift 26s ease-in-out infinite alternate}
 @keyframes drift{from{transform:translate(0,-50%)}to{transform:translate(3.2%,-50%)}}
 .hero-bg::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(96deg,var(--ground) 26%,rgba(8,19,33,.86) 44%,rgba(8,19,33,.42) 66%,rgba(8,19,33,.62) 100%)}
-.hero .shell{position:relative;z-index:1;display:grid;
+  background:linear-gradient(96deg,rgba(8,19,33,.80) 26%,rgba(8,19,33,.80) 44%,rgba(8,19,33,.40) 66%,rgba(8,19,33,.60) 100%)}
+.hero .shell{position:relative;display:grid;
              grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:48px;align-items:center;width:100%}
 
 .eyebrow{display:flex;align-items:center;gap:12px;font:500 11px/1 "IBM Plex Mono",monospace;
@@ -116,8 +138,8 @@ h1 .dim{color:var(--ink-2)}
 .slot p{margin:9px 0 0;font-size:14px;line-height:1.5;color:var(--ink-2)}
 
 /* ── секции ────────────────────────────────────────── */
-section.band{padding:104px 0;border-top:1px solid var(--line-soft);background:var(--ground)}
-section.band.sunk{background:var(--void)}
+section.band{padding:104px 0;border-top:1px solid var(--line-soft);background:transparent}
+section.band.sunk{background:rgba(5,11,20,.55)}
 .sec-head{display:flex;align-items:center;gap:12px;font:500 11px/1 "IBM Plex Mono",monospace;
           letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-bottom:20px}
 .sec-head::before{content:"";width:26px;height:2px;background:var(--gold)}
@@ -144,7 +166,7 @@ h2{font-size:clamp(26px,3vw,38px);line-height:1.12;max-width:20ch}
 .notes li{margin-bottom:7px}
 .notes b{color:var(--ink);font-weight:500}
 
-footer{background:var(--void);border-top:1px solid var(--line-soft);padding:44px 0;
+footer{background:rgba(5,11,20,.86);border-top:1px solid var(--line-soft);padding:44px 0;
        font-size:13px;color:var(--ink-3)}
 
 @media (max-width:1080px){
@@ -182,6 +204,17 @@ footer{background:var(--void);border-top:1px solid var(--line-soft);padding:44px
   <a class="tel" href="tel:+78633010045">+7 (863) 301-00-45</a>
   <a class="cta" href="#chego">Запросить КП</a>
 </div></header>
+
+<canvas id="grid" class="fx" aria-hidden="true"></canvas>
+<canvas id="drops" class="fx" aria-hidden="true"></canvas>
+
+<div class="fxpick" id="fxpick" role="group" aria-label="Слой фона (только для сравнения)">
+  <span class="fxpick-l">Фон</span>
+  <button data-fx="grid">Сетка</button>
+  <button data-fx="drops">Капли</button>
+  <button data-fx="both">Оба</button>
+  <button data-fx="none">Без</button>
+</div>
 
 <div class="hero">
   <div class="hero-bg"><img src="assets/chevrons-band.jpg" alt=""></div>
@@ -355,11 +388,30 @@ footer{background:var(--void);border-top:1px solid var(--line-soft);padding:44px
   });
   show('pp');
 
+  // переключатель фоновых слоёв
+  var FXK = 'fogod-fx';
+  function setFx(v) {
+    document.body.className = document.body.className.replace(/\bfx-\w+/g, '').trim();
+    if (v !== 'none') document.body.classList.add('fx-' + v);
+    document.querySelectorAll('.fxpick button').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.fx === v));
+    });
+    try { localStorage.setItem(FXK, v); } catch (e) {}
+  }
+  document.querySelectorAll('.fxpick button').forEach(function (b) {
+    b.addEventListener('click', function () { setFx(b.dataset.fx); });
+  });
+  var saved = 'grid';
+  try { saved = localStorage.getItem(FXK) || 'grid'; } catch (e) {}
+  setFx(saved);
+
   var top = document.getElementById('top');
   function onScroll() { top.classList.toggle('stuck', window.scrollY > 24); }
   addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 })();
 </script>
+<script src="js/grid.js"></script>
+<script src="js/drops.js"></script>
 </body>
 </html>
