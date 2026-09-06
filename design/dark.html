@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ФОГОД — тёмная концепция</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap">
+<style>
+:root{
+  --void:#050B14; --ground:#081321; --surface:#0C1A2C; --raise:#112541;
+  --line:#1B3050; --line-soft:#132540;
+  --ink:#EDF3FA; --ink-2:#9EB4CE; --ink-3:#66809E;
+  --blue:#2E86DE; --blue-deep:#1268C3; --gold:#E0A92A; --red:#D0322B;
+  --gut:40px; --max:1320px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font:400 16px/1.55 "IBM Plex Sans",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.shell{max-width:var(--max);margin:0 auto;padding:0 var(--gut)}
+h1,h2,h3{font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:700;margin:0}
+a{color:inherit}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+
+/* ── шапка ─────────────────────────────────────────── */
+.top{position:fixed;inset:0 0 auto 0;z-index:40;transition:background .25s ease,border-color .25s ease;
+     border-bottom:1px solid transparent}
+.top.stuck{background:rgba(8,19,33,.92);backdrop-filter:blur(10px);border-bottom-color:var(--line-soft)}
+.top .shell{display:flex;align-items:center;gap:36px;height:76px}
+.top img{height:34px;width:auto;display:block}
+.nav{display:flex;gap:26px;font-size:14px;color:var(--ink-2)}
+.nav a{text-decoration:none}
+.nav a:hover{color:var(--ink)}
+.top .sp{flex:1}
+.tel{font:500 15px/1 "IBM Plex Sans",sans-serif;text-decoration:none;white-space:nowrap}
+.cta{display:inline-block;background:var(--blue-deep);color:#fff;text-decoration:none;
+     padding:12px 20px;font-weight:600;font-size:14px;transition:background .15s ease}
+.cta:hover{background:var(--blue)}
+
+/* ── герой ─────────────────────────────────────────── */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;
+      padding:108px 0 56px;overflow:hidden;background:var(--ground)}
+/* шевроны — фирменная графика из презентаций, а не декор. Кадрирую так,
+   чтобы читались вершины стрелок, и веду медленный дрейф вправо: стрелки
+   и так указывают вправо, движение по их направлению = поток */
+.hero-bg{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.hero-bg img{position:absolute;top:50%;right:0;height:132%;width:auto;max-width:none;
+             transform:translate(0,-50%);opacity:.95;
+             animation:drift 26s ease-in-out infinite alternate}
+@keyframes drift{from{transform:translate(0,-50%)}to{transform:translate(3.2%,-50%)}}
+.hero-bg::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(96deg,var(--ground) 26%,rgba(8,19,33,.86) 44%,rgba(8,19,33,.42) 66%,rgba(8,19,33,.62) 100%)}
+.hero .shell{position:relative;z-index:1;display:grid;
+             grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:48px;align-items:center;width:100%}
+
+.eyebrow{display:flex;align-items:center;gap:12px;font:500 11px/1 "IBM Plex Mono",monospace;
+         letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:26px}
+.eyebrow::before{content:"";width:26px;height:2px;background:var(--red)}
+h1{font-size:clamp(30px,3.4vw,44px);line-height:1.08;letter-spacing:-.01em}
+h1 .dim{color:var(--ink-2)}
+.lede{margin:18px 0 0;font-size:16px;line-height:1.6;color:var(--ink-2);max-width:44ch;font-weight:300}
+
+/* переключатель типа */
+.picker{margin-top:28px;border-top:1px solid var(--line)}
+.pick{display:block;width:100%;text-align:left;background:none;border:0;cursor:pointer;
+      border-bottom:1px solid var(--line);padding:15px 2px 15px 0;color:var(--ink-2);
+      font:inherit;position:relative;transition:color .18s ease}
+.pick::before{content:"";position:absolute;left:-var(--gut);top:0;bottom:0;width:0}
+.pick .pk-top{display:flex;align-items:baseline;gap:12px}
+.pick .pk-n{font:500 11px/1 "IBM Plex Mono",monospace;color:var(--ink-3);letter-spacing:.1em}
+.pick .pk-t{font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:700;font-size:21px;
+            color:var(--ink);transition:color .18s ease}
+.pick .pk-s{display:block;margin-top:4px;font-size:13px;line-height:1.45;color:var(--ink-3);max-width:38ch}
+.pick .pk-bar{position:absolute;left:0;bottom:-1px;height:2px;width:0;background:var(--blue);
+              transition:width .38s cubic-bezier(.22,.61,.36,1)}
+.pick[aria-selected="true"] .pk-t{color:var(--blue)}
+.pick[aria-selected="true"] .pk-bar{width:100%}
+.pick:hover .pk-t{color:var(--ink)}
+.pick[aria-selected="true"]:hover .pk-t{color:var(--blue)}
+.pick:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+
+/* сцена продукта */
+.stage{position:relative;height:min(58vh,460px)}
+.stage-inner{position:absolute;inset:0 0 0 236px;perspective:1500px;transform-style:preserve-3d}
+.shot{position:absolute;right:0;top:50%;height:auto;width:auto;
+      max-height:100%;max-width:100%;transform-origin:30% 55%;
+      transition:opacity .46s ease, transform .78s cubic-bezier(.22,.61,.36,1);
+      opacity:0;transform:translate(-74px,-50%) rotateY(-13deg) scale(.965)}
+.shot.on{opacity:1;transform:translate(0,-50%) rotateY(0deg) scale(1)}
+
+.specs{position:absolute;left:0;top:50%;transform:translateY(-50%);z-index:2;
+       width:204px;pointer-events:none}
+.spec{display:block;padding:11px 0;border-bottom:1px solid var(--line-soft);
+      opacity:0;transform:translateX(-14px);
+      transition:opacity .4s ease,transform .5s cubic-bezier(.22,.61,.36,1)}
+.specs.on .spec{opacity:1;transform:none}
+.specs.on .spec:nth-child(1){transition-delay:.10s}
+.specs.on .spec:nth-child(2){transition-delay:.17s}
+.specs.on .spec:nth-child(3){transition-delay:.24s}
+.specs.on .spec:nth-child(4){transition-delay:.31s}
+.spec .k{display:block;font:500 10px/1 "IBM Plex Mono",monospace;letter-spacing:.13em;
+         text-transform:uppercase;color:var(--ink-3);margin-bottom:5px}
+.spec .v{font-family:"IBM Plex Mono",monospace;font-size:16px;color:var(--ink);
+         font-variant-numeric:tabular-nums}
+.spec .v.good{color:var(--gold)}
+
+/* ── слот под видео воды ───────────────────────────── */
+.slot{border:1px dashed var(--gold);padding:18px 20px;margin-top:0}
+.slot .lbl{font:500 10px/1 "IBM Plex Mono",monospace;letter-spacing:.14em;
+           text-transform:uppercase;color:var(--gold)}
+.slot p{margin:9px 0 0;font-size:14px;line-height:1.5;color:var(--ink-2)}
+
+/* ── секции ────────────────────────────────────────── */
+section.band{padding:104px 0;border-top:1px solid var(--line-soft);background:var(--ground)}
+section.band.sunk{background:var(--void)}
+.sec-head{display:flex;align-items:center;gap:12px;font:500 11px/1 "IBM Plex Mono",monospace;
+          letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-bottom:20px}
+.sec-head::before{content:"";width:26px;height:2px;background:var(--gold)}
+h2{font-size:clamp(26px,3vw,38px);line-height:1.12;max-width:20ch}
+.sec-lede{margin:18px 0 0;color:var(--ink-2);font-weight:300;font-size:17px;max-width:56ch}
+
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:56px;align-items:center;margin-top:52px}
+.figure{background:var(--surface);border:1px solid var(--line-soft);padding:28px}
+.figure img{display:block;width:100%;height:auto}
+.figure figcaption{margin-top:16px;font-size:13px;color:var(--ink-3);line-height:1.5}
+
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--line);
+       border-left:1px solid var(--line);margin-top:52px}
+.fact{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:26px 24px}
+.fact .n{font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:700;font-size:30px;
+         color:var(--ink);font-variant-numeric:tabular-nums}
+.fact .n .u{font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:400;color:var(--ink-3);margin-left:6px}
+.fact .k{margin-top:9px;font:500 10px/1.4 "IBM Plex Mono",monospace;letter-spacing:.13em;
+         text-transform:uppercase;color:var(--ink-3)}
+
+.notes{margin-top:44px;border-left:2px solid var(--gold);padding:4px 0 4px 22px}
+.notes h3{font-size:19px;margin-bottom:12px}
+.notes ul{margin:0;padding-left:18px;color:var(--ink-2);font-size:15px;line-height:1.7}
+.notes li{margin-bottom:7px}
+.notes b{color:var(--ink);font-weight:500}
+
+footer{background:var(--void);border-top:1px solid var(--line-soft);padding:44px 0;
+       font-size:13px;color:var(--ink-3)}
+
+@media (max-width:1080px){
+  .hero .shell{grid-template-columns:1fr;gap:40px}
+  .stage{height:min(48vh,400px)}
+  .stage-inner{inset:0 0 0 210px}
+  .two{grid-template-columns:1fr;gap:36px}
+  .facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:720px){
+  :root{--gut:20px}
+  .nav,.tel{display:none}
+  .hero{min-height:auto;padding:104px 0 56px}
+  .stage{height:auto;display:flex;flex-direction:column-reverse;gap:20px}
+  .stage-inner{position:static;height:230px}
+  .shot{right:50%;transform:translate(50%,-50%) rotateY(-13deg) scale(.965)}
+  .shot.on{transform:translate(50%,-50%) rotateY(0) scale(1)}
+  .specs{position:static;transform:none;width:auto;display:grid;
+         grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px}
+  .facts{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<header class="top" id="top"><div class="shell">
+  <a href="#"><img src="assets/logo-white.png" alt="ФОГОД"></a>
+  <nav class="nav">
+    <a href="#tipy">Типы</a><a href="#princip">Принцип</a><a href="#chego">Каталог</a><a href="#chego">Контакты</a>
+  </nav>
+  <span class="sp"></span>
+  <a class="tel" href="tel:+78633010045">+7 (863) 301-00-45</a>
+  <a class="cta" href="#chego">Запросить КП</a>
+</div></header>
+
+<div class="hero">
+  <div class="hero-bg"><img src="assets/chevrons-band.jpg" alt=""></div>
+  <div class="shell">
+
+    <div>
+      <div class="eyebrow">Отечественный производитель · более 25 лет</div>
+      <h1>Самоочищающиеся фильтры,<br><span class="dim">которые не останавливают процесс</span></h1>
+      <p class="lede">Единственный в России производитель гидродинамических фильтров
+         ТМ ФОГОД. Вода, масло, СОЖ — серийные решения и изготовление по вашему ТЗ.</p>
+
+      <div class="picker" role="tablist" aria-label="Тип фильтра">
+        <button class="pick" role="tab" aria-selected="true" data-key="pp">
+          <span class="pk-top"><span class="pk-n">01</span><span class="pk-t">Полнопоточные</span></span>
+          <span class="pk-s">Весь поток идёт через фильтр. Шлам уходит в бункер-гидроциклон,
+                жидкость возвращается в линию.</span>
+          <span class="pk-bar"></span>
+        </button>
+        <button class="pick" role="tab" aria-selected="false" data-key="npp">
+          <span class="pk-top"><span class="pk-n">02</span><span class="pk-t">Неполнопоточные</span></span>
+          <span class="pk-s">Очищается часть потока в контуре. Компактнее в обвязке,
+                сброс через коллектор.</span>
+          <span class="pk-bar"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="specs" id="specs"></div>
+      <div class="stage-inner">
+        <img class="shot" id="shot-pp"  src="assets/ovgd-pp.png"  alt="ОВГД полнопоточный">
+        <img class="shot" id="shot-npp" src="assets/ovgd-npp.png" alt="ОВГД неполнопоточный">
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<section class="band sunk" id="tipy">
+  <div class="shell">
+    <div class="sec-head">Что отличает типы</div>
+    <h2>Разница не в размере, а в том, куда девается шлам</h2>
+    <p class="sec-lede">Оба типа собираются на одной базе — центральной части корпуса.
+       Дальше комплектация расходится, и от неё зависит, теряете вы жидкость на
+       очистке или нет.</p>
+
+    <div class="two">
+      <figure class="figure">
+        <img src="assets/tipy-shema.jpg" alt="Схема комплектации полнопоточного и неполнопоточного фильтров">
+        <figcaption>Заводская схема комплектации: общая база, к ней бункер-гидроциклон
+          для полнопоточного и коллектор сброса для неполнопоточного.</figcaption>
+      </figure>
+      <div>
+        <div class="notes">
+          <h3>Полнопоточный</h3>
+          <ul>
+            <li>База + <b>бункер-гидроциклон</b> + шкаф управления</li>
+            <li>Потери жидкости на очистку — <b>нет</b></li>
+            <li>Подвод загрязнённой среды снизу, сбоку или сверху</li>
+          </ul>
+        </div>
+        <div class="notes" style="margin-top:28px">
+          <h3>Неполнопоточный</h3>
+          <ul>
+            <li>База + <b>коллектор сброса</b></li>
+            <li>Потери на очистку — <b>до 10 %</b></li>
+            <li>Компактнее в обвязке, эжектор выносится при необходимости</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="facts">
+      <div class="fact"><div class="n">3–8000<span class="u">м³/ч</span></div><div class="k">Производительность</div></div>
+      <div class="fact"><div class="n">до 25<span class="u">мкм</span></div><div class="k">Тонкость фильтрации</div></div>
+      <div class="fact"><div class="n">2–25<span class="u">бар</span></div><div class="k">Рабочее давление</div></div>
+      <div class="fact"><div class="n">Ду 20–1200</div><div class="k">Диаметр патрубков</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="chego">
+  <div class="shell">
+    <div class="sec-head">Честно о концепции</div>
+    <h2>Что здесь настоящее, а что ещё нельзя сделать</h2>
+
+    <div class="two" style="align-items:start">
+      <div class="notes">
+        <h3>Собрано из ваших материалов</h3>
+        <ul>
+          <li>Тёмный фон и шевроны — <b>ваш собственный фон из презентаций</b>,
+              не выдуманная стилистика</li>
+          <li>Рендеры аппаратов — из презентаций, альфа пересобрана по цветовой
+              дистанции: заводская вырезка оставляла белые пятна между болтами</li>
+          <li>Какой из аппаратов полнопоточный, а какой нет — <b>по заводской
+              схеме комплектации</b> из вашего docx, а не на глаз</li>
+          <li>Все числа — из презентаций, ничего не досочинено</li>
+        </ul>
+      </div>
+      <div>
+        <div class="slot">
+          <div class="lbl">Слот: фоновое видео воды</div>
+          <p>Фотореалистичная движущаяся вода в вебе — это видео, другого способа нет.
+             Нарисованная скриптом вода — ровно то, что в проекте уже отклонено как
+             «сгенерированная вода». Нужен файл: <b>rabota-filtra-ovgd.mp4</b> или любая
+             ваша съёмка потока. Слот под него готов.</p>
+        </div>
+        <div class="slot" style="margin-top:20px">
+          <div class="lbl">Слот: вращение вокруг оси</div>
+          <p>Сейчас аппарат выезжает вправо с лёгким доворотом — это одна картинка
+             в перспективе. Настоящее вращение требует <b>серии кадров с оборота</b>
+             (12–36 ракурсов) или самой 3D-модели. В презентациях каждый аппарат
+             есть только в одном ракурсе — проверено, второго нет.</p>
+        </div>
+        <div class="slot" style="margin-top:20px">
+          <div class="lbl">Внимание: чужие картинки</div>
+          <p>В презентациях лежат снимки со стока с водяными знаками
+             <b>dreamstime.com</b> и фото чужого завода с логотипом <b>BOXIN 博鑫机械</b>.
+             На сайт их брать нельзя — это чужие права.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer><div class="shell">
+  Концепция тёмной темы · ООО «ФОГОД» · Ростов-на-Дону · +7 (863) 301-00-45 доб. 4003 · filt@fogod.ru
+</div></footer>
+
+<script>
+(function () {
+  var DATA = {
+    pp: [
+      ['Расход',            '3–8000 м³/ч', 0],
+      ['Тонкость',          'от 25 мкм',   0],
+      ['Давление',          '2–25 бар',    0],
+      ['Потери на очистку', 'нет',         1]
+    ],
+    npp: [
+      ['Расход',            '3–8000 м³/ч', 0],
+      ['Тонкость',          'от 25 мкм',   0],
+      ['Давление',          '2–25 бар',    0],
+      ['Потери на очистку', 'до 10 %',     0]
+    ]
+  };
+  var specs = document.getElementById('specs');
+  var picks = [].slice.call(document.querySelectorAll('.pick'));
+  var cur = null;
+
+  function show(key) {
+    if (key === cur) return;
+    cur = key;
+    picks.forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.key === key)); });
+    document.querySelectorAll('.shot').forEach(function (im) {
+      im.classList.toggle('on', im.id === 'shot-' + key);
+    });
+    specs.classList.remove('on');
+    specs.innerHTML = DATA[key].map(function (r) {
+      return '<span class="spec"><span class="k">' + r[0] + '</span>' +
+             '<span class="v' + (r[2] ? ' good' : '') + '">' + r[1] + '</span></span>';
+    }).join('');
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { specs.classList.add('on'); });
+    });
+  }
+
+  picks.forEach(function (b) {
+    b.addEventListener('mouseenter', function () { show(b.dataset.key); });
+    b.addEventListener('focus',      function () { show(b.dataset.key); });
+    b.addEventListener('click',      function () { show(b.dataset.key); });
+  });
+  show('pp');
+
+  var top = document.getElementById('top');
+  function onScroll() { top.classList.toggle('stuck', window.scrollY > 24); }
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+</body>
+</html>
