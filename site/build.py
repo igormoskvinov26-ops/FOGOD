@@ -68,18 +68,19 @@ def page(*, path, title, desc, body, active='', crumbs=None):
 <link rel="stylesheet" href="{base}assets/css/main.css">
 </head>
 <body>
+<canvas id="grid" aria-hidden="true"></canvas>
 
 <div class="topbar"><div class="shell">
   <span class="city drop">{SITE['city']}</span>
   <a href="tel:+78633010045">{SITE['phone_full']}</a>
   <a href="mailto:{SITE['email']}">{SITE['email']}</a>
   <span class="sep"></span>
-  <a href="#">VK</a><a href="#">WhatsApp</a><a href="#">RuTube</a>
+  <span class="soc"><a href="#">VK</a><a href="#">WhatsApp</a><a href="#">RuTube</a></span>
 </div></div>
 
 <header class="main"><div class="shell">
   <a class="logo" href="{base}index.html" aria-label="ФОГОД — промышленные фильтры">
-    <img src="{base}assets/img/logo-blue.png" alt="ФОГОД" width="199" height="44"></a>
+    <img src="{base}assets/img/logo-white.png" alt="ФОГОД" width="199" height="44"></a>
   <nav class="primary">{nav(base, active)}</nav>
   <div class="head-right">
     <div class="head-phone">
@@ -114,6 +115,7 @@ def page(*, path, title, desc, body, active='', crumbs=None):
     <span class="certs">{SITE['certs']}</span>
   </div>
 </div></footer>
+<script src="{base}assets/js/grid.js" defer></script>
 </body>
 </html>
 '''
@@ -401,7 +403,7 @@ def assets():
     css = css.replace('#view-semeystvo .row .fam', '.fam-page .row .fam')
     open(os.path.join(css_dir, 'main.css'), 'w', encoding='utf-8').write(css)
 
-    for name in ('logo-blue.png', 'logo-white.png'):
+    for name in ('logo-blue.png', 'logo-white.png', 'ovgd-pp.png', 'ovgd-npp.png'):
         shutil.copy(os.path.join(SRC, 'assets', name), os.path.join(img_dir, name))
     shutil.copy(os.path.join(SRC, 'assets', 'chevrons-band.jpg'),
                 os.path.join(img_dir, 'chevrons.jpg'))
@@ -418,6 +420,8 @@ def scripts():
     for name in ('katalog', 'podbor', 'index'):
         body = open(os.path.join(ROOT, 'js', name + '.js'), encoding='utf-8').read()
         open(os.path.join(js_dir, name + '.js'), 'w', encoding='utf-8').write(shared + body)
+    # сетка идёт на каждую страницу и данных не требует
+    shutil.copy(os.path.join(ROOT, 'js', 'grid.js'), os.path.join(js_dir, 'grid.js'))
 
 def sitemap(paths):
     today = datetime.date.today().isoformat()

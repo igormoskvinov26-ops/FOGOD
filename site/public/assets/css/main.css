@@ -1,61 +1,60 @@
 
+  /* ── Токены. Тема одна — тёмная.
+     Палитра утверждена на концепции design/dark.html: земля и шевроны
+     взяты с фирменного фона презентаций, поэтому это не перекраска
+     светлой темы, а собственный тёмный язык компании. ───────────── */
   :root {
-    /* нейтрали со сдвигом в сталь */
-    --paper:      #F4F6F9;
-    --surface:    #FFFFFF;
-    --sunk:       #EAEFF4;
-    --ink:        #101F31;
-    --ink-2:      #4B5F76;
-    --ink-3:      #7488A0;
-    --rule:       #CFDAE5;
-    --rule-soft:  #E2E9F0;
-    /* фирменные */
-    --navy:       #123A63;
-    --navy-deep:  #0B2440;
-    --blue:       #1268C3;
-    --blue-ink:   #0F58A6;
-    --blue-wash:  #E6F0FA;
+    /* нейтрали: земля, поднятые поверхности, линии */
+    --paper:      #081321;   /* фон страницы */
+    --surface:    #0C1A2C;   /* карточка, панель */
+    --sunk:       #112541;   /* поднятая плашка, заливка на схеме */
+    --ink:        #EDF3FA;
+    --ink-2:      #9EB4CE;
+    --ink-3:      #66809E;
+    --rule:       #1B3050;
+    --rule-soft:  #132540;
+    /* фирменные. Синий и красный подняты по светлоте: на тёмном
+       #1268C3 и #D0322B проваливаются и не держат контраст текста */
+    --navy:       #0A1728;
+    --navy-deep:  #050B14;
+    --blue:       #2E86DE;
+    --blue-ink:   #59A4EC;
+    --blue-wash:  #10243C;
     --gold:       #E0A92A;
-    --gold-ink:   #8F6708;
-    --red:        #D0322B;
-    --logo:       #0D4C8B;   /* синий с логотипа — темнее акцентного, уточнить по исходнику */
-    /* на тёмном */
-    --on-dark:    #E8EFF7;
-    --on-dark-2:  #9FB6CE;
-    --on-dark-3:  #6E88A4;
-    --dark-rule:  #24405F;
+    --gold-ink:   #E0A92A;
+    --red:        #E04A43;
+    --logo:       #DCE8F4;
+    --draft:      #A8C2DC;   /* линия чертежа: --navy на тёмном не виден */
+    /* «на тёмном» теперь совпадает с основными: фон и так тёмный */
+    --on-dark:    #EDF3FA;
+    --on-dark-2:  #9EB4CE;
+    --on-dark-3:  #66809E;
+    --dark-rule:  #1B3050;
+
+    /* Полосы во всю ширину — полупрозрачные, чтобы сквозь них читалась
+       сетка. Карточки, панели и поля ввода остаются плотными: под текстом
+       фон ползать не должен. */
+    --paper-a:      rgba(8, 19, 33, .58);
+    --surface-a:    rgba(12, 26, 44, .74);
+    --navy-a:       rgba(10, 23, 40, .80);
+    --navy-deep-a:  rgba(5, 11, 20, .84);
 
     --measure: 62ch;
     --page: 1240px;
     --gut: 32px;
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --paper:#08141F; --surface:#0E1F2E; --sunk:#152A3C;
-      --ink:#E2ECF5; --ink-2:#9FB4C8; --ink-3:#7A8EA4;
-      --rule:#24384C; --rule-soft:#1A2B3C;
-      --navy:#0B1B2B; --navy-deep:#060F1A;
-      --blue:#59A4EC; --blue-ink:#7EBBF5; --blue-wash:#12283C;
-      --gold:#E4BA5C; --gold-ink:#E4BA5C;
-      --red:#E1554E; --logo:#DCE8F4;
-      --on-dark:#E2ECF5; --on-dark-2:#95AEC7; --on-dark-3:#65809C;
-      --dark-rule:#1E3550;
-    }
-  }
-  :root[data-theme="dark"] {
-    --paper:#08141F; --surface:#0E1F2E; --sunk:#152A3C;
-    --ink:#E2ECF5; --ink-2:#9FB4C8; --ink-3:#7A8EA4;
-    --rule:#24384C; --rule-soft:#1A2B3C;
-    --navy:#0B1B2B; --navy-deep:#060F1A;
-    --blue:#59A4EC; --blue-ink:#7EBBF5; --blue-wash:#12283C;
-    --gold:#E4BA5C; --gold-ink:#E4BA5C;
-    --red:#E1554E; --logo:#DCE8F4;
-    --on-dark:#E2ECF5; --on-dark-2:#95AEC7; --on-dark-3:#65809C;
-    --dark-rule:#1E3550;
-  }
-
   * { box-sizing: border-box; }
+
+  /* Кинетическая сетка — фоновый слой на всех страницах.
+     Лежит над фоном страницы и под содержимым, поэтому все полосы
+     должны быть либо прозрачными, либо полупрозрачными: непрозрачный
+     фон секции просто закроет её. */
+  #grid {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; display: block;
+  }
+  .topbar, header.main, .crumbs, .hero, section, footer, .fam-hero,
+  .card-head, .card-body, .wiz-head, .kontakty { position: relative; z-index: 1; }
 
   body {
     margin: 0;
@@ -93,7 +92,7 @@
 
   /* ══════ Хедер ══════ */
 
-  .topbar { background: var(--navy-deep); color: var(--on-dark-2); }
+  .topbar { background: var(--navy-deep-a); color: var(--on-dark-2); }
   .topbar .shell {
     display: flex; align-items: center; gap: 24px;
     height: 40px; font-size: 13px;
@@ -165,24 +164,25 @@
 
   /* ══════ Герой ══════ */
 
-  .hero { background: var(--surface); border-bottom: 1px solid var(--rule); }
+  .hero { background: var(--surface-a); border-bottom: 1px solid var(--rule); }
   .hero .shell {
-    display: grid; grid-template-columns: minmax(0,1fr) 430px;
-    gap: 56px; padding-top: 60px; padding-bottom: 56px; align-items: center;
+    display: grid; grid-template-columns: minmax(0,430px) minmax(0,1fr);
+    gap: 48px; padding-top: 44px; padding-bottom: 44px; align-items: center;
   }
   .hero .eyebrow {
     display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
   }
   .hero .eyebrow .bar { width: 26px; height: 2px; background: var(--red); }
   .hero h1 {
-    font-size: clamp(32px, 3.5vw, 46px); line-height: 1.06; margin: 0 0 20px;
+    font-size: clamp(30px, 2.9vw, 39px); line-height: 1.08; margin: 0 0 16px;
     color: var(--ink);
   }
   .hero h1 .thin { font-weight: 600; color: var(--ink-2); }
   .hero .lede {
-    font-size: 18px; color: var(--ink-2); max-width: 50ch; margin: 0 0 30px;
+    font-size: 16px; color: var(--ink-2); max-width: 46ch; margin: 0 0 24px;
   }
-  .hero .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 34px; }
+  .hero .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 26px; }
+  .hero .btn.lg { height: 48px; padding: 0 24px; font-size: 15px; }
 
   .hero-specs {
     display: grid; grid-template-columns: repeat(4, 1fr);
@@ -191,14 +191,84 @@
   .hero-specs div { padding: 16px 18px 0 0; }
   .hero-specs .v {
     font-family: "IBM Plex Sans Condensed", sans-serif; font-weight: 700;
-    font-size: 26px; color: var(--navy); line-height: 1.1;
+    font-size: 26px; color: var(--ink); line-height: 1.1;
     font-variant-numeric: tabular-nums;
   }
-  :root[data-theme="dark"] .hero-specs .v, :root:not([data-theme="light"]) .hero-specs .v { color: var(--ink); }
-  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .hero-specs .v { color: var(--navy); } }
   .hero-specs .u { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--ink-2); }
   .hero-specs .k { margin-top: 4px; }
 
+  /* Выбор типа фильтра. Наведение меняет аппарат: он выезжает вправо
+     с доворотом, а слева, в освободившемся поле, проступают параметры.
+     Довороту здесь верить нельзя — это одна картинка в перспективе, а не
+     оборот. Настоящее вращение потребует серии кадров с оборота. */
+  .hero-pick { border-top: 1px solid var(--rule); }
+  .pick {
+    display: block; width: 100%; text-align: left; background: none; border: 0;
+    border-bottom: 1px solid var(--rule); padding: 15px 2px 15px 0;
+    color: var(--ink-2); font: inherit; position: relative; cursor: pointer;
+  }
+  .pick .pk-top { display: flex; align-items: baseline; gap: 12px; }
+  .pick .pk-n {
+    font-family: "IBM Plex Mono", monospace; font-size: 11px;
+    color: var(--ink-3); letter-spacing: .1em;
+  }
+  .pick .pk-t {
+    font-family: "IBM Plex Sans Condensed", sans-serif; font-weight: 700;
+    font-size: 21px; color: var(--ink); transition: color .18s ease;
+  }
+  .pick .pk-s {
+    display: block; margin-top: 4px; font-size: 13px; line-height: 1.45;
+    color: var(--ink-3); max-width: 40ch;
+  }
+  .pick .pk-bar {
+    position: absolute; left: 0; bottom: -1px; height: 2px; width: 0;
+    background: var(--blue); transition: width .38s cubic-bezier(.22,.61,.36,1);
+  }
+  .pick[aria-selected="true"] .pk-t { color: var(--blue); }
+  .pick[aria-selected="true"] .pk-bar { width: 100%; }
+  .pick:hover .pk-t { color: var(--ink); }
+  .pick[aria-selected="true"]:hover .pk-t { color: var(--blue); }
+  .pick:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+
+  .hero-stage { position: relative; height: min(56vh, 430px); }
+  .hero-shots {
+    position: absolute; inset: 0 0 0 210px;
+    perspective: 1500px; transform-style: preserve-3d;
+  }
+  .hero-shot {
+    position: absolute; right: 0; top: 50%; width: auto; height: auto;
+    max-width: 100%; max-height: 100%; transform-origin: 30% 55%;
+    opacity: 0; transform: translate(-70px, -50%) rotateY(-13deg) scale(.965);
+    transition: opacity .46s ease, transform .78s cubic-bezier(.22,.61,.36,1);
+  }
+  .hero-shot.on { opacity: 1; transform: translate(0, -50%) rotateY(0deg) scale(1); }
+
+  .hero-params {
+    position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+    z-index: 2; width: 186px; pointer-events: none;
+  }
+  .hero-params .p {
+    display: block; padding: 10px 0; border-bottom: 1px solid var(--rule-soft);
+    opacity: 0; transform: translateX(-14px);
+    transition: opacity .4s ease, transform .5s cubic-bezier(.22,.61,.36,1);
+  }
+  .hero-params.on .p { opacity: 1; transform: none; }
+  .hero-params.on .p:nth-child(1) { transition-delay: .10s; }
+  .hero-params.on .p:nth-child(2) { transition-delay: .17s; }
+  .hero-params.on .p:nth-child(3) { transition-delay: .24s; }
+  .hero-params.on .p:nth-child(4) { transition-delay: .31s; }
+  .hero-params .k {
+    display: block; font-family: "IBM Plex Mono", monospace; font-size: 10px;
+    letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3);
+    margin-bottom: 4px;
+  }
+  .hero-params .v {
+    font-family: "IBM Plex Mono", monospace; font-size: 15px; color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .hero-params .v.good { color: var(--gold); }
+
+  .princip-fig { max-width: 460px; margin: 0 auto 44px; }
   .hero-fig { position: relative; }
   .hero-fig svg { width: 100%; height: auto; display: block; }
   .fig-note {
@@ -208,13 +278,19 @@
 
   @media (max-width: 980px) {
     .hero .shell { grid-template-columns: 1fr; gap: 36px; }
-    .hero-fig { max-width: 420px; }
-    .hero-specs { grid-template-columns: repeat(2, 1fr); }
+    .hero-stage { height: auto; display: flex; flex-direction: column-reverse; gap: 18px; }
+    .hero-shots { position: static; height: 220px; }
+    .hero-shot { right: 50%; transform: translate(50%, -50%) rotateY(-13deg) scale(.965); }
+    .hero-shot.on { transform: translate(50%, -50%) rotateY(0) scale(1); }
+    .hero-params {
+      position: static; transform: none; width: auto;
+      display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 0 20px;
+    }
   }
 
   /* ══════ Подбор ══════ */
 
-  .picker { background: var(--navy); color: var(--on-dark); }
+  .picker { background: var(--navy-a); color: var(--on-dark); }
   .picker .shell { padding: 48px 32px 50px; }
   .picker .head { display: flex; align-items: flex-end; gap: 24px; margin-bottom: 26px; flex-wrap: wrap; }
   .picker h2 { font-size: 32px; margin: 0; color: #FFFFFF; }
@@ -287,8 +363,8 @@
 
   /* ══════ Секции ══════ */
 
-  section.band { padding: 78px 0; border-bottom: 1px solid var(--rule); background: var(--surface); }
-  section.band.alt { background: var(--paper); }
+  section.band { padding: 78px 0; border-bottom: 1px solid var(--rule); background: var(--surface-a); }
+  section.band.alt { background: var(--paper-a); }
 
   .sec-head { margin-bottom: 38px; }
   .sec-head .label { display: block; margin-bottom: 12px; }
@@ -389,7 +465,7 @@
   @media (max-width: 860px) { .prod { grid-template-columns: 1fr; gap: 32px; } }
 
   /* Заявка */
-  .quote { background: var(--navy-deep); color: var(--on-dark); }
+  .quote { background: var(--navy-deep-a); color: var(--on-dark); }
   .quote .shell { padding: 64px 32px 64px; display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
   .quote h2 { font-size: clamp(30px, 3.4vw, 42px); margin: 0 0 16px; color: #FFFFFF; }
   .quote p { margin: 0 0 8px; color: var(--on-dark-2); font-size: 16px; max-width: 44ch; }
@@ -410,7 +486,7 @@
   @media (max-width: 860px) { .quote .shell { grid-template-columns: 1fr; gap: 32px; } }
 
   /* Футер */
-  footer.site { background: var(--navy); color: var(--on-dark-2); }
+  footer.site { background: var(--navy-a); color: var(--on-dark-2); }
   footer.site .shell { padding: 56px 32px 32px; }
   .foot-top { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.2fr; gap: 40px; }
   .foot-col h4 {
@@ -450,6 +526,11 @@
     .logo .word { font-size: 26px; }
     .logo .mark { width: 36px; height: 36px; flex: 0 0 36px; }
     .topbar .shell { gap: 16px; }
+    /* На узком экране в верхней полосе оставляем только телефон: город и
+       соцсети переносились и обрезались, а шапка на мобильном телефон
+       не показывает вовсе. */
+    .topbar .shell { white-space: nowrap; overflow-x: auto; }
+    .topbar .city, .topbar .soc, .topbar .sep { display: none; }
   }
 
   /* ── Настоящий логотип ── */
@@ -476,7 +557,7 @@
 
   nav.primary a.is-active { color: var(--ink); border-bottom-color: var(--blue); }
 
-  .crumbs { background: var(--surface); border-bottom: 1px solid var(--rule-soft); }
+  .crumbs { background: var(--surface-a); border-bottom: 1px solid var(--rule-soft); }
   .crumbs .shell {
     display: flex; gap: 8px; align-items: center; height: 42px;
     font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--ink-3);
@@ -484,7 +565,7 @@
   .crumbs a:hover { color: var(--ink-2); }
   .crumbs .sl { opacity: .55; }
 
-  .cat-head { background: var(--surface); border-bottom: 1px solid var(--rule); }
+  .cat-head { background: var(--surface-a); border-bottom: 1px solid var(--rule); }
   .cat-head .shell { padding: 40px 32px 32px; }
   .cat-head h1 {
     font-size: clamp(30px, 3.4vw, 42px); margin: 0 0 12px; color: var(--ink);
@@ -492,7 +573,7 @@
   .cat-head p { margin: 0; font-size: 18px; color: var(--ink-2); max-width: var(--measure); }
 
   /* уровень 1: семейства */
-  .fams { border-top: 1px solid var(--rule-soft); background: var(--surface); }
+  .fams { border-top: 1px solid var(--rule-soft); background: var(--surface-a); }
   .fams .shell { display: flex; gap: 0; overflow-x: auto; }
   .fam-tab {
     flex: 0 0 auto; padding: 16px 20px 12px; cursor: pointer;
@@ -736,7 +817,7 @@
   }
 
   /* ══════ Подбор — страница ══════ */
-  .wiz-head { background: var(--surface); border-bottom: 1px solid var(--rule); }
+  .wiz-head { background: var(--surface-a); border-bottom: 1px solid var(--rule); }
   .wiz-head .shell { padding: 36px 32px 32px; }
   .wiz-head h1 { font-size: clamp(30px, 3.4vw, 42px); margin: 0 0 12px; color: var(--ink); }
   .wiz-head p { margin: 0; font-size: 18px; color: var(--ink-2); max-width: var(--measure); }
@@ -791,7 +872,7 @@
   }
 
   /* ══════ Посадочная семейства ══════ */
-  .fam-hero { background: var(--navy); color: var(--on-dark); }
+  .fam-hero { background: var(--navy-a); color: var(--on-dark); }
   .fam-hero .shell { padding: 48px 32px 44px; }
   .fam-hero .label { color: var(--on-dark-3); display: block; margin-bottom: 12px; }
   .fam-hero h1 { font-size: clamp(32px, 3.5vw, 46px); margin: 0 0 16px; color: #FFFFFF; }

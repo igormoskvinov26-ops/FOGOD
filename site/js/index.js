@@ -51,3 +51,46 @@
   });
   run();
 })();
+
+/* Выбор типа фильтра в герое.
+ * Наведение или фокус меняет аппарат: он выезжает вправо с доворотом,
+ * а слева проступают параметры. Различает типы только «потери на очистку»
+ * — остальные диапазоны у них общие, и придумывать разницу нельзя.
+ */
+(function () {
+  var picks = [].slice.call(document.querySelectorAll('.hero-pick .pick'));
+  var box = document.getElementById('hero-params');
+  if (!picks.length || !box) return;
+
+  var P = {
+    pp: [['Расход', '3–8000 м³/ч', 0], ['Тонкость', 'от 25 мкм', 0],
+         ['Давление', '2–25 бар', 0], ['Потери на очистку', 'нет', 1]],
+    npp: [['Расход', '3–8000 м³/ч', 0], ['Тонкость', 'от 25 мкм', 0],
+          ['Давление', '2–25 бар', 0], ['Потери на очистку', 'до 10 %', 0]]
+  };
+  var cur = null;
+
+  function show(key) {
+    if (key === cur || !P[key]) return;
+    cur = key;
+    picks.forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.key === key)); });
+    document.querySelectorAll('.hero-shot').forEach(function (im) {
+      im.classList.toggle('on', im.id === 'shot-' + key);
+    });
+    box.classList.remove('on');
+    box.innerHTML = P[key].map(function (r) {
+      return '<span class="p"><span class="k">' + r[0] + '</span>' +
+             '<span class="v' + (r[2] ? ' good' : '') + '">' + r[1] + '</span></span>';
+    }).join('');
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { box.classList.add('on'); });
+    });
+  }
+
+  picks.forEach(function (b) {
+    ['mouseenter', 'focus', 'click'].forEach(function (ev) {
+      b.addEventListener(ev, function () { show(b.dataset.key); });
+    });
+  });
+  show('pp');
+})();

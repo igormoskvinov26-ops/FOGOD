@@ -66,8 +66,8 @@ def collect():
     for p in pages():
         src = open(os.path.join(PUB, p), encoding='utf-8').read()
         bodies[p] = strip_body(p, src)
-        m = re.search(r'<script src="[^"]*?/([\w.-]+\.js)"', src)
-        per_page[p] = m.group(1) if m else None
+        # у страницы может быть несколько скриптов: свой и общий слой сетки
+        per_page[p] = re.findall(r'<script src="[^"]*?/([\w.-]+\.js)"', src)
     for name in sorted(os.listdir(os.path.join(PUB, 'assets', 'js'))):
         scripts[name] = open(os.path.join(PUB, 'assets', 'js', name), encoding='utf-8').read()
     css = open(os.path.join(PUB, 'assets', 'css', 'main.css'), encoding='utf-8').read()
@@ -160,7 +160,7 @@ iframe{display:block;width:100%;height:100%;border:0}
   function show(page, frag){
     if (!D.bodies[page]) page = '404.html';
     if (page !== cur) {
-      var js = D.perPage[page] ? D.scripts[D.perPage[page]] : '';
+      var js = (D.perPage[page] || []).map(function (n) { return D.scripts[n] || ''; }).join('\n;\n');
       fr.srcdoc = '<!doctype html><html lang="ru"><head><meta charset="utf-8">' +
         '<meta name="viewport" content="width=device-width, initial-scale=1">' +
         '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap">' +
