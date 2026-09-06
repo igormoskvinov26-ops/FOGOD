@@ -14,7 +14,8 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 PUB  = os.path.join(ROOT, 'public')
 OUT  = os.path.join(ROOT, 'preview')
 
-MIME = {'.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.svg': 'image/svg+xml'}
+MIME = {'.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
+        '.svg': 'image/svg+xml', '.webp': 'image/webp'}
 
 TITLES = {}
 
@@ -69,11 +70,23 @@ def collect():
         # у страницы может быть несколько скриптов: свой и общий слой сетки
         per_page[p] = re.findall(r'<script src="[^"]*?/([\w.-]+\.js)"', src)
     for name in sorted(os.listdir(os.path.join(PUB, 'assets', 'js'))):
-        scripts[name] = open(os.path.join(PUB, 'assets', 'js', name), encoding='utf-8').read()
+        js = open(os.path.join(PUB, 'assets', 'js', name), encoding='utf-8').read()
+        # путь к кадру оборота собирается в рантайме, токен в разметке его не
+        # поймает — подменяем на выборку из встроенной карты
+        js = js.replace("'assets/img/turn/' + key + '-0' + i + '.webp'",
+                        "window.__TURN__[key + '-0' + i]")
+        js = js.replace("im.src = 'assets/img/turn/' + key + '-0' + i + '.webp';",
+                        "im.src = window.__TURN__[key + '-0' + i];")
+        scripts[name] = js
     css = open(os.path.join(PUB, 'assets', 'css', 'main.css'), encoding='utf-8').read()
     imgs = {}
-    for name in sorted(os.listdir(os.path.join(PUB, 'assets', 'img'))):
-        raw = open(os.path.join(PUB, 'assets', 'img', name), 'rb').read()
+    img_dir = os.path.join(PUB, 'assets', 'img')
+    files = []
+    for dp, _, fs in os.walk(img_dir):          # кадры оборота лежат в подпапке
+        files += [os.path.join(dp, f) for f in fs]
+    for full in sorted(files):
+        name = os.path.basename(full)
+        raw = open(full, 'rb').read()
         mime = MIME.get(os.path.splitext(name)[1].lower(), 'application/octet-stream')
         imgs[name] = 'data:' + mime + ';base64,' + base64.b64encode(raw).decode()
     css = re.sub(r'url\((["\']?)([^)"\']*/)?([\w.\-]+\.(?:png|jpe?g|svg))\1\)',
@@ -165,6 +178,7 @@ body.is-inline #inline{display:block}
   var inline = false, loaded = {};
 
   function showInline(page, frag){
+    window.__TURN__ = D.turn;
     var host = document.getElementById('inline');
     host.innerHTML = imgs(D.bodies[page]);
     (D.perPage[page] || []).forEach(function (n) {
@@ -211,7 +225,9 @@ body.is-inline #inline{display:block}
       fr.srcdoc = '<!doctype html><html lang="ru"><head><meta charset="utf-8">' +
         '<meta name="viewport" content="width=device-width, initial-scale=1">' +
         '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap">' +
-        '<style>' + D.css + '</style></head><body>' + imgs(D.bodies[page]) +
+        '<style>' + D.css + '</style></head><body>' +
+        '<' + 'script>window.__TURN__=' + JSON.stringify(D.turn) + ';<' + '/script>' +
+        imgs(D.bodies[page]) +
         '<' + 'script>' + js + '<' + '/script>' +
         '<' + 'script>' + hook(page) + (frag ? scrollTo_(frag) : '') + '<' + '/script>' +
         '</body></html>';
@@ -262,8 +278,9 @@ body.is-inline #inline{display:block}
 
 def main():
     bodies, scripts, per_page, css, imgs = collect()
+    turn = {os.path.splitext(k)[0]: v for k, v in imgs.items() if k.endswith('.webp')}
     payload = json.dumps({'bodies': bodies, 'scripts': scripts, 'perPage': per_page,
-                          'css': css, 'imgs': imgs, 'titles': TITLES},
+                          'css': css, 'imgs': imgs, 'titles': TITLES, 'turn': turn},
                          ensure_ascii=False).replace('</', r'<\/')
     os.makedirs(OUT, exist_ok=True)
     path = os.path.join(OUT, 'wfogod-preview.html')
