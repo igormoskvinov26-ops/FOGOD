@@ -68,9 +68,16 @@ def collect():
         src = open(os.path.join(PUB, p), encoding='utf-8').read()
         bodies[p] = strip_body(p, src)
         # у страницы может быть несколько скриптов: свой и общий слой сетки
-        per_page[p] = re.findall(r'<script src="[^"]*?/([\w.-]+\.js)"', src)
-    for name in sorted(os.listdir(os.path.join(PUB, 'assets', 'js'))):
-        js = open(os.path.join(PUB, 'assets', 'js', name), encoding='utf-8').read()
+        per_page[p] = [n for n in re.findall(r'<script src="[^"]*?/([\w.-]+\.js)"', src)
+                       if n != 'hero3d.js']
+    js_dir = os.path.join(PUB, 'assets', 'js')
+    for name in sorted(os.listdir(js_dir)):
+        # vendor/ — папка, а hero3d.js это ES-модуль с импортами и загрузкой
+        # модели по сети: внутри одного файла превью он работать не может.
+        # Там остаётся тот же рендер, что и без WebGL.
+        if name == 'hero3d.js' or not os.path.isfile(os.path.join(js_dir, name)):
+            continue
+        js = open(os.path.join(js_dir, name), encoding='utf-8').read()
         # путь к кадру оборота собирается в рантайме, токен в разметке его не
         # поймает — подменяем на выборку из встроенной карты
         js = js.replace("'assets/img/turn/' + key + '-0' + i + '.webp'",
