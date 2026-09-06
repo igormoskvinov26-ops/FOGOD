@@ -543,16 +543,21 @@
   @media (max-width: 720px) { .logo img { height: 34px; } }
 
   /* ── Фирменные шевроны ──
-     Артворк компании из подложки слайдов. Прижат к правому краю,
-     уходит за обрез, не повторяется плиткой. Только на тёмных полосах. */
+     Артворк компании, отрендерен из ВЕКТОРА (фон_2_1, PDF 1148x1633 мм),
+     а не вырезан из слайда: теперь кромки чистые на любом экране.
+     Прижат к правому краю, уходит за обрез, не повторяется плиткой.
+     Только на тёмных полосах.
+     Непрозрачность снижена до .55, маска отодвинута до 68%: вектор
+     заметно контрастнее слайдовой версии и на полосе с формой начинал
+     спорить с ней за внимание. */
   .chevrons { position: relative; overflow: hidden; isolation: isolate; }
   .chevrons::before {
     content: ""; position: absolute; inset: 0; z-index: -1;
     background: url("../img/chevrons.jpg") no-repeat right center;
     background-size: auto 118%;
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 58%);
-            mask-image: linear-gradient(to right, transparent 0%, #000 58%);
-    opacity: .9;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 68%);
+            mask-image: linear-gradient(to right, transparent 0%, #000 68%);
+    opacity: .55;
     pointer-events: none;
   }
   @media (max-width: 900px) { .chevrons::before { background-size: auto 88%; opacity: .5; } }
