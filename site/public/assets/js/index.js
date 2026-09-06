@@ -20,7 +20,7 @@ window.FOGOD = {"DATA": [{"id": "ovgd-pp", "nm": "ОВГД полнопоточ�
 
   window.rowHTML = function (r, showFam) {
     var fam = showFam === false ? '' :
-      '<div class="fam"><a href="semeystvo/' + D.FAM_SLUG[r.fam] + '.html">' + esc(r.fam) + '</a></div>';
+      '<div class="row-fam"><a href="semeystvo/' + D.FAM_SLUG[r.fam] + '.html">' + esc(r.fam) + '</a></div>';
     return '<div class="row"><div>' + fam +
       '<h3 class="nm"><a href="filtr/' + r.id + '.html">' + esc(r.nm) + '</a></h3>' +
       '<p class="sub">' + esc(r.sub) + '</p>' +

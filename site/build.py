@@ -131,7 +131,7 @@ def _office(o):
 # ─────────────────────────── компоненты ───────────────────────────
 
 def row(r, base, show_fam=True):
-    fam = (f'<div class="fam"><a href="{base}semeystvo/{FAM_SLUG[r["fam"]]}.html">'
+    fam = (f'<div class="row-fam"><a href="{base}semeystvo/{FAM_SLUG[r["fam"]]}.html">'
            f'{e(r["fam"])}</a></div>') if show_fam else ''
     return f'''<div class="row">
       <div>{fam}
@@ -286,8 +286,8 @@ def index_page():
     body = _relink(body)
     # карточки семейств ведут на посадочные, а не в каталог общим списком
     order = iter(FAMS)
-    body = re.sub(r'<a class="fam" href="katalog\.html">',
-                  lambda _m: f'<a class="fam" href="semeystvo/{FAM_SLUG[next(order)]}.html">', body)
+    body = re.sub(r'<a class="fam-card" href="katalog\.html">',
+                  lambda _m: f'<a class="fam-card" href="semeystvo/{FAM_SLUG[next(order)]}.html">', body)
     return page(path='index.html',
         title='ФОГОД — промышленные фильтры для очистки жидкостей',
         desc='Самоочищающиеся гидродинамические фильтры ТМ ФОГОД. Очистка воды, масла и СОЖ от механических примесей: 3–8000 м³/ч, до 25 мкм, 2–25 бар. Изготовление по вашему ТЗ.',
