@@ -68,7 +68,38 @@
     npp: [['Расход', '3–8000 м³/ч', 0], ['Тонкость', 'от 25 мкм', 0],
           ['Давление', '2–25 бар', 0], ['Потери на очистку', 'до 10 %', 0]]
   };
-  var cur = null;
+  var cur = null, spin = 0, FR = 4;   // 4 кадра = поворот на 45 градусов
+
+  // Кадры оборота сняты с 3D-модели изделия (STEP из КОМПАСа). Вращение
+  // настоящее: при выборе типа аппарат едет вправо и одновременно
+  // проворачивается вокруг оси на 45 градусов. Дальше поворачивать нельзя —
+  // на больших углах колонна уходит за корпус и силуэт разваливается.
+  // Кадры подгружаются после отрисовки, чтобы не задерживать первый экран.
+  var frames = {};
+  function preload(key) {
+    if (frames[key]) return;
+    frames[key] = [];
+    for (var i = 0; i < FR; i++) {
+      var im = new Image();
+      im.src = 'assets/img/turn/' + key + '-0' + i + '.webp';
+      frames[key].push(im);
+    }
+  }
+  addEventListener('load', function () { preload('pp'); preload('npp'); });
+
+  function turn(key, el) {
+    cancelAnimationFrame(spin);
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    preload(key);
+    var t0 = performance.now(), DUR = 700;
+    (function step(t) {
+      var k = Math.min((t - t0) / DUR, 1);
+      var e = 1 - Math.pow(1 - k, 3);
+      var i = Math.min(Math.round(e * (FR - 1)), FR - 1);
+      el.src = 'assets/img/turn/' + key + '-0' + i + '.webp';
+      if (k < 1) spin = requestAnimationFrame(step);
+    })(t0);
+  }
 
   function show(key) {
     if (key === cur || !P[key]) return;
@@ -77,6 +108,7 @@
     document.querySelectorAll('.hero-shot').forEach(function (im) {
       im.classList.toggle('on', im.id === 'shot-' + key);
     });
+    turn(key, document.getElementById('shot-' + key));
     box.classList.remove('on');
     box.innerHTML = P[key].map(function (r) {
       return '<span class="p"><span class="k">' + r[0] + '</span>' +

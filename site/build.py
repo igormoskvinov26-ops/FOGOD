@@ -403,6 +403,9 @@ def assets():
     css = css.replace('#view-semeystvo .row .fam', '.fam-page .row .fam')
     open(os.path.join(css_dir, 'main.css'), 'w', encoding='utf-8').write(css)
 
+    turn_src = os.path.join(SRC, 'assets', 'turn')
+    if os.path.isdir(turn_src):
+        shutil.copytree(turn_src, os.path.join(img_dir, 'turn'), dirs_exist_ok=True)
     for name in ('logo-blue.png', 'logo-white.png', 'ovgd-pp.png', 'ovgd-npp.png'):
         shutil.copy(os.path.join(SRC, 'assets', name), os.path.join(img_dir, name))
     shutil.copy(os.path.join(SRC, 'assets', 'chevrons-band.jpg'),
