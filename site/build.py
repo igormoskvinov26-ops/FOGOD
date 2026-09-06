@@ -64,7 +64,7 @@ def page(*, path, title, desc, body, active='', crumbs=None):
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap">
 <link rel="stylesheet" href="{base}assets/css/main.css">
 </head>
 <body>
@@ -148,8 +148,8 @@ def row(r, base, show_fam=True):
         </div>
       </div>
       <div class="act">
-        <a class="btn" href="{base}index.html#zayavka">Запросить КП</a>
         <a class="btn ghost" href="{base}filtr/{r['id']}.html">Подробнее</a>
+        <a class="act-quiet" href="{base}index.html#zayavka">Запросить КП</a>
       </div>
     </div>'''
 
@@ -397,7 +397,7 @@ def assets():
     m = _mock()
     css = _slice(m, '<style>', '</style>')
     # data-URI шеврона -> файл: в статике картинка должна кэшироваться отдельно
-    css = re.sub(r'url\("data:image/jpeg;base64,[^"]+"\)', 'url("../img/chevrons.jpg")', css)
+    # артворк шевронов уже подставлен путём в исходнике
     # роутер не нужен: виды стали отдельными страницами
     css = css.replace('  .view { display: none; }\n  .view.is-on { display: block; }\n', '')
     css = css.replace('#view-semeystvo .row .fam', '.fam-page .row .fam')
@@ -408,8 +408,8 @@ def assets():
         shutil.copytree(turn_src, os.path.join(img_dir, 'turn'), dirs_exist_ok=True)
     for name in ('logo-blue.png', 'logo-white.png', 'ovgd-pp.png', 'ovgd-npp.png'):
         shutil.copy(os.path.join(SRC, 'assets', name), os.path.join(img_dir, name))
-    shutil.copy(os.path.join(SRC, 'assets', 'chevrons-band.jpg'),
-                os.path.join(img_dir, 'chevrons.jpg'))
+    shutil.copy(os.path.join(SRC, 'assets', 'chevrons-alpha.webp'),
+                os.path.join(img_dir, 'chevrons.webp'))
     return css
 
 def data_js():

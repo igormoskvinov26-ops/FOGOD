@@ -32,7 +32,7 @@ window.FOGOD = {"DATA": [{"id": "ovgd-pp", "nm": "ОВГД полнопоточ�
         '<div><span class="k">Привод</span>' + txtv(r.privod) + '</div>' +
       '</div></div>' +
       '<div class="act">' +
-        '<a class="btn" href="index.html#zayavka">Запросить КП</a>' +
+        '<a class="act-quiet" href="index.html#zayavka">Запросить КП</a>' +
         '<a class="btn ghost" href="filtr/' + r.id + '.html">Подробнее</a>' +
       '</div></div>';
   };

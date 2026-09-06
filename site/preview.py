@@ -224,7 +224,7 @@ body.is-inline #inline{display:block}
       var js = (D.perPage[page] || []).map(function (n) { return D.scripts[n] || ''; }).join('\n;\n');
       fr.srcdoc = '<!doctype html><html lang="ru"><head><meta charset="utf-8">' +
         '<meta name="viewport" content="width=device-width, initial-scale=1">' +
-        '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap">' +
+        '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap">' +
         '<style>' + D.css + '</style></head><body>' +
         '<' + 'script>window.__TURN__=' + JSON.stringify(D.turn) + ';<' + '/script>' +
         imgs(D.bodies[page]) +

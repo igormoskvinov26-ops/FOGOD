@@ -3,45 +3,52 @@
      Палитра утверждена на концепции design/dark.html: земля и шевроны
      взяты с фирменного фона презентаций, поэтому это не перекраска
      светлой темы, а собственный тёмный язык компании. ───────────── */
+  /* ── Токены. Тема тёмная, ориентир — макет v10 (docs/makiet-v10).
+     Земля нейтральная, почти чёрная, а не сине-стальная: на нейтрали
+     красный акцент читается дороже, а любой цветной фон удешевляет.
+     Из четырёх фирменных цветов в интерфейсе остался красный. Синий
+     убран совсем, золото оставлено ровно в одной работе — «данных нет».
+     Это переписывает прежнее правило «синий — действие, красный —
+     только продукт»: теперь действие красное. ───────────────── */
   :root {
-    /* нейтрали: земля, поднятые поверхности, линии */
-    --paper:      #081321;   /* фон страницы */
-    --surface:    #0C1A2C;   /* карточка, панель */
-    --sunk:       #112541;   /* поднятая плашка, заливка на схеме */
-    --ink:        #EDF3FA;
-    --ink-2:      #9EB4CE;
-    --ink-3:      #66809E;
-    --rule:       #1B3050;
-    --rule-soft:  #132540;
-    /* фирменные. Синий и красный подняты по светлоте: на тёмном
-       #1268C3 и #D0322B проваливаются и не держат контраст текста */
-    --navy:       #0A1728;
-    --navy-deep:  #050B14;
-    --blue:       #2E86DE;
-    --blue-ink:   #59A4EC;
-    --blue-wash:  #10243C;
-    --gold:       #E0A92A;
+    /* нейтрали */
+    --paper:      #090C0F;   /* фон страницы */
+    --surface:    #10151B;   /* карточка, панель */
+    --sunk:       #171D24;   /* поднятая плашка, заливка на схеме */
+    --ink:        #FFFFFF;   /* заголовки — чистый белый, как в макете */
+    --ink-2:      #B1BAC2;
+    --ink-3:      #929FA9;
+    --rule:       #293138;
+    --rule-soft:  #1B2229;
+    /* тёмные полосы */
+    --navy:       #0D1115;
+    --navy-deep:  #06090C;
+    /* акцент */
+    --red:        #D34349;   /* действие И продукт */
+    --red-ink:    #E57276;   /* наведение, фокус */
+    --red-fill:   #D34D51;   /* заливка основной кнопки */
+    --blue:       #D34349;   /* синего в системе больше нет: псевдоним,
+                                чтобы не осталось забытых var(--blue) */
+    --blue-ink:   #E57276;
+    --blue-wash:  #171D24;
+    --gold:       #E0A92A;   /* только состояние «данных нет» */
     --gold-ink:   #E0A92A;
-    --red:        #E04A43;
+    --draft:      #A8C2DC;   /* линия чертежа */
     --logo:       #DCE8F4;
-    --draft:      #A8C2DC;   /* линия чертежа: --navy на тёмном не виден */
-    /* «на тёмном» теперь совпадает с основными: фон и так тёмный */
-    --on-dark:    #EDF3FA;
-    --on-dark-2:  #9EB4CE;
-    --on-dark-3:  #66809E;
-    --dark-rule:  #1B3050;
+    --on-dark:    #FFFFFF;
+    --on-dark-2:  #B1BAC2;
+    --on-dark-3:  #929FA9;
+    --dark-rule:  #293138;
 
-    /* Полосы во всю ширину — полупрозрачные, чтобы сквозь них читалась
-       сетка. Карточки, панели и поля ввода остаются плотными: под текстом
-       фон ползать не должен. */
-    --paper-a:      rgba(8, 19, 33, .58);
-    --surface-a:    rgba(12, 26, 44, .74);
-    --navy-a:       rgba(10, 23, 40, .80);
-    --navy-deep-a:  rgba(5, 11, 20, .84);
+    /* полупрозрачные полосы: под ними работает сетка */
+    --paper-a:      rgba(9, 12, 15, .62);
+    --surface-a:    rgba(16, 21, 27, .74);
+    --navy-a:       rgba(13, 17, 21, .82);
+    --navy-deep-a:  rgba(6, 9, 12, .86);
 
     --measure: 62ch;
-    --page: 1240px;
-    --gut: 32px;
+    --page: 1200px;
+    --gut: 24px;
   }
 
   * { box-sizing: border-box; }
@@ -68,10 +75,14 @@
 
   .shell { max-width: var(--page); margin: 0 auto; padding: 0 var(--gut); }
 
+  /* Заголовки — обычный Plex Sans на 500 с плотным отрицательным
+     трекингом, а не Condensed 700. Это и даёт «дорого»: крупный кегль,
+     небольшой вес, сжатые межбуквенные. Condensed на больших размерах
+     читается как заводская табличка. */
   h1, h2, h3, .cond {
-    font-family: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif;
-    font-weight: 700;
-    letter-spacing: -.01em;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 500;
+    letter-spacing: -.035em;
     text-wrap: balance;
   }
 
@@ -81,8 +92,8 @@
   }
 
   .label {
-    font-size: 10px; font-weight: 500; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--ink-3);
+    font-size: 12px; font-weight: 400; letter-spacing: .04em;
+    text-transform: uppercase; color: var(--red);
   }
 
   a { color: inherit; text-decoration: none; }
@@ -100,6 +111,7 @@
   .topbar a { color: var(--on-dark-2); }
   .topbar a:hover { color: var(--on-dark); }
   .topbar .sep { margin-left: auto; }
+  .topbar .soc { display: inline-flex; gap: 16px; }
   .topbar .city { color: var(--on-dark); font-weight: 500; }
   .topbar .drop::after { content: "▾"; margin-left: 5px; font-size: 10px; opacity: .7; }
 
@@ -132,23 +144,27 @@
   .head-right { margin-left: auto; display: flex; align-items: center; gap: 24px; }
   .head-phone { text-align: right; line-height: 1.25; }
   .head-phone .num {
-    font-family: "IBM Plex Sans Condensed", sans-serif; font-weight: 700;
+    font-family: "IBM Plex Sans", sans-serif; font-weight: 500; letter-spacing: -.03em;
     font-size: 21px; color: var(--ink); white-space: nowrap;
   }
   .head-phone .cap { font-size: 12px; color: var(--ink-3); }
 
+  /* Единственное скругление в системе — 3 px на кнопках и полях, как в
+     целевом макете. Конструктивные панели и таблицы остаются острыми. */
   .btn {
     display: inline-flex; align-items: center; justify-content: center;
-    height: 46px; padding: 0 22px; border: 0; cursor: pointer;
-    font-family: "IBM Plex Sans", sans-serif; font-size: 15px; font-weight: 600;
-    background: var(--blue); color: #FFFFFF; white-space: nowrap;
-    transition: background .12s ease;
+    height: 52px; padding: 0 24px; border: 0; border-radius: 3px; cursor: pointer;
+    font-family: "IBM Plex Sans", sans-serif; font-size: 14px; font-weight: 500;
+    background: var(--red-fill); color: #FFFFFF; white-space: nowrap;
+    transition: background .25s ease, transform .25s ease;
   }
-  .btn:hover { background: var(--blue-ink); }
+  .btn:hover { transform: translateY(-2px); }
+  .btn:hover { background: #BA3D43; }
   .btn.ghost {
     background: transparent; color: var(--ink);
     box-shadow: inset 0 0 0 1px var(--rule);
   }
+  .btn.ghost:hover { transform: none; }
   .btn.ghost:hover { box-shadow: inset 0 0 0 1px var(--ink-3); background: transparent; }
   .btn.on-dark {
     background: transparent; color: var(--on-dark);
@@ -170,11 +186,18 @@
     gap: 48px; padding-top: 44px; padding-bottom: 44px; align-items: center;
   }
   .hero .eyebrow {
-    display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
+    white-space: nowrap;
+  }
+  /* на узком экране рубрикатор длиннее строки — распускаем перенос,
+     иначе страница уезжает вбок */
+  @media (max-width: 720px) {
+    .hero .eyebrow { white-space: normal; align-items: flex-start; }
+    .hero .eyebrow .bar { margin-top: 7px; flex: 0 0 26px; }
   }
   .hero .eyebrow .bar { width: 26px; height: 2px; background: var(--red); }
   .hero h1 {
-    font-size: clamp(30px, 2.9vw, 39px); line-height: 1.08; margin: 0 0 16px;
+    font-size: clamp(40px, 4.2vw, 60px); line-height: 1.06; margin: 0 0 22px;
     color: var(--ink);
   }
   .hero h1 .thin { font-weight: 600; color: var(--ink-2); }
@@ -190,7 +213,7 @@
   }
   .hero-specs div { padding: 16px 18px 0 0; }
   .hero-specs .v {
-    font-family: "IBM Plex Sans Condensed", sans-serif; font-weight: 700;
+    font-family: "IBM Plex Sans", sans-serif; font-weight: 500; letter-spacing: -.03em;
     font-size: 26px; color: var(--ink); line-height: 1.1;
     font-variant-numeric: tabular-nums;
   }
@@ -213,7 +236,7 @@
     color: var(--ink-3); letter-spacing: .1em;
   }
   .pick .pk-t {
-    font-family: "IBM Plex Sans Condensed", sans-serif; font-weight: 700;
+    font-family: "IBM Plex Sans", sans-serif; font-weight: 500; letter-spacing: -.03em;
     font-size: 21px; color: var(--ink); transition: color .18s ease;
   }
   .pick .pk-s {
@@ -269,7 +292,7 @@
     font-family: "IBM Plex Mono", monospace; font-size: 15px; color: var(--ink);
     font-variant-numeric: tabular-nums;
   }
-  .hero-params .v.good { color: var(--gold); }
+  .hero-params .v.good { color: var(--ink); font-weight: 500; }
 
   .princip-fig { max-width: 460px; margin: 0 auto 44px; }
   .hero-fig { position: relative; }
@@ -366,13 +389,16 @@
 
   /* ══════ Секции ══════ */
 
-  section.band { padding: 78px 0; border-bottom: 1px solid var(--rule); background: var(--surface-a); }
+  section.band { padding: 104px 0; border-bottom: 1px solid var(--rule); background: var(--surface-a); }
   section.band.alt { background: var(--paper-a); }
 
-  .sec-head { margin-bottom: 38px; }
-  .sec-head .label { display: block; margin-bottom: 12px; }
-  .sec-head h2 { font-size: clamp(28px, 3.2vw, 40px); margin: 0 0 12px; color: var(--ink); }
-  .sec-head p { margin: 0; font-size: 18px; color: var(--ink-2); max-width: var(--measure); }
+  .sec-head { margin-bottom: 52px; }
+  .sec-head .label { display: block; margin-bottom: 24px; }
+  .sec-head h2 {
+    font-size: clamp(36px, 3.7vw, 52px); line-height: 1.14; margin: 0 0 16px;
+    color: var(--ink); max-width: 620px;
+  }
+  .sec-head p { margin: 0; font-size: 16px; line-height: 1.65; color: var(--ink-2); max-width: 510px; }
 
   /* Семейства */
   .fam-grid {
@@ -409,7 +435,7 @@
   .chart-top { display: flex; align-items: baseline; gap: 12px; margin-bottom: 9px; }
   .chart-top .nm { font-size: 16px; font-weight: 600; color: var(--ink); }
   .chart-top .val {
-    margin-left: auto; font-family: "IBM Plex Sans Condensed", sans-serif;
+    margin-left: auto; font-family: "IBM Plex Sans", sans-serif;
     font-weight: 700; font-size: 26px; color: var(--ink); font-variant-numeric: tabular-nums;
   }
   .chart-top .val small { font-family: "IBM Plex Mono", monospace; font-size: 12px; font-weight: 400; color: var(--ink-2); }
@@ -553,7 +579,7 @@
   .chevrons { position: relative; overflow: hidden; isolation: isolate; }
   .chevrons::before {
     content: ""; position: absolute; inset: 0; z-index: -1;
-    background: url("../img/chevrons.jpg") no-repeat right center;
+    background: url("../img/chevrons.webp") no-repeat right center;
     background-size: auto 118%;
     -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 68%);
             mask-image: linear-gradient(to right, transparent 0%, #000 68%);
@@ -657,7 +683,7 @@
     padding-bottom: 14px; border-bottom: 2px solid var(--ink);
   }
   .toolbar .found {
-    font-family: "IBM Plex Sans Condensed", sans-serif; font-weight: 700;
+    font-family: "IBM Plex Sans", sans-serif; font-weight: 500; letter-spacing: -.03em;
     font-size: 21px; color: var(--ink);
   }
   .toolbar .found span { color: var(--ink-3); font-weight: 400; font-size: 15px; }
@@ -686,7 +712,7 @@
     padding: 22px 0; border-bottom: 1px solid var(--rule-soft);
   }
   .row .nm {
-    font-family: "IBM Plex Sans Condensed", sans-serif; font-weight: 700;
+    font-family: "IBM Plex Sans", sans-serif; font-weight: 500; letter-spacing: -.03em;
     font-size: 21px; color: var(--ink); margin: 0 0 4px;
   }
   .row .nm a:hover { color: var(--blue); }
@@ -696,6 +722,12 @@
     margin-bottom: 7px;
   }
   .row .sub { font-size: 15px; color: var(--ink-2); margin: 0 0 13px; max-width: 62ch; }
+  .act-quiet {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 40px; font-size: 13px; color: var(--ink-3);
+    border-bottom: 1px solid transparent; transition: color .15s ease;
+  }
+  .act-quiet:hover { color: var(--red-ink); }
   .specs {
     display: flex; flex-wrap: wrap; gap: 0;
     border-top: 1px solid var(--rule-soft);
@@ -888,7 +920,7 @@
   .fam-nums { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); border-top: 1px solid var(--dark-rule); }
   .fam-nums div { padding: 16px 20px 0 0; }
   .fam-nums .v {
-    font-family: "IBM Plex Sans Condensed", sans-serif; font-weight: 700; font-size: 26px;
+    font-family: "IBM Plex Sans", sans-serif; font-weight: 500; letter-spacing: -.03em; font-size: 26px;
     color: #FFFFFF; font-variant-numeric: tabular-nums; line-height: 1.1;
   }
   .fam-nums .v.nd { color: var(--gold); font-size: 21px; }

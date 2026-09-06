@@ -87,7 +87,7 @@
     // второй. Иначе 2200 stroke за кадр.
     ctx.lineWidth = 1;
     for (var pass = 0; pass < 2; pass++) {
-      ctx.strokeStyle = pass ? 'rgba(96,168,238,.42)' : 'rgba(112,144,182,.11)';
+      ctx.strokeStyle = pass ? 'rgba(211,67,73,.40)' : 'rgba(150,169,183,.12)';
       ctx.beginPath();
       for (var j = 0; j < rows; j++) {
         for (var i = 0; i < cols; i++) {
@@ -110,7 +110,7 @@
     for (var n = 0; n < pts.length; n++) {
       var q = pts[n];
       if (q.m < 0.1) continue;                 // в покое узлы не рисуем: их держат нити
-      ctx.fillStyle = 'rgba(120,180,244,' + (0.15 + q.m * 0.6) + ')';
+      ctx.fillStyle = 'rgba(213,83,86,' + (0.15 + q.m * 0.65) + ')';
       var sz = q.m > 0.6 ? 3 : 2.2;
       ctx.fillRect(q.x - sz / 2, q.y - sz / 2, sz, sz);
     }
