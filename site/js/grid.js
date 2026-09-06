@@ -4,9 +4,10 @@
  * поверхности. Узлы держатся на пружине и возвращаются на место, поэтому
  * покой у сетки строгий — никакого постоянного дрожания.
  *
- * Яркость узла считается от его смещения: спокойная сетка почти не видна,
- * а под курсором и по фронту волны сама проступает. Это и есть весь эффект,
- * никакого свечения сверху.
+ * Сетка держится нитями между соседями, а не россыпью точек: гнётся именно
+ * нить, и деформация читается. Яркость считается от смещения — спокойная
+ * сетка едва различима, а под курсором и по фронту волны проступает сама.
+ * Никакого свечения сверху.
  */
 (function () {
   var cv = document.getElementById('grid');
@@ -34,7 +35,7 @@
     pts = new Array(cols * rows);
     for (var j = 0; j < rows; j++)
       for (var i = 0; i < cols; i++)
-        pts[j * cols + i] = { bx: i * STEP, by: j * STEP, x: i * STEP, y: j * STEP, vx: 0, vy: 0 };
+        pts[j * cols + i] = { bx: i * STEP, by: j * STEP, x: i * STEP, y: j * STEP, vx: 0, vy: 0, m: 0 };
   }
 
   function step(t) {
@@ -77,13 +78,41 @@
       p.x += p.vx * dt; p.y += p.vy * dt;
 
       var ox = p.x - p.bx, oy = p.y - p.by;
-      var m = Math.min(Math.sqrt(ox * ox + oy * oy) / 22, 1);
-      var a = 0.17 + m * 0.62;
-      ctx.fillStyle = m > 0.42
-        ? 'rgba(96,168,238,' + a + ')'
-        : 'rgba(120,152,190,' + a + ')';
-      var sz = m > 0.6 ? 3 : 2.2;
-      ctx.fillRect(p.x - sz / 2, p.y - sz / 2, sz, sz);
+      p.m = Math.min(Math.sqrt(ox * ox + oy * oy) / 22, 1);
+    }
+
+    // Нити между соседями. Без них узлы читаются россыпью точек, а не
+    // сеткой, и вся деформация пропадает: гнётся именно нить.
+    // Два прохода вместо тысячи обводок: покой одной линией, возмущённое —
+    // второй. Иначе 2200 stroke за кадр.
+    ctx.lineWidth = 1;
+    for (var pass = 0; pass < 2; pass++) {
+      ctx.strokeStyle = pass ? 'rgba(96,168,238,.42)' : 'rgba(112,144,182,.11)';
+      ctx.beginPath();
+      for (var j = 0; j < rows; j++) {
+        for (var i = 0; i < cols; i++) {
+          var p0 = pts[j * cols + i];
+          var hot = p0.m > 0.14;
+          if (hot !== !!pass) continue;
+          if (i < cols - 1) {
+            var pr = pts[j * cols + i + 1];
+            ctx.moveTo(p0.x, p0.y); ctx.lineTo(pr.x, pr.y);
+          }
+          if (j < rows - 1) {
+            var pd = pts[(j + 1) * cols + i];
+            ctx.moveTo(p0.x, p0.y); ctx.lineTo(pd.x, pd.y);
+          }
+        }
+      }
+      ctx.stroke();
+    }
+
+    for (var n = 0; n < pts.length; n++) {
+      var q = pts[n];
+      if (q.m < 0.1) continue;                 // в покое узлы не рисуем: их держат нити
+      ctx.fillStyle = 'rgba(120,180,244,' + (0.15 + q.m * 0.6) + ')';
+      var sz = q.m > 0.6 ? 3 : 2.2;
+      ctx.fillRect(q.x - sz / 2, q.y - sz / 2, sz, sz);
     }
     raf = requestAnimationFrame(step);
   }
