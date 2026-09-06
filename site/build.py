@@ -293,7 +293,8 @@ def index_page():
     return page(path='index.html',
         title='ФОГОД — промышленные фильтры для очистки жидкостей',
         desc='Самоочищающиеся гидродинамические фильтры ТМ ФОГОД. Очистка воды, масла и СОЖ от механических примесей: 3–8000 м³/ч, до 25 мкм, 2–25 бар. Изготовление по вашему ТЗ.',
-        body=body + '\n<script src="assets/js/index.js" defer></script>', active='')
+        body=body + '\n<script src="assets/js/index.js" defer></script>'
+                   + '\n<script type="module" src="assets/js/hero3d.js"></script>', active='')
 
 def katalog_page():
     rows = ''.join(row(r, '') for r in DATA)
@@ -406,6 +407,12 @@ def assets():
     turn_src = os.path.join(SRC, 'assets', 'turn')
     if os.path.isdir(turn_src):
         shutil.copytree(turn_src, os.path.join(img_dir, 'turn'), dirs_exist_ok=True)
+    for sub in ('model', 'vendor'):
+        src_dir = os.path.join(SRC, 'assets', sub)
+        if os.path.isdir(src_dir):
+            dst = os.path.join(OUT, 'assets', 'js', 'vendor') if sub == 'vendor' \
+                  else os.path.join(OUT, 'assets', sub)
+            shutil.copytree(src_dir, dst, dirs_exist_ok=True)
     vid_dir = os.path.join(OUT, 'assets', 'video')
     os.makedirs(vid_dir, exist_ok=True)
     shutil.copy(os.path.join(SRC, 'assets', 'fogod-filter-demo.mp4'),
@@ -429,8 +436,9 @@ def scripts():
     for name in ('katalog', 'podbor', 'index'):
         body = open(os.path.join(ROOT, 'js', name + '.js'), encoding='utf-8').read()
         open(os.path.join(js_dir, name + '.js'), 'w', encoding='utf-8').write(shared + body)
-    # сетка идёт на каждую страницу и данных не требует
-    shutil.copy(os.path.join(ROOT, 'js', 'grid.js'), os.path.join(js_dir, 'grid.js'))
+    # сетка и трёхмерный герой данных не требуют, копируются как есть
+    for name in ('grid.js', 'hero3d.js'):
+        shutil.copy(os.path.join(ROOT, 'js', name), os.path.join(js_dir, name))
 
 def sitemap(paths):
     today = datetime.date.today().isoformat()
