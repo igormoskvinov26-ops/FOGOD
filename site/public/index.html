@@ -111,6 +111,29 @@
   </div>
 </div>
 
+<section class="claim chevrons">
+  <div class="shell claim-inner">
+    <div class="claim-fig">
+      <span class="claim-num">0<i>%</i></span>
+      <span class="claim-cap">потери на самоочистку<br>у полнопоточного ОВГД</span>
+    </div>
+    <div class="claim-body">
+      <h2>Самоочистка не стоит вам ни литра</h2>
+      <p>Полнопоточный ОВГД возвращает жидкость в линию: шлам уходит в
+         бункер-гидроциклон, среда остаётся в контуре. Неполнопоточный
+         сбрасывает через коллектор и теряет <b>до 10 % расхода</b>.</p>
+      <div class="claim-calc">
+        <label for="claim-q">Ваш расход</label>
+        <input id="claim-q" type="number" inputmode="numeric" min="1" max="8000" value="120">
+        <span class="claim-unit">м³/ч</span>
+        <output id="claim-out"></output>
+      </div>
+      <p class="claim-note">Арифметика от вашего числа, без допущений о режиме
+         работы объекта.</p>
+    </div>
+  </div>
+</section>
+
 <section class="band" id="katalog">
   <div class="shell">
     <div class="sec-head">
@@ -209,6 +232,30 @@
       <span class="label">Принцип работы</span>
       <h2>Отделение частиц центробежной силой</h2>
       <p>Фильтр-гидроциклон идёт в составе ОВГД или как отдельный аппарат.</p>
+    </div>
+
+    <div class="demo">
+      <div class="demo-video">
+        <video controls muted playsinline preload="none"
+               poster="assets/img/filter-poster.jpg"
+               aria-label="Анимация работы гидродинамического фильтра ОВГД">
+          <source src="assets/video/filter-demo.mp4" type="video/mp4">
+          Ваш браузер не воспроизводит видео.
+          <a href="assets/video/filter-demo.mp4">Скачать файл</a>.
+        </video>
+      </div>
+      <div class="demo-side">
+        <span class="label">Техническая демонстрация</span>
+        <h3>Полнопоточный ОВГД в работе</h3>
+        <p>Анимация работы аппарата на трубопроводе: подвод загрязнённой
+           среды, отделение шлама, отвод в бункер. Основной процесс при
+           этом не останавливается.</p>
+        <ul class="demo-list">
+          <li><b>01</b> Загрязнения задерживаются фильтроэлементом</li>
+          <li><b>02</b> Шлам отводится в бункер-гидроциклон</li>
+          <li><b>03</b> Очищенная среда возвращается в линию</li>
+        </ul>
+      </div>
     </div>
 
     <div class="princip-fig">

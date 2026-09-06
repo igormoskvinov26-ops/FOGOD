@@ -126,3 +126,30 @@
   });
   show('pp');
 })();
+
+/* Счётчик потерь в секции аргумента.
+ * Считает ровно то, что можно посчитать: 10 % расхода за 1000 часов работы.
+ * Часов в году не выдумываем — режим объекта нам неизвестен, а 1000 часов
+ * заказчик пересчитает под себя в уме.
+ */
+(function () {
+  var inp = document.getElementById('claim-q');
+  var out = document.getElementById('claim-out');
+  if (!inp || !out) return;
+
+  function fmt(n) {
+    return Math.round(n).toLocaleString('ru-RU').replace(/\u00a0/g, ' ');
+  }
+  function run() {
+    var q = parseFloat(inp.value);
+    if (!isFinite(q) || q <= 0) {
+      out.textContent = 'Введите расход, чтобы увидеть разницу.';
+      return;
+    }
+    q = Math.min(q, 8000);
+    out.innerHTML = 'Неполнопоточный сбросит до <b>' + fmt(q * 0.10 * 1000) +
+                    ' м³</b> за 1000 часов работы. Полнопоточный — <b>0 м³</b>.';
+  }
+  inp.addEventListener('input', run);
+  run();
+})();

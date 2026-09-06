@@ -406,6 +406,12 @@ def assets():
     turn_src = os.path.join(SRC, 'assets', 'turn')
     if os.path.isdir(turn_src):
         shutil.copytree(turn_src, os.path.join(img_dir, 'turn'), dirs_exist_ok=True)
+    vid_dir = os.path.join(OUT, 'assets', 'video')
+    os.makedirs(vid_dir, exist_ok=True)
+    shutil.copy(os.path.join(SRC, 'assets', 'fogod-filter-demo.mp4'),
+                os.path.join(vid_dir, 'filter-demo.mp4'))
+    shutil.copy(os.path.join(SRC, 'assets', 'fogod-filter-poster.jpg'),
+                os.path.join(img_dir, 'filter-poster.jpg'))
     for name in ('logo-blue.png', 'logo-white.png', 'ovgd-pp.png', 'ovgd-npp.png'):
         shutil.copy(os.path.join(SRC, 'assets', name), os.path.join(img_dir, name))
     shutil.copy(os.path.join(SRC, 'assets', 'chevrons-alpha.webp'),
