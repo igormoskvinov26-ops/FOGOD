@@ -66,6 +66,14 @@ def page(*, path, title, desc, body, active='', crumbs=None):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap">
 <link rel="stylesheet" href="{base}assets/css/main.css">
+<script>
+/* Флаг проявления ставится ДО отрисовки. Если поставить его из отложенного
+   скрипта, страница сначала покажет блоки, потом спрячет их и приведёт
+   обратно — заметное мигание. И если движение в системе выключено, флага
+   нет вовсе: тогда прятать нечего. */
+try {{ if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window)
+  document.documentElement.classList.add('has-reveal'); }} catch (e) {{}}
+</script>
 </head>
 <body>
 <canvas id="grid" aria-hidden="true"></canvas>
@@ -116,6 +124,7 @@ def page(*, path, title, desc, body, active='', crumbs=None):
   </div>
 </div></footer>
 <script src="{base}assets/js/grid.js" defer></script>
+<script src="{base}assets/js/scroll.js" defer></script>
 </body>
 </html>
 '''
@@ -437,7 +446,7 @@ def scripts():
         body = open(os.path.join(ROOT, 'js', name + '.js'), encoding='utf-8').read()
         open(os.path.join(js_dir, name + '.js'), 'w', encoding='utf-8').write(shared + body)
     # сетка и трёхмерный герой данных не требуют, копируются как есть
-    for name in ('grid.js', 'hero3d.js'):
+    for name in ('grid.js', 'hero3d.js', 'scroll.js'):
         shutil.copy(os.path.join(ROOT, 'js', name), os.path.join(js_dir, name))
 
 def sitemap(paths):

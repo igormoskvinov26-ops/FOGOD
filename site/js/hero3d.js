@@ -185,6 +185,24 @@ async function boot() {
     picker.addEventListener('focusout', () => { tFocus = 0; });
   }
 
+  /* Доворот при прокрутке: пока первый экран уходит вверх, аппарат
+     поворачивается на треть предела. Это не украшение — уходя, изделие
+     показывает вторую сторону, а не просто уезжает. Ручное вращение
+     важнее: пока тянут мышью, прокрутка в поворот не вмешивается. */
+  let scrollYaw = 0;
+  if (!reduced) {
+    let sraf = 0;
+    const onScroll = () => {
+      sraf = 0;
+      const r = stage.getBoundingClientRect();
+      const k = Math.max(0, Math.min(1, -r.top / Math.max(1, r.height)));
+      scrollYaw = k * CFG.yaw * 0.34;
+    };
+    addEventListener('scroll', () => { if (!sraf) sraf = requestAnimationFrame(onScroll); },
+                     { passive: true });
+    onScroll();
+  }
+
   function size() {
     const r = stage.getBoundingClientRect();
     if (!r.width || !r.height) return;
@@ -202,7 +220,7 @@ async function boot() {
     pitch += (tPitch - pitch) * k;
     focus += (tFocus - focus) * k;
     const idle = reduced || drag || tFocus ? 0 : Math.sin(t * 0.00034) * 0.05;
-    pivot.rotation.set(pitch, yaw + idle, 0);
+    pivot.rotation.set(pitch, yaw + idle + (drag ? 0 : scrollYaw), 0);
     slide.position.x = focus * radius * 0.42;
     slide.scale.setScalar(1 - focus * 0.14);
     renderer.render(scene, camera);

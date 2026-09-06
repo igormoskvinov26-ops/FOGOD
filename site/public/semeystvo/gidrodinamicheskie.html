@@ -13,6 +13,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap">
 <link rel="stylesheet" href="../assets/css/main.css">
+<script>
+/* Флаг проявления ставится ДО отрисовки. Если поставить его из отложенного
+   скрипта, страница сначала покажет блоки, потом спрячет их и приведёт
+   обратно — заметное мигание. И если движение в системе выключено, флага
+   нет вовсе: тогда прятать нечего. */
+try { if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window)
+  document.documentElement.classList.add('has-reveal'); } catch (e) {}
+</script>
 </head>
 <body>
 <canvas id="grid" aria-hidden="true"></canvas>
@@ -129,5 +137,6 @@
   </div>
 </div></footer>
 <script src="../assets/js/grid.js" defer></script>
+<script src="../assets/js/scroll.js" defer></script>
 </body>
 </html>
