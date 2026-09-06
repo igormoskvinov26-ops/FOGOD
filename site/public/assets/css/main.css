@@ -305,7 +305,7 @@
     gap: 48px; align-items: center; margin-bottom: 64px;
   }
   .demo-video {
-    background: var(--navy-deep); border: 1px solid var(--rule);
+    background: var(--navy-deep); border: 0;
     border-radius: 4px; overflow: hidden; line-height: 0;
   }
   .demo-video video { width: 100%; height: auto; display: block; }
@@ -473,17 +473,20 @@
   .sec-head p { margin: 0; font-size: 16px; line-height: 1.65; color: var(--ink-2); max-width: 510px; }
 
   /* Семейства */
+  /* Рамки убраны намеренно: клетка из волосяных линий читается как
+     таблица и шумит. Разделяет воздух, а принадлежность к ряду держит
+     одна линия сверху карточки. */
   .fam-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    border-top: 1px solid var(--rule); border-left: 1px solid var(--rule);
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2px 40px;
   }
   .fam-card {
-    border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
-    padding: 24px 24px 24px; display: block; background: var(--surface);
-    transition: background .12s ease;
+    border-top: 1px solid var(--rule); padding: 22px 0 30px;
+    display: block; background: none;
+    transition: border-color .15s ease;
   }
-  section.band.alt .fam-card { background: var(--paper); }
-  .fam-card:hover { background: var(--blue-wash); }
+  section.band.alt .fam-card { background: none; }
+  .fam-card:hover { background: none; border-top-color: var(--ink-3); }
   .fam-card .n {
     font-family: "IBM Plex Mono", monospace; font-size: 12px;
     color: var(--ink-3); letter-spacing: .12em;
@@ -539,10 +542,10 @@
   @media (max-width: 860px) { .steps { grid-template-columns: 1fr; gap: 32px; } }
 
   /* Применение */
-  .apply { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  .apply { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 2px 36px; background: none; }
   .apply .t { overflow-wrap: anywhere; }
-  .apply div { background: var(--surface); padding: 20px 20px 24px; }
-  section.band.alt .apply div { background: var(--paper); }
+  .apply div { background: none; padding: 20px 0 26px; border-top: 1px solid var(--rule); }
+  section.band.alt .apply div { background: none; }
   .apply .t { font-size: 15px; font-weight: 600; color: var(--ink); line-height: 1.35; }
   .apply .m { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--ink-3); margin-top: 7px; }
   @media (max-width: 940px) { .apply { grid-template-columns: repeat(2, minmax(0,1fr)); } }
@@ -832,8 +835,8 @@
   .zone-note { margin: 12px 0 0; font-size: 13px; color: var(--ink-3); max-width: var(--measure); }
 
   .empty {
-    border: 1px solid var(--rule); background: var(--surface);
-    padding: 32px 32px; margin-top: 22px;
+    border: 0; border-left: 2px solid var(--gold); background: var(--surface);
+    padding: 28px 32px; margin-top: 22px;
   }
   .empty h3 { font-size: 21px; margin: 0 0 10px; color: var(--ink); }
   .empty p { margin: 0 0 18px; color: var(--ink-2); max-width: 56ch; }
@@ -866,6 +869,10 @@
   .card-head h1 { font-size: clamp(30px, 3.4vw, 42px); margin: 0 0 12px; color: var(--ink); }
   .card-head p { margin: 0; font-size: 18px; color: var(--ink-2); max-width: var(--measure); }
 
+  /* Под плотными данными сетка приглушается: решётка, просвечивающая
+     сквозь таблицу ТТХ, — тот же визуальный шум, что и лишние рамки,
+     только фоновый. Полосы остаются полупрозрачными, но плотнее. */
+  .card-body, .wiz, .work { background: rgba(9, 12, 15, .82); }
   .card-body { padding: 40px 0 80px; }
   .card-body .shell { display: grid; grid-template-columns: minmax(0,1fr) 380px; gap: 56px; align-items: start; }
 
@@ -895,7 +902,7 @@
   .card-text p:last-child { margin-bottom: 0; }
 
   .card-body .shell > div:last-child { position: sticky; top: 24px; }
-  .aside-panel { border: 1px solid var(--rule); background: var(--surface); padding: 24px; }
+  .aside-panel { border: 0; background: var(--surface); padding: 28px; }
   .aside-panel h3 { font-size: 21px; margin: 0 0 8px; color: var(--ink); }
   .aside-panel p { margin: 0 0 16px; font-size: 15px; color: var(--ink-2); }
   .aside-panel .btn { width: 100%; margin-bottom: 8px; }
@@ -955,7 +962,7 @@
   .step-item.is-now .n { color: var(--blue); }
   .step-item.is-done { color: var(--ink-2); }
 
-  .wiz-panel { border: 1px solid var(--rule); background: var(--surface); padding: 32px; }
+  .wiz-panel { border: 0; background: var(--surface); padding: 36px; }
   .wiz-panel .label { display: block; margin-bottom: 12px; }
   .wiz-panel h2 {
     font-size: 32px; margin: 0 0 8px; color: var(--ink);
