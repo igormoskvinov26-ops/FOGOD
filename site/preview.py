@@ -107,6 +107,11 @@ select{background:#12293F;color:#fff;border:1px solid #24486E;border-radius:0;
 .stage.w375 .frame{width:375px;border-left:1px solid #1E3A5C;border-right:1px solid #1E3A5C}
 .stage.w900 .frame{width:900px;border-left:1px solid #1E3A5C;border-right:1px solid #1E3A5C}
 iframe{display:block;width:100%;height:100%;border:0}
+#inline{display:none}
+body.is-inline .stage{display:block;overflow:auto}
+body.is-inline .frame{width:100%;height:auto;background:transparent}
+body.is-inline iframe{display:none}
+body.is-inline #inline{display:block}
 @media (max-width:640px){ .note{display:none} .bar{gap:10px;padding:0 10px} }
 </style>
 
@@ -121,7 +126,7 @@ iframe{display:block;width:100%;height:100%;border:0}
     <button data-w="" aria-pressed="true">Во всю</button>
   </div>
 </div>
-<div class="stage" id="stage"><div class="frame"><iframe id="fr" title="Страница сайта"></iframe></div></div>
+<div class="stage" id="stage"><div class="frame"><iframe id="fr" title="Страница сайта"></iframe><div id="inline"></div></div></div>
 
 <script>
 (function(){
@@ -157,8 +162,50 @@ iframe{display:block;width:100%;height:100%;border:0}
     return html.replace(/__IMG:([\w.\-]+)__/g, function(m, n){ return D.imgs[n] || m; });
   }
 
+  var inline = false, loaded = {};
+
+  function showInline(page, frag){
+    var host = document.getElementById('inline');
+    host.innerHTML = imgs(D.bodies[page]);
+    (D.perPage[page] || []).forEach(function (n) {
+      if (loaded[n]) return;                 // слушатели вешаются на документ,
+      loaded[n] = true;                      // повторный запуск их бы удвоил
+      var sc = document.createElement('script');
+      sc.textContent = D.scripts[n] || '';
+      document.body.appendChild(sc);
+    });
+    if (frag) {
+      var t = document.getElementById(frag);
+      if (t) t.scrollIntoView();
+    }
+    document.getElementById('stage').scrollTop = frag ? document.getElementById('stage').scrollTop : 0;
+  }
+
+  function goInline(){
+    if (inline) return;
+    inline = true;
+    document.body.classList.add('is-inline');
+    var st = document.createElement('style');
+    st.textContent = D.css;
+    document.head.appendChild(st);
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a');
+      if (!a) return;
+      if (a.closest('.bar')) return;
+      var h = a.getAttribute('href') || '';
+      if (h.slice(0, 2) === '#/') { e.preventDefault(); location.hash = h; }
+    });
+    cur = '';
+    route();
+  }
+
   function show(page, frag){
     if (!D.bodies[page]) page = '404.html';
+    if (inline) {
+      if (page !== cur) { cur = page; nav.value = page; showInline(page, frag); }
+      else if (frag) { var t = document.getElementById(frag); if (t) t.scrollIntoView({behavior:'smooth'}); }
+      return;
+    }
     if (page !== cur) {
       var js = (D.perPage[page] || []).map(function (n) { return D.scripts[n] || ''; }).join('\n;\n');
       fr.srcdoc = '<!doctype html><html lang="ru"><head><meta charset="utf-8">' +
@@ -170,6 +217,11 @@ iframe{display:block;width:100%;height:100%;border:0}
         '</body></html>';
       cur = page;
       nav.value = page;
+      setTimeout(function () {                // iframe мог быть запрещён песочницей
+        var d = null;
+        try { d = fr.contentDocument; } catch (e) {}
+        if (!d || !d.body || !d.body.children.length) goInline();
+      }, 700);
     } else if (frag) {
       var t = fr.contentDocument && fr.contentDocument.getElementById(frag);
       if (t) t.scrollIntoView({behavior: 'smooth'});
@@ -215,8 +267,11 @@ def main():
                          ensure_ascii=False).replace('</', r'<\/')
     os.makedirs(OUT, exist_ok=True)
     path = os.path.join(OUT, 'wfogod-preview.html')
+    # <title> должен лежать в самом начале файла: публикатор ищет его
+    # только в первых килобайтах, а блок данных занимает больше мегабайта
+    head, rest = SHELL.split('\n', 1)
     open(path, 'w', encoding='utf-8').write(
-        '<script>window.__PREVIEW__ = ' + payload + ';</script>\n' + SHELL)
+        head + '\n<script>window.__PREVIEW__ = ' + payload + ';</script>\n' + rest)
     kb = os.path.getsize(path) // 1024
     print('Превью: %d страниц, %d КБ -> %s' % (len(bodies), kb, path))
 
