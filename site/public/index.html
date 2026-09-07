@@ -76,9 +76,25 @@ try { if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'Intersecti
 
     <div class="hero-stage">
       <div class="hero-params" id="hero-params"></div>
+      <!-- Чертёжный слой. Выноски привязаны к точкам модели и пересчитываются
+           каждый кадр: аппарат вращается — вместе с ним едут и они. В макете
+           v10 этот слой статичен поверх вращающегося холста, поэтому там
+           выноска через полсекунды показывает в пустоту. -->
+      <div class="hero-draft" id="hero-draft" aria-hidden="true">
+        <svg class="hd-svg"><g class="hd-lines"></g></svg>
+        <span class="hd-coord"><span>47°14′ N</span><span>39°42′ E</span><span>Проекция 3/4 · ось A—A</span></span>
+        <span class="hd-call" data-i="1"><b>01</b><i>Корпус фильтра</i></span>
+        <span class="hd-call" data-i="2"><b>02</b><i>Ревизионная крышка</i></span>
+        <span class="hd-call" data-i="3"><b>03</b><i>Бункер-гидроциклон</i></span>
+      </div>
       <div class="hero-shots">
         <img class="hero-shot" id="shot-pp"  src="assets/img/turn/pp-00.webp"  alt="ОВГД полнопоточный" width="643" height="402">
         <img class="hero-shot" id="shot-npp" src="assets/img/turn/npp-00.webp" alt="ОВГД неполнопоточный" width="644" height="496">
+      </div>
+      <div class="hero-block" id="hero-block">
+        <div><span>Обозначение</span><b>109.00.00</b></div>
+        <div><span>Исполнение</span><b class="hb-mode">Полнопоточное</b></div>
+        <div><span>Модель</span><b>Сборочная, CAD</b></div>
       </div>
       <span class="hero-drag">Зажмите и вращайте</span>
     </div>

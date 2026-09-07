@@ -303,12 +303,74 @@
   .hero-canvas.is-drag { cursor: grabbing; }
   .hero-shots.is-3d .hero-shot { opacity: 0; }
   .hero-drag {
-    position: absolute; left: 50%; transform: translateX(-50%);
-    bottom: -10px; display: none; white-space: nowrap;
+    position: absolute; right: 0; bottom: -2px; display: none; white-space: nowrap;
     font-family: "IBM Plex Mono", monospace; font-size: 11px;
     letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3);
   }
   .hero-shots.is-3d + .hero-drag, .is-3d ~ .hero-drag { display: block; }
+
+  /* ── Чертёжный слой героя ─────────────────────────────────────────────
+     Появляется только когда трёхмерная сцена действительно запустилась:
+     класс ставит hero3d.js. Без WebGL и без скриптов слоя нет вовсе —
+     иначе выноски указывали бы на статичную картинку в других местах.
+
+     Два состояния, а не одно. В покое сцена держит характеристики: это
+     то, ради чего инженер сюда пришёл. Как только он берёт модель
+     мышью, характеристики уходят и приходят выноски — аппарат на
+     секунду становится чертежом. Показывать оба набора разом нельзя,
+     они делят одно поле и складываются в шум.  */
+  .hero-draft {
+    position: absolute; inset: 0; z-index: 3; pointer-events: none;
+    opacity: 0; transition: opacity .5s ease;
+    font-family: "IBM Plex Mono", monospace;
+  }
+  .hero-stage.is-draft .hero-draft { opacity: 1; }
+  .hero-params { transition: opacity .35s ease; }
+  .hero-stage.is-insp .hero-params { opacity: 0; }
+  .hd-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .hd-svg .lead, .hd-svg .dot { opacity: 0; transition: opacity .3s ease; }
+  .hd-svg .lead { fill: none; stroke: var(--draft); stroke-width: 1; }
+  .hd-svg .dot { fill: none; stroke: var(--draft); stroke-width: 1; }
+  .hero-stage.is-insp .hd-svg .lead { opacity: .5; }
+  .hero-stage.is-insp .hd-svg .dot { opacity: .75; }
+  .hd-svg .axis { stroke: var(--draft); stroke-width: 1; opacity: .22; stroke-dasharray: 14 5 3 5; }
+  .hd-svg .mark { fill: none; stroke: var(--draft); stroke-width: 1; opacity: .4; }
+  .hd-svg .mark-t {
+    fill: var(--draft); opacity: .7; font-family: "IBM Plex Mono", monospace;
+    font-size: 11px; text-anchor: middle; dominant-baseline: central;
+  }
+  .hd-coord {
+    position: absolute; left: 0; top: 0; display: grid; gap: 3px;
+    font-size: 10px; letter-spacing: .1em; color: var(--ink-3);
+  }
+  .hd-call {
+    position: absolute; left: 0; white-space: nowrap;
+    display: flex; align-items: baseline; gap: 8px;
+    font-size: 11px; letter-spacing: .04em; color: var(--ink-2);
+    transform: translateY(-50%); opacity: 0; transition: opacity .3s ease;
+  }
+  .hero-stage.is-insp .hd-call.on { opacity: 1; }
+  .hd-call b { font-weight: 500; font-size: 10px; color: var(--red-ink); }
+  .hd-call i { font-style: normal; }
+
+  /* Основная надпись: то же, что штамп на чертеже. Держит нижнюю кромку
+     сцены и объясняет, что именно крутится, — это модель изделия, а не
+     украшение. Появляется вместе со сценой. */
+  .hero-block {
+    position: absolute; left: 0; right: 150px; bottom: -12px;
+    display: none; gap: 26px; flex-wrap: wrap;
+    padding-top: 10px; border-top: 1px solid var(--rule-soft);
+  }
+  .hero-stage.is-draft .hero-block { display: flex; }
+  .hero-block span {
+    display: block; font-family: "IBM Plex Mono", monospace; font-size: 9px;
+    letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3);
+    margin-bottom: 3px;
+  }
+  .hero-block b {
+    font-family: "IBM Plex Mono", monospace; font-size: 12px;
+    font-weight: 400; color: var(--ink-2);
+  }
 
   .hero-params {
     position: absolute; left: 0; top: 50%; transform: translateY(-50%);

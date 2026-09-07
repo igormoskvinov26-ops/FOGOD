@@ -17,6 +17,17 @@
 const CFG = {
   three: 'assets/js/vendor/three.module.min.js',
   model: { pp: 'assets/model/ovgd-pp.glb', npp: 'assets/model/ovgd-npp.glb' },
+  /* Выноски. Точки заданы долями габарита, поэтому переживают замену
+     модели; подписи разные, потому что низ у исполнений действительно
+     разный: у полнопоточного бункер-гидроциклон, у неполнопоточного
+     коллектор сброса. Это подтверждено сборочным чертежом. */
+  marks: {
+    pp: ['Корпус фильтра', 'Ревизионная крышка', 'Бункер-гидроциклон'],
+    npp: ['Корпус фильтра', 'Ревизионная крышка', 'Коллектор сброса'],
+  },
+  mode: { pp: 'Полнопоточное', npp: 'Неполнопоточное' },
+  at: [[-0.12, 0.02, 0.42], [-0.10, 0.44, 0.16], [0.40, -0.08, 0.14]],
+  labelY: [0.46, 0.16, 0.80],
   yaw: 0.58,          // предел поворота по горизонтали, рад
   pitch: 0.24,        // предел по вертикали от экватора
   start: -0.32,
@@ -133,15 +144,25 @@ async function boot() {
   const cache = {};
   let current = null, radius = 1;
 
+  const marks = CFG.at.map(() => new THREE.Object3D());
+  marks.forEach(m => pivot.add(m));
+
   function frame() {
-    const box = new THREE.Box3().setFromObject(pivot);
+    if (!current) return;
+    // сброс до замера: иначе повторный показ той же модели центрирует её
+    // второй раз и уводит из кадра
+    current.position.set(0, 0, 0);
+    current.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(current);
     if (box.isEmpty()) return;
     const size = box.getSize(new THREE.Vector3());
     const centre = box.getCenter(new THREE.Vector3());
-    pivot.children.forEach(o => o.position.sub(centre));
+    current.position.sub(centre);
     radius = Math.max(Math.hypot(size.x, size.z) * 0.5, size.y * 0.5);
     camera.position.set(0, radius * 0.16, radius * 2.75);
     camera.lookAt(0, 0, 0);
+    marks.forEach((m, i) => m.position.set(
+      CFG.at[i][0] * size.x, CFG.at[i][1] * size.y, CFG.at[i][2] * size.z));
   }
 
   async function show(key) {
@@ -153,6 +174,7 @@ async function boot() {
     pivot.add(current);
     frame();
     stage.classList.add('is-3d');
+    draft.retitle(key);
   }
 
   // ── вращение мышью. OrbitControls не нужен: нам хватает двух углов
@@ -160,6 +182,90 @@ async function boot() {
   let yaw = CFG.start, pitch = 0, tYaw = CFG.start, tPitch = 0;
   let drag = false, lx = 0, ly = 0;
   const clamp = (v, l) => Math.max(-l, Math.min(l, v));
+
+  /* ── Чертёжный слой. Единственное, ради чего он написан руками, —
+     выноски должны ехать за моделью. Точка привязки живёт в сцене,
+     проецируется камерой в экранные координаты и каждый кадр тянет за
+     собой полку и подпись. Статичный SVG поверх вращающегося холста
+     (так сделано в макете v10) через полсекунды указывает в пустоту. */
+  const draft = (function () {
+    const box = document.getElementById('hero-draft');
+    const outer = stage.parentElement;                 // .hero-stage
+    if (!box || !outer) return { retitle() {}, sync() {} };
+    const svg = box.querySelector('.hd-svg');
+    const g = box.querySelector('.hd-lines');
+    const calls = [...box.querySelectorAll('.hd-call')];
+    const mode = document.querySelector('.hero-block .hb-mode');
+    const ns = 'http://www.w3.org/2000/svg';
+    const mk = (t, a) => { const e = document.createElementNS(ns, t);
+      for (const k in a) e.setAttribute(k, a[k]); return e; };
+
+    const axis = mk('line', { class: 'axis' });
+    const ends = [mk('circle', { class: 'mark', r: 11 }), mk('circle', { class: 'mark', r: 11 })];
+    const letters = [mk('text', { class: 'mark-t' }), mk('text', { class: 'mark-t' })];
+    letters.forEach(t => t.textContent = 'A');
+    const leads = calls.map(() => mk('path', { class: 'lead' }));
+    const dots = calls.map(() => mk('circle', { class: 'dot', r: 4 }));
+    g.append(axis, ...ends, ...letters, ...leads, ...dots);
+
+    const v = new THREE.Vector3();
+    let W = 0, H = 0, dx = 0;
+
+    function measure() {
+      const a = outer.getBoundingClientRect(), b = stage.getBoundingClientRect();
+      W = a.width; H = a.height; dx = b.left - a.left;
+      svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+      const y = H * 0.52;
+      axis.setAttribute('x1', dx + 14); axis.setAttribute('x2', W - 14);
+      axis.setAttribute('y1', y); axis.setAttribute('y2', y);
+      [dx + 14, W - 14].forEach((x, i) => {
+        ends[i].setAttribute('cx', x); ends[i].setAttribute('cy', y);
+        letters[i].setAttribute('x', x); letters[i].setAttribute('y', y);
+      });
+      calls.forEach((el, i) => el.style.top = (CFG.labelY[i] * 100) + '%');
+    }
+
+    function sync() {
+      if (!W) return;
+      marks.forEach((m, i) => {
+        m.getWorldPosition(v).project(camera);
+        const x = dx + (v.x * 0.5 + 0.5) * (W - dx);
+        const y = (-v.y * 0.5 + 0.5) * H;
+        const ly = CFG.labelY[i] * H;
+        const lx = calls[i].offsetWidth + 10;
+        // выноска, которая пошла бы назад через собственную подпись, —
+        // это не выноска. В такой кадр она просто гаснет
+        const ok = v.z < 1 && x > lx + 44;
+        calls[i].classList.toggle('on', ok);
+        leads[i].style.opacity = dots[i].style.opacity = ok ? '' : '0';
+        if (!ok) return;
+        const elbow = Math.max(lx + 30, x - Math.abs(y - ly) - 18);
+        leads[i].setAttribute('d', 'M' + x.toFixed(1) + ' ' + y.toFixed(1) +
+          'L' + elbow.toFixed(1) + ' ' + ly.toFixed(1) + 'H' + lx);
+        dots[i].setAttribute('cx', x.toFixed(1));
+        dots[i].setAttribute('cy', y.toFixed(1));
+      });
+    }
+
+    function retitle(k) {
+      (CFG.marks[k] || []).forEach((t, i) => {
+        const el = calls[i] && calls[i].querySelector('i');
+        if (el) el.textContent = t;
+      });
+      if (mode) mode.textContent = CFG.mode[k] || '';
+      outer.classList.add('is-draft');
+      measure();
+    }
+
+    const insp = on => outer.classList.toggle('is-insp', on);
+    return { retitle, sync, measure, insp };
+  })();
+
+  // Осмотр включается наведением на холст и держится, пока модель тянут:
+  // увести курсор во время вращения — обычное дело, и слой не должен
+  // мигать на полпути
+  cv.addEventListener('pointerenter', () => draft.insp(true));
+  cv.addEventListener('pointerleave', () => { if (!drag) draft.insp(false); });
 
   cv.addEventListener('pointerdown', e => {
     drag = true; lx = e.clientX; ly = e.clientY;
@@ -171,7 +277,10 @@ async function boot() {
     tPitch = clamp(tPitch - (e.clientY - ly) * 0.004, CFG.pitch);
     lx = e.clientX; ly = e.clientY;
   });
-  const stop = e => { drag = false; cv.classList.remove('is-drag'); };
+  const stop = e => {
+    drag = false; cv.classList.remove('is-drag');
+    if (!cv.matches(':hover')) draft.insp(false);
+  };
   cv.addEventListener('pointerup', stop);
   cv.addEventListener('pointercancel', stop);
 
@@ -224,10 +333,11 @@ async function boot() {
     slide.position.x = focus * radius * 0.42;
     slide.scale.setScalar(1 - focus * 0.14);
     renderer.render(scene, camera);
+    draft.sync();
     raf = requestAnimationFrame(tick);
   }
 
-  addEventListener('resize', size);
+  addEventListener('resize', () => { size(); draft.measure(); });
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) { cancelAnimationFrame(raf); raf = 0; }
     else if (!raf) { t0 = performance.now(); raf = requestAnimationFrame(tick); }
@@ -235,7 +345,8 @@ async function boot() {
 
   await show('pp');
   size();
-  if (reduced) renderer.render(scene, camera);
+  draft.measure();
+  if (reduced) { renderer.render(scene, camera); draft.sync(); }
   else { t0 = performance.now(); raf = requestAnimationFrame(tick); }
 
   // переключение типа берём у существующего выбора
