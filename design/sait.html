@@ -104,16 +104,38 @@
 
   .shell { max-width: var(--page); margin: 0 auto; padding: 0 var(--gut); }
 
-  /* Заголовки — Plex Mono на 500 с плотным отрицательным трекингом, а не
-     Condensed 700 и не Sans. Моноширинный на крупном кегле читается как
-     инженерный документ, а не как маркетинговая полоса — это и держит
-     «дорого». Перенесено из макета v17: там это единственный несущий
-     приём стиля помимо палитры, которая у нас уже совпадала. */
+  /* Заголовки делят роль на две, а не одну гарнитуру для всех. Первая
+     проверка была по тексту CSS макета v17 и ошиблась: --font-heading
+     там правда Mono, но крупные заголовки-события (герой, карточки
+     товара, финальный CTA) переопределены обратно на Sans точечно —
+     это видно только в computed style браузера, не в тексте каскада.
+     Живая проверка: h1 героя — Sans/500/74px, «Технические характеристики»
+     — Sans, названия карточек «Весь поток. Под контролем.» — Sans,
+     финальный «Дайте потоку правильное направление» — Sans/78px. Mono —
+     только у повторяющегося секционного h2 («Фильтрация — часть
+     технологического процесса», «Самоочищающиеся фильтры ОВГД» и т. п.)
+     и у мелких технических цифр/меток.
+     Правило здесь: h1 и h3 — крупные заявления и названия карточек,
+     остаются на Sans. h2 — повторяющийся секционный заголовок, на Mono:
+     это и даёт «инженерный документ» ровно там, где в макете. */
   h1, h2, h3, .cond {
-    font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
     font-weight: 500;
-    letter-spacing: -.03em;
     text-wrap: balance;
+  }
+  h1, h3, .cond {
+    font-family: "IBM Plex Sans", sans-serif;
+    letter-spacing: -.035em;
+  }
+  h2 {
+    font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+    letter-spacing: -.02em;
+  }
+  /* Событийные заголовки — не повторяющийся раздел, а разовое заявление
+     на весь холст, как финальный CTA в макете. Тот же случай, что и h1
+     героя: событие остаётся на Sans, а не на секционном Mono. */
+  .claim-body h2, .quote h2 {
+    font-family: "IBM Plex Sans", sans-serif;
+    letter-spacing: -.035em;
   }
 
   .mono, .label {
@@ -269,7 +291,7 @@
     color: var(--ink-3); letter-spacing: .1em;
   }
   .pick .pk-t {
-    font-family: "IBM Plex Mono", monospace; font-weight: 500; letter-spacing: -.02em;
+    font-family: "IBM Plex Sans", sans-serif; font-weight: 500; letter-spacing: -.035em;
     font-size: 21px; color: var(--ink); transition: color .18s ease;
   }
   .pick .pk-s {
@@ -893,7 +915,7 @@
     padding: 22px 0; border-bottom: 1px solid var(--rule-soft);
   }
   .row .nm {
-    font-family: "IBM Plex Mono", monospace; font-weight: 500; letter-spacing: -.02em;
+    font-family: "IBM Plex Sans", sans-serif; font-weight: 500; letter-spacing: -.035em;
     font-size: 21px; color: var(--ink); margin: 0 0 4px;
   }
   .row .nm a:hover { color: var(--blue); }
