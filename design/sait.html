@@ -235,7 +235,32 @@
 
   /* ══════ Герой ══════ */
 
-  .hero { background: var(--surface-a); border-bottom: 1px solid var(--rule); }
+  .hero { position: relative; overflow: hidden; background: var(--surface-a); border-bottom: 1px solid var(--rule); }
+  /* Фон героя — фото воды на весь экран, решение Игоря 08.09.2026:
+     использовать water-flow.webp из макета, несмотря на неподтверждённую
+     лицензию источника (см. CLAUDE.md, «Получено от Игоря»). Внутри
+     .hero — своя локальная укладка слоёв, отдельная от сайтовой сетки
+     #grid: фото перекрывает её здесь полностью, сетка остаётся видна
+     и интерактивна на всех секциях ниже героя, как было. */
+  .hero-water-bg {
+    position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%;
+    object-fit: cover; object-position: center 42%;
+    filter: saturate(.82) brightness(.6) contrast(1.05);
+    transition: opacity .5s ease, filter .5s ease;
+  }
+  .hero-water-wash {
+    position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background:
+      linear-gradient(100deg, var(--paper) 0%, rgba(9,12,15,.86) 34%, rgba(9,12,15,.42) 62%, rgba(9,12,15,.7) 100%),
+      linear-gradient(0deg, var(--paper) 0%, transparent 16%, transparent 84%, var(--paper) 100%);
+  }
+  .hero > .shell { position: relative; z-index: 2; }
+  /* Инженерный режим гасит фото так же, как материал модели: осмотр —
+     это уже не сцена с продуктом, а чертёж, фото там лишнее. Браузер без
+     :has() просто оставляет фото как есть — деградация не ломает вид. */
+  .hero:has(.hero-stage.is-insp) .hero-water-bg {
+    opacity: .3; filter: saturate(.25) brightness(.42) contrast(1.1);
+  }
   .hero .shell {
     display: grid; grid-template-columns: minmax(0,430px) minmax(0,1fr);
     gap: 48px; padding-top: 44px; padding-bottom: 44px; align-items: center;
@@ -1186,6 +1211,8 @@
 </header>
 
 <div class="view is-on" id="view-home"><div class="hero">
+  <img class="hero-water-bg" src="assets/img/water-flow.webp" alt="" aria-hidden="true">
+  <div class="hero-water-wash" aria-hidden="true"></div>
   <div class="shell">
     <div>
       <div class="eyebrow">

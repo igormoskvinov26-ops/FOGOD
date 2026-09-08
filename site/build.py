@@ -432,6 +432,8 @@ def assets():
         shutil.copy(os.path.join(SRC, 'assets', name), os.path.join(img_dir, name))
     shutil.copy(os.path.join(SRC, 'assets', 'chevrons-alpha.webp'),
                 os.path.join(img_dir, 'chevrons.webp'))
+    shutil.copy(os.path.join(SRC, 'assets', 'water-flow.webp'),
+                os.path.join(img_dir, 'water-flow.webp'))
     return css
 
 def data_js():
