@@ -268,7 +268,6 @@ async function boot() {
         if (el) el.textContent = t;
       });
       if (mode) mode.textContent = CFG.mode[k] || '';
-      outer.classList.add('is-draft');
       measure();
     }
 
@@ -298,16 +297,6 @@ async function boot() {
   };
   cv.addEventListener('pointerup', stop);
   cv.addEventListener('pointercancel', stop);
-
-  // ── сдвиг вправо, когда выбран тип: слева освобождается поле под параметры
-  let focus = 0, tFocus = 0;
-  const picker = document.querySelector('.hero-pick');
-  if (picker) {
-    picker.addEventListener('pointerenter', () => { tFocus = 1; });
-    picker.addEventListener('pointerleave', () => { tFocus = 0; });
-    picker.addEventListener('focusin', () => { tFocus = 1; });
-    picker.addEventListener('focusout', () => { tFocus = 0; });
-  }
 
   /* Доворот при прокрутке: пока первый экран уходит вверх, аппарат
      поворачивается на треть предела. Это не украшение — уходя, изделие
@@ -342,11 +331,8 @@ async function boot() {
     const k = 1 - Math.pow(0.001, dt);
     yaw += (tYaw - yaw) * k;
     pitch += (tPitch - pitch) * k;
-    focus += (tFocus - focus) * k;
-    const idle = reduced || drag || tFocus ? 0 : Math.sin(t * 0.00034) * 0.05;
+    const idle = reduced || drag || inspOn ? 0 : Math.sin(t * 0.00034) * 0.05;
     pivot.rotation.set(pitch, yaw + idle + (drag ? 0 : scrollYaw), 0);
-    slide.position.x = focus * radius * 0.42;
-    slide.scale.setScalar(1 - focus * 0.14);
     redBlend += ((inspOn ? 1 : 0) - redBlend) * k;
     if (current && current.userData.redMats) {
       for (const mat of current.userData.redMats) mat.color.copy(mat.userData.base).lerp(GRAPHITE, redBlend);
@@ -364,17 +350,14 @@ async function boot() {
     else if (!raf) { t0 = performance.now(); raf = requestAnimationFrame(tick); }
   });
 
+  // Герой показывает представительную модель без выбора исполнения —
+  // выбор происходит ниже, в разделе «Оборудование». Как и в макете,
+  // в герое переключателя нет.
   await show('pp');
   size();
   draft.measure();
   if (reduced) { renderer.render(scene, camera); draft.sync(); }
   else { t0 = performance.now(); raf = requestAnimationFrame(tick); }
-
-  // переключение типа берём у существующего выбора
-  document.querySelectorAll('.hero-pick .pick').forEach(b => {
-    ['mouseenter', 'focus', 'click'].forEach(ev =>
-      b.addEventListener(ev, () => show(b.dataset.key)));
-  });
 }
 
 if (document.readyState === 'complete') boot();

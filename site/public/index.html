@@ -50,8 +50,9 @@ try { if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'Intersecti
 <div class="hero">
   <img class="hero-water-bg" src="assets/img/water-flow.webp" alt="" aria-hidden="true">
   <div class="hero-water-wash" aria-hidden="true"></div>
-  <div class="shell">
-    <div>
+
+  <div class="shell hero-experience">
+    <div class="hero-copy">
       <div class="eyebrow">
         <span class="bar"></span>
         <span class="label">Отечественный производитель · более 25 лет на рынке</span>
@@ -62,43 +63,57 @@ try { if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'Intersecti
         <a class="btn lg" href="podbor.html">Подобрать фильтр</a>
         <a class="btn lg ghost" href="katalog.html">Смотреть каталог</a>
       </div>
-      <div class="hero-pick" role="tablist" aria-label="Тип гидродинамического фильтра">
-        <button class="pick" role="tab" aria-selected="true" data-key="pp">
-          <span class="pk-top"><span class="pk-n">01</span><span class="pk-t">Полнопоточные</span></span>
-          <span class="pk-s">Весь поток идёт через фильтр. Шлам уходит в бункер-гидроциклон, жидкость возвращается в линию.</span>
-          <span class="pk-bar"></span>
-        </button>
-        <button class="pick" role="tab" aria-selected="false" data-key="npp">
-          <span class="pk-top"><span class="pk-n">02</span><span class="pk-t">Неполнопоточные</span></span>
-          <span class="pk-s">Очищается часть потока в контуре. Компактнее в обвязке, сброс через коллектор.</span>
-          <span class="pk-bar"></span>
-        </button>
-      </div>
     </div>
 
-    <div class="hero-stage">
-      <div class="hero-params" id="hero-params"></div>
-      <!-- Чертёжный слой. Выноски привязаны к точкам модели и пересчитываются
-           каждый кадр: аппарат вращается — вместе с ним едут и они. В макете
-           v10 этот слой статичен поверх вращающегося холста, поэтому там
-           выноска через полсекунды показывает в пустоту. -->
-      <div class="hero-draft" id="hero-draft" aria-hidden="true">
-        <svg class="hd-svg"><g class="hd-lines"></g></svg>
-        <span class="hd-coord"><span>47°14′ N</span><span>39°42′ E</span><span>Проекция 3/4 · ось A—A</span></span>
-        <span class="hd-call" data-i="1"><b>01</b><i>Корпус фильтра</i></span>
-        <span class="hd-call" data-i="2"><b>02</b><i>Ревизионная крышка</i></span>
-        <span class="hd-call" data-i="3"><b>03</b><i>Бункер-гидроциклон</i></span>
-      </div>
-      <div class="hero-shots">
-        <img class="hero-shot" id="shot-pp"  src="assets/img/turn/pp-00.webp"  alt="ОВГД полнопоточный" width="643" height="402">
-        <img class="hero-shot" id="shot-npp" src="assets/img/turn/npp-00.webp" alt="ОВГД неполнопоточный" width="644" height="496">
+    <div class="hero-coord" aria-hidden="true"><span>47°14′ N</span><span>39°42′ E</span></div>
+
+    <!-- Панель характеристик. Появляется вместо копирайта, когда модель
+         берут мышью, — тот же приём, что чертёжный слой на аппарате: в
+         покое первый экран продаёт продукт, при осмотре превращается в
+         техдокумент. На узком экране, где 3D-сцена вообще не грузится
+         (ниже 900px, см. hero3d.js), панель открыта всегда — там нет
+         наведения, которое могло бы её показать. -->
+    <div class="hero-specs-panel" aria-hidden="true">
+      <p class="kicker">ОВГД · ФИЛЬТР 109</p>
+      <h2>Технические<br>характеристики</h2>
+      <div class="hero-params" id="hero-params">
+        <span class="p"><span class="k">Расход</span><span class="v">3–8000 м³/ч</span></span>
+        <span class="p"><span class="k">Тонкость</span><span class="v">от 25 мкм</span></span>
+        <span class="p"><span class="k">Давление</span><span class="v">2–25 бар</span></span>
+        <span class="p"><span class="k">Потери на очистку</span><span class="v good">нет</span></span>
       </div>
       <div class="hero-block" id="hero-block">
         <div><span>Обозначение</span><b>109.00.00</b></div>
         <div><span>Исполнение</span><b class="hb-mode">Полнопоточное</b></div>
         <div><span>Модель</span><b>Сборочная, CAD</b></div>
       </div>
+      <a class="btn" href="podbor.html">Подобрать фильтр</a>
+    </div>
+
+    <div class="hero-stage">
+      <!-- Чертёжный слой. Выноски привязаны к точкам модели и пересчитываются
+           каждый кадр: аппарат вращается — вместе с ним едут и они. В макете
+           v10 этот слой статичен поверх вращающегося холста, поэтому там
+           выноска через полсекунды показывает в пустоту. -->
+      <div class="hero-draft" id="hero-draft" aria-hidden="true">
+        <svg class="hd-svg"><g class="hd-lines"></g></svg>
+        <span class="hd-call" data-i="1"><b>01</b><i>Корпус фильтра</i></span>
+        <span class="hd-call" data-i="2"><b>02</b><i>Ревизионная крышка</i></span>
+        <span class="hd-call" data-i="3"><b>03</b><i>Бункер-гидроциклон</i></span>
+      </div>
+      <div class="hero-shots">
+        <img class="hero-shot" id="shot-pp" src="assets/img/turn/pp-00.webp" alt="ОВГД полнопоточный" width="643" height="402">
+      </div>
       <span class="hero-drag">Зажмите и вращайте</span>
+    </div>
+  </div>
+
+  <div class="hero-facts">
+    <div class="shell">
+      <div><b>25+</b><span>лет опыта производства</span></div>
+      <div><b>ФОГОД</b><span>собственная запатентованная разработка</span></div>
+      <div><b>Полный цикл</b><span>от расчёта до запуска</span></div>
+      <div><b>Под ваше ТЗ</b><span>не только серийные модели</span></div>
     </div>
   </div>
 </div>

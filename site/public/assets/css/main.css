@@ -230,6 +230,15 @@
 
   /* ══════ Герой ══════ */
 
+  /* ══════ Герой: каркас точно по макету v17 ══════
+     Композиция, а не только палитра/шрифт: без рамок, модель во весь
+     кадр, копирайт компактным блоком в углу, координаты — в другом
+     углу, факты — полосой по нижней кромке. Раньше у нас была своя
+     компоновка (боксовая панель модели, таб-переключатель исполнений в
+     герое) — Игорь прямо попросил каркас макета, а не перекраску нашей
+     схемы. Переключатель исполнений из героя убран: в макете его там и
+     нет, выбор происходит ниже в разделе «Оборудование»; герой
+     показывает представительную модель (полнопоточный) без выбора. */
   .hero { position: relative; overflow: hidden; background: var(--surface-a); border-bottom: 1px solid var(--rule); }
   /* Фон героя — фото воды на весь экран, решение Игоря 08.09.2026:
      использовать water-flow.webp из макета, несмотря на неподтверждённую
@@ -249,101 +258,93 @@
       linear-gradient(100deg, var(--paper) 0%, rgba(9,12,15,.86) 34%, rgba(9,12,15,.42) 62%, rgba(9,12,15,.7) 100%),
       linear-gradient(0deg, var(--paper) 0%, transparent 16%, transparent 84%, var(--paper) 100%);
   }
-  .hero > .shell { position: relative; z-index: 2; }
   /* Инженерный режим гасит фото так же, как материал модели: осмотр —
      это уже не сцена с продуктом, а чертёж, фото там лишнее. Браузер без
      :has() просто оставляет фото как есть — деградация не ломает вид. */
   .hero:has(.hero-stage.is-insp) .hero-water-bg {
     opacity: .3; filter: saturate(.25) brightness(.42) contrast(1.1);
   }
-  .hero .shell {
-    display: grid; grid-template-columns: minmax(0,430px) minmax(0,1fr);
-    gap: 48px; padding-top: 44px; padding-bottom: 44px; align-items: center;
+
+  /* Высота героя больше не подобрана на глаз под один вариант текста:
+     копирайт живёт в обычном потоке и сам решает, сколько ему нужно
+     места, а padding-bottom резервирует зазор для полосы фактов,
+     которая приколота к низу героя абсолютно. Первая версия зашивала
+     фиксированную высоту (78vh/720px) под конкретную длину заголовка —
+     на длинном варианте кнопки съезжали под полосу фактов и гасли под
+     её полупрозрачной заливкой. min-height здесь — нижняя граница на
+     случай короткого текста и большого экрана, а не потолок. */
+  .hero-experience {
+    position: relative; z-index: 2; min-height: min(64vh, 560px);
+    padding: 84px 0 148px;
   }
-  .hero .eyebrow {
-    display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
-    white-space: nowrap;
+
+  .hero-copy {
+    position: relative; z-index: 3;
+    width: min(430px, 36vw);
+    transition: opacity .4s ease, transform .5s ease, filter .4s ease;
   }
-  /* на узком экране рубрикатор длиннее строки — распускаем перенос,
-     иначе страница уезжает вбок */
-  @media (max-width: 720px) {
-    .hero .eyebrow { white-space: normal; align-items: flex-start; }
-    .hero .eyebrow .bar { margin-top: 7px; flex: 0 0 26px; }
+  .hero:has(.hero-stage.is-insp) .hero-copy {
+    opacity: 0; transform: translate3d(-24px, 0, 0); filter: blur(6px);
+    pointer-events: none;
   }
-  .hero .eyebrow .bar { width: 26px; height: 2px; background: var(--red); }
-  .hero h1 {
-    font-size: clamp(40px, 4.2vw, 60px); line-height: 1.06; margin: 0 0 22px;
+  .hero-copy .eyebrow {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 22px;
+  }
+  .hero-copy .eyebrow .bar { width: 26px; height: 2px; background: var(--red); flex: 0 0 26px; }
+  .hero-copy h1 {
+    font-size: clamp(36px, 3.6vw, 52px); line-height: 1.08; margin: 0 0 20px;
     color: var(--ink);
   }
-  .hero h1 .thin { font-weight: 600; color: var(--ink-2); }
-  .hero .lede {
-    font-size: 16px; color: var(--ink-2); max-width: 46ch; margin: 0 0 24px;
-  }
-  .hero .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 26px; }
-  .hero .btn.lg { height: 48px; padding: 0 24px; font-size: 15px; }
+  .hero-copy h1 .thin { font-weight: 600; color: var(--ink-2); }
+  .hero-copy .lede { font-size: 16px; color: var(--ink-2); max-width: 40ch; margin: 0 0 26px; }
+  .hero-copy .cta { display: flex; gap: 12px; flex-wrap: wrap; }
+  .hero-copy .btn.lg { height: 48px; padding: 0 24px; font-size: 15px; }
 
-  .hero-specs {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    border-top: 1px solid var(--rule);
-  }
-  .hero-specs div { padding: 16px 18px 0 0; }
-  .hero-specs .v {
-    font-family: "IBM Plex Mono", monospace; font-weight: 500; letter-spacing: -.02em;
-    font-size: 26px; color: var(--ink); line-height: 1.1;
-    font-variant-numeric: tabular-nums;
-  }
-  .hero-specs .u { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--ink-2); }
-  .hero-specs .k { margin-top: 4px; }
-
-  /* Выбор типа фильтра. Наведение меняет аппарат: он выезжает вправо
-     с доворотом, а слева, в освободившемся поле, проступают параметры.
-     Довороту здесь верить нельзя — это одна картинка в перспективе, а не
-     оборот. Настоящее вращение потребует серии кадров с оборота. */
-  .hero-pick { border-top: 1px solid var(--rule); }
-  .pick {
-    display: block; width: 100%; text-align: left; background: none; border: 0;
-    border-bottom: 1px solid var(--rule); padding: 15px 2px 15px 0;
-    color: var(--ink-2); font: inherit; position: relative; cursor: pointer;
-  }
-  .pick .pk-top { display: flex; align-items: baseline; gap: 12px; }
-  .pick .pk-n {
+  .hero-coord {
+    position: absolute; z-index: 3; top: 84px; right: var(--gut);
+    display: grid; gap: 4px; text-align: right;
     font-family: "IBM Plex Mono", monospace; font-size: 11px;
-    color: var(--ink-3); letter-spacing: .1em;
+    letter-spacing: .1em; color: var(--ink-3); pointer-events: none;
   }
-  .pick .pk-t {
-    font-family: "IBM Plex Sans", sans-serif; font-weight: 500; letter-spacing: -.035em;
-    font-size: 21px; color: var(--ink); transition: color .18s ease;
-  }
-  .pick .pk-s {
-    display: block; margin-top: 4px; font-size: 13px; line-height: 1.45;
-    color: var(--ink-3); max-width: 40ch;
-  }
-  .pick .pk-bar {
-    position: absolute; left: 0; bottom: -1px; height: 2px; width: 0;
-    background: var(--blue); transition: width .38s cubic-bezier(.22,.61,.36,1);
-  }
-  .pick[aria-selected="true"] .pk-t { color: var(--blue); }
-  .pick[aria-selected="true"] .pk-bar { width: 100%; }
-  .pick:hover .pk-t { color: var(--ink); }
-  .pick[aria-selected="true"]:hover .pk-t { color: var(--blue); }
-  .pick:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 
-  .hero-stage { position: relative; height: min(56vh, 430px); }
+  /* Панель характеристик заняла место копирайта: когда модель берут
+     мышью, ей нужно поле слева, и это то же поле, что держит h1 в
+     покое. Именно поэтому копирайт гасится синхронно (:has() выше). */
+  .hero-specs-panel {
+    position: absolute; z-index: 4; left: var(--gut); top: 50%;
+    width: min(360px, 34vw); padding: 26px 0;
+    transform: translate3d(-24px, -50%, 0) scale(.97);
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity .32s ease, transform .4s cubic-bezier(.22,1,.36,1), visibility 0s .4s;
+  }
+  .hero:has(.hero-stage.is-insp) .hero-specs-panel {
+    opacity: 1; visibility: visible; pointer-events: auto;
+    transform: translate3d(0, -50%, 0) scale(1);
+    transition-delay: .06s, 0s, 0s;
+  }
+  .hero-specs-panel .kicker {
+    margin: 0 0 16px; color: var(--red-ink); font-family: "IBM Plex Mono", monospace;
+    font-size: 12px; letter-spacing: .06em; text-transform: uppercase;
+  }
+  .hero-specs-panel h2 { font-size: clamp(26px, 2.6vw, 36px); line-height: 1.1; margin: 0 0 22px; color: var(--ink); }
+  .hero-specs-panel .btn { margin-top: 22px; height: 46px; padding: 0 22px; font-size: 14px; }
+
+  /* Модель не подъезжает под копирайт: левая кромка сцены останавливается
+     там же, где кончается колонка текста (и панели характеристик — они
+     делят одну и ту же полосу слева, поэтому сцене не нужно сдвигаться
+     между состояниями). В макете текст на широких экранах наезжает на
+     верхний фланец модели — эта правка нарочно её не повторяет. */
+  .hero-stage {
+    position: absolute; z-index: 2;
+    top: 0; right: 0; bottom: 148px; left: min(430px, 36vw);
+  }
   .hero-shots {
-    position: absolute; inset: 0 0 0 210px;
-    perspective: 1500px; transform-style: preserve-3d;
+    position: absolute; inset: 0; display: grid; place-items: center;
   }
-  /* Вращение здесь настоящее — кадрами оборота, снятыми с 3D-модели.
-     Фальшивый rotateY на плоской картинке убран: он читался как переворот
-     карточки, а не как поворот изделия вокруг оси. */
   .hero-shot {
-    position: absolute; right: 0; top: 50%; width: auto; height: auto;
-    max-width: 100%; max-height: 100%;
-    opacity: 0; transform: translate(-64px, -50%) scale(.97);
-    transition: opacity .40s ease, transform .78s cubic-bezier(.22,.61,.36,1);
+    max-width: 92%; max-height: 100%; width: auto; height: auto;
+    filter: drop-shadow(0 40px 46px rgba(0,0,0,.5));
   }
-  .hero-shot.on { opacity: 1; transform: translate(0, -50%) scale(1); }
-
   /* Холст трёхмерного героя. Картинка под ним остаётся в разметке и
      скрывается только когда модель действительно загрузилась: без WebGL
      или при ошибке сети посетитель видит рендер, а не пустоту. */
@@ -351,7 +352,7 @@
   .hero-canvas.is-drag { cursor: grabbing; }
   .hero-shots.is-3d .hero-shot { opacity: 0; }
   .hero-drag {
-    position: absolute; right: 0; bottom: -2px; display: none; white-space: nowrap;
+    position: absolute; right: 0; bottom: 0; display: none; white-space: nowrap;
     font-family: "IBM Plex Mono", monospace; font-size: 11px;
     letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3);
   }
@@ -361,35 +362,24 @@
      Появляется только когда трёхмерная сцена действительно запустилась:
      класс ставит hero3d.js. Без WebGL и без скриптов слоя нет вовсе —
      иначе выноски указывали бы на статичную картинку в других местах.
-
-     Два состояния, а не одно. В покое сцена держит характеристики: это
-     то, ради чего инженер сюда пришёл. Как только он берёт модель
-     мышью, характеристики уходят и приходят выноски — аппарат на
-     секунду становится чертежом. Показывать оба набора разом нельзя,
-     они делят одно поле и складываются в шум.  */
+     Теперь выходит вместе с панелью характеристик, не вместо неё —
+     в полноэкранном каркасе места хватает на оба, в тесной боксовой
+     панели раньше не хватало. */
   .hero-draft {
     position: absolute; inset: 0; z-index: 3; pointer-events: none;
     opacity: 0; transition: opacity .5s ease;
     font-family: "IBM Plex Mono", monospace;
   }
-  .hero-stage.is-draft .hero-draft { opacity: 1; }
-  .hero-params { transition: opacity .35s ease; }
-  .hero-stage.is-insp .hero-params { opacity: 0; }
+  .hero-stage.is-insp .hero-draft { opacity: 1; }
   .hd-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-  .hd-svg .lead, .hd-svg .dot { opacity: 0; transition: opacity .3s ease; }
+  .hd-svg .lead, .hd-svg .dot { opacity: .6; transition: opacity .3s ease; }
   .hd-svg .lead { fill: none; stroke: var(--draft); stroke-width: 1; }
   .hd-svg .dot { fill: none; stroke: var(--draft); stroke-width: 1; }
-  .hero-stage.is-insp .hd-svg .lead { opacity: .5; }
-  .hero-stage.is-insp .hd-svg .dot { opacity: .75; }
   .hd-svg .axis { stroke: var(--draft); stroke-width: 1; opacity: .22; stroke-dasharray: 14 5 3 5; }
   .hd-svg .mark { fill: none; stroke: var(--draft); stroke-width: 1; opacity: .4; }
   .hd-svg .mark-t {
     fill: var(--draft); opacity: .7; font-family: "IBM Plex Mono", monospace;
     font-size: 11px; text-anchor: middle; dominant-baseline: central;
-  }
-  .hd-coord {
-    position: absolute; left: 0; top: 0; display: grid; gap: 3px;
-    font-size: 10px; letter-spacing: .1em; color: var(--ink-3);
   }
   .hd-call {
     position: absolute; left: 0; white-space: nowrap;
@@ -401,15 +391,13 @@
   .hd-call b { font-weight: 500; font-size: 10px; color: var(--red-ink); }
   .hd-call i { font-style: normal; }
 
-  /* Основная надпись: то же, что штамп на чертеже. Держит нижнюю кромку
-     сцены и объясняет, что именно крутится, — это модель изделия, а не
-     украшение. Появляется вместе со сценой. */
+  /* Штамп сборочной модели — живёт в панели характеристик, а не на
+     самом аппарате: полноэкранный каркас не держит нижнюю кромку
+     сцены, куда штамп раньше крепился. */
   .hero-block {
-    position: absolute; left: 0; right: 150px; bottom: -12px;
-    display: none; gap: 26px; flex-wrap: wrap;
-    padding-top: 10px; border-top: 1px solid var(--rule-soft);
+    display: flex; gap: 24px; flex-wrap: wrap;
+    margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--rule-soft);
   }
-  .hero-stage.is-draft .hero-block { display: flex; }
   .hero-block span {
     display: block; font-family: "IBM Plex Mono", monospace; font-size: 9px;
     letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3);
@@ -420,30 +408,35 @@
     font-weight: 400; color: var(--ink-2);
   }
 
-  .hero-params {
-    position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-    z-index: 2; width: 186px; pointer-events: none;
-  }
-  .hero-params .p {
-    display: block; padding: 10px 0; border-bottom: 1px solid var(--rule-soft);
-    opacity: 0; transform: translateX(-14px);
-    transition: opacity .4s ease, transform .5s cubic-bezier(.22,.61,.36,1);
-  }
-  .hero-params.on .p { opacity: 1; transform: none; }
-  .hero-params.on .p:nth-child(1) { transition-delay: .10s; }
-  .hero-params.on .p:nth-child(2) { transition-delay: .17s; }
-  .hero-params.on .p:nth-child(3) { transition-delay: .24s; }
-  .hero-params.on .p:nth-child(4) { transition-delay: .31s; }
+  .hero-params { display: grid; gap: 0; border-top: 1px solid var(--rule-soft); }
+  .hero-params .p { display: block; padding: 12px 0; border-bottom: 1px solid var(--rule-soft); }
   .hero-params .k {
     display: block; font-family: "IBM Plex Mono", monospace; font-size: 10px;
     letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3);
     margin-bottom: 4px;
   }
   .hero-params .v {
-    font-family: "IBM Plex Mono", monospace; font-size: 15px; color: var(--ink);
+    font-family: "IBM Plex Mono", monospace; font-size: 16px; color: var(--ink);
     font-variant-numeric: tabular-nums;
   }
   .hero-params .v.good { color: var(--ink); font-weight: 500; }
+
+  /* Факты — полоса по нижней кромке героя, поверх фото, полупрозрачная.
+     Аналог их hero-facts: первый экран перестаёт быть только картинкой. */
+  .hero-facts {
+    position: absolute; z-index: 3; left: 0; right: 0; bottom: 0;
+    border-top: 1px solid var(--rule); background: rgba(9,12,15,.6);
+    backdrop-filter: blur(8px);
+  }
+  .hero-facts .shell { display: grid; grid-template-columns: repeat(4, 1fr); }
+  .hero-facts .shell div { padding: 22px 26px; border-right: 1px solid var(--rule); }
+  .hero-facts .shell div:first-child { padding-left: 0; }
+  .hero-facts .shell div:last-child { border-right: 0; }
+  .hero-facts b {
+    display: block; font-family: "IBM Plex Mono", monospace; font-weight: 500;
+    font-size: 19px; color: var(--ink); margin-bottom: 5px;
+  }
+  .hero-facts span { display: block; font-size: 12px; color: var(--ink-3); }
 
   /* Видеосекция. Единственный момент на странице, где изделие показано
      в работе, а не рендером, — поэтому ей дан вес: широкая, тёмная,
@@ -522,16 +515,42 @@
     font-size: 12px; color: var(--ink-3); text-align: center;
   }
 
+  /* Ниже 980px 3D-сцена ещё грузится (порог отключения в hero3d.js — 900px),
+     но каркас героя уже не тянет: полноэкранный кадр требует места, которого
+     нет. Копирайт, панель характеристик и модель возвращаются в обычный
+     поток, друг под другом. Панель открыта всегда — там нет наведения,
+     которое могло бы её раскрыть, а без неё пропадают и характеристики,
+     и «Подобрать фильтр». */
   @media (max-width: 980px) {
-    .hero .shell { grid-template-columns: 1fr; gap: 36px; }
-    .hero-stage { height: auto; display: flex; flex-direction: column-reverse; gap: 18px; }
-    .hero-shots { position: static; height: 220px; }
-      .hero-shot { right: 50%; transform: translate(50%, -50%) scale(.97); }
-    .hero-shot.on { transform: translate(50%, -50%) scale(1); }
-    .hero-params {
-      position: static; transform: none; width: auto;
-      display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 0 20px;
+    .hero { min-height: 0; }
+    .hero-experience { padding: 56px 0 0; }
+    .hero-copy, .hero-specs-panel {
+      position: static; top: auto; left: auto; width: auto;
+      opacity: 1; visibility: visible; pointer-events: auto;
+      transform: none; filter: none;
     }
+    .hero-coord { display: none; }
+    .hero-specs-panel { margin-top: 30px; padding: 26px 0 0; border-top: 1px solid var(--rule); }
+    /* CTA уже есть в копирайте выше — здесь он был бы вторым подряд */
+    .hero-specs-panel .btn { display: none; }
+    .hero-params { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 0 20px; }
+    /* relative, не static: иначе .hero-shots (inset:0) ищет ближайшего
+       позиционированного предка выше по дереву и раздувается на всю
+       высоту .hero-experience — модель на телефоне становится огромной */
+    .hero-stage { position: relative; height: 300px; margin-top: 30px; }
+    .hero-facts {
+      position: static; margin-top: 30px; background: transparent; backdrop-filter: none;
+    }
+    .hero-facts .shell { grid-template-columns: repeat(2, 1fr); }
+    .hero-facts .shell div:nth-child(2) { border-right: 0; }
+    .hero-facts .shell div:nth-child(-n+2) { border-bottom: 1px solid var(--rule); padding-bottom: 18px; }
+    .hero-facts .shell div:nth-child(n+3) { padding-top: 18px; }
+  }
+  @media (max-width: 550px) {
+    .hero-specs-panel h2 { font-size: 28px; }
+    .hero-facts .shell { grid-template-columns: 1fr; }
+    .hero-facts .shell div { border-right: 0 !important; padding: 16px 0 !important; border-bottom: 1px solid var(--rule); }
+    .hero-facts .shell div:last-child { border-bottom: 0; }
   }
 
   /* ══════ Подбор ══════ */
