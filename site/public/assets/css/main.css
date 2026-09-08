@@ -99,14 +99,15 @@
 
   .shell { max-width: var(--page); margin: 0 auto; padding: 0 var(--gut); }
 
-  /* Заголовки — обычный Plex Sans на 500 с плотным отрицательным
-     трекингом, а не Condensed 700. Это и даёт «дорого»: крупный кегль,
-     небольшой вес, сжатые межбуквенные. Condensed на больших размерах
-     читается как заводская табличка. */
+  /* Заголовки — Plex Mono на 500 с плотным отрицательным трекингом, а не
+     Condensed 700 и не Sans. Моноширинный на крупном кегле читается как
+     инженерный документ, а не как маркетинговая полоса — это и держит
+     «дорого». Перенесено из макета v17: там это единственный несущий
+     приём стиля помимо палитры, которая у нас уже совпадала. */
   h1, h2, h3, .cond {
-    font-family: "IBM Plex Sans", sans-serif;
+    font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
     font-weight: 500;
-    letter-spacing: -.035em;
+    letter-spacing: -.03em;
     text-wrap: balance;
   }
 
@@ -240,7 +241,7 @@
   }
   .hero-specs div { padding: 16px 18px 0 0; }
   .hero-specs .v {
-    font-family: "IBM Plex Sans", sans-serif; font-weight: 500; letter-spacing: -.03em;
+    font-family: "IBM Plex Mono", monospace; font-weight: 500; letter-spacing: -.02em;
     font-size: 26px; color: var(--ink); line-height: 1.1;
     font-variant-numeric: tabular-nums;
   }
@@ -263,7 +264,7 @@
     color: var(--ink-3); letter-spacing: .1em;
   }
   .pick .pk-t {
-    font-family: "IBM Plex Sans", sans-serif; font-weight: 500; letter-spacing: -.03em;
+    font-family: "IBM Plex Mono", monospace; font-weight: 500; letter-spacing: -.02em;
     font-size: 21px; color: var(--ink); transition: color .18s ease;
   }
   .pick .pk-s {
@@ -610,7 +611,7 @@
   .chart-top { display: flex; align-items: baseline; gap: 12px; margin-bottom: 9px; }
   .chart-top .nm { font-size: 16px; font-weight: 600; color: var(--ink); }
   .chart-top .val {
-    margin-left: auto; font-family: "IBM Plex Sans", sans-serif;
+    margin-left: auto; font-family: "IBM Plex Mono", monospace;
     font-weight: 700; font-size: 26px; color: var(--ink); font-variant-numeric: tabular-nums;
   }
   .chart-top .val small { font-family: "IBM Plex Mono", monospace; font-size: 12px; font-weight: 400; color: var(--ink-2); }
@@ -858,7 +859,7 @@
     padding-bottom: 14px; border-bottom: 2px solid var(--ink);
   }
   .toolbar .found {
-    font-family: "IBM Plex Sans", sans-serif; font-weight: 500; letter-spacing: -.03em;
+    font-family: "IBM Plex Mono", monospace; font-weight: 500; letter-spacing: -.02em;
     font-size: 21px; color: var(--ink);
   }
   .toolbar .found span { color: var(--ink-3); font-weight: 400; font-size: 15px; }
@@ -887,7 +888,7 @@
     padding: 22px 0; border-bottom: 1px solid var(--rule-soft);
   }
   .row .nm {
-    font-family: "IBM Plex Sans", sans-serif; font-weight: 500; letter-spacing: -.03em;
+    font-family: "IBM Plex Mono", monospace; font-weight: 500; letter-spacing: -.02em;
     font-size: 21px; color: var(--ink); margin: 0 0 4px;
   }
   .row .nm a:hover { color: var(--blue); }
@@ -1099,7 +1100,7 @@
   .fam-nums { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); border-top: 1px solid var(--dark-rule); }
   .fam-nums div { padding: 16px 20px 0 0; }
   .fam-nums .v {
-    font-family: "IBM Plex Sans", sans-serif; font-weight: 500; letter-spacing: -.03em; font-size: 26px;
+    font-family: "IBM Plex Mono", monospace; font-weight: 500; letter-spacing: -.02em; font-size: 26px;
     color: #FFFFFF; font-variant-numeric: tabular-nums; line-height: 1.1;
   }
   .fam-nums .v.nd { color: var(--gold); font-size: 21px; }

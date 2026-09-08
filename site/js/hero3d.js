@@ -67,6 +67,7 @@ async function loadGLB(url, THREE) {
   };
 
   const group = new THREE.Group();
+  const redMats = [];
   for (const prim of json.meshes[0].primitives) {
     const g = new THREE.BufferGeometry();
     g.setAttribute('position', new THREE.BufferAttribute(read(prim.attributes.POSITION), 3));
@@ -74,7 +75,7 @@ async function loadGLB(url, THREE) {
     const m = json.materials[prim.material];
     const pbr = m.pbrMetallicRoughness || {};
     const c = pbr.baseColorFactor || [1, 1, 1, 1];
-    group.add(new THREE.Mesh(g, new THREE.MeshStandardMaterial({
+    const mat = new THREE.MeshStandardMaterial({
       color: new THREE.Color().setRGB(c[0], c[1], c[2], THREE.SRGBColorSpace),
       metalness: pbr.metallicFactor ?? 0.2,
       roughness: pbr.roughnessFactor ?? 0.6,
@@ -82,8 +83,14 @@ async function loadGLB(url, THREE) {
       // производные. Это и есть вид CAD-рендеров компании
       flatShading: true,
       side: THREE.DoubleSide,
-    })));
+    });
+    // корпус, а не крепёж и не сталь: только его красят инженерным режимом.
+    // Базовый цвет сохранён отдельно — лерп идёт от него, а не от
+    // предыдущего кадра, иначе на медленном таймере цвет уводит.
+    if (m.name === 'fogod-red') { mat.userData.base = mat.color.clone(); redMats.push(mat); }
+    group.add(new THREE.Mesh(g, mat));
   }
+  group.userData.redMats = redMats;
   return group;
 }
 
@@ -109,12 +116,19 @@ async function boot() {
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
+  // Инженерный режим красит корпус в графит — тот же приём, что и в макете
+  // v17, только цвет меняет материал модели, а не CSS-фильтр поверх неё.
+  const GRAPHITE = new THREE.Color(0x707a82);
 
   scene.add(new THREE.AmbientLight(0xffffff, 0.22));
   const key = new THREE.DirectionalLight(0xfff2dc, 3.4); key.position.set(4, 6, 5);
   const fill = new THREE.DirectionalLight(0xd34349, 1.15); fill.position.set(-6, 1, 3);
   const rim = new THREE.DirectionalLight(0xc6dcf2, 2.1); rim.position.set(-2, 3, -6);
   scene.add(key, fill, rim);
+  // заливка красная в покое — это цвет продукта, а не студийный свет.
+  // В осмотре она остывает вместе с материалом, иначе графит на модели
+  // всё равно читается красным из-за отражённого света
+  const FILL_PRODUCT = fill.color.clone(), FILL_ENGINEERING = new THREE.Color(0x8fa6b8);
 
   /* Карта окружения строится в коде, без файла и без RoomEnvironment из
      examples: сталь с metalness отражает окружение, и без него крепёж на
@@ -181,6 +195,7 @@ async function boot() {
   //    с пределами и затуханием
   let yaw = CFG.start, pitch = 0, tYaw = CFG.start, tPitch = 0;
   let drag = false, lx = 0, ly = 0;
+  let inspOn = false, redBlend = 0;
   const clamp = (v, l) => Math.max(-l, Math.min(l, v));
 
   /* ── Чертёжный слой. Единственное, ради чего он написан руками, —
@@ -257,7 +272,7 @@ async function boot() {
       measure();
     }
 
-    const insp = on => outer.classList.toggle('is-insp', on);
+    const insp = on => { outer.classList.toggle('is-insp', on); inspOn = on; };
     return { retitle, sync, measure, insp };
   })();
 
@@ -332,6 +347,12 @@ async function boot() {
     pivot.rotation.set(pitch, yaw + idle + (drag ? 0 : scrollYaw), 0);
     slide.position.x = focus * radius * 0.42;
     slide.scale.setScalar(1 - focus * 0.14);
+    redBlend += ((inspOn ? 1 : 0) - redBlend) * k;
+    if (current && current.userData.redMats) {
+      for (const mat of current.userData.redMats) mat.color.copy(mat.userData.base).lerp(GRAPHITE, redBlend);
+    }
+    fill.color.copy(FILL_PRODUCT).lerp(FILL_ENGINEERING, redBlend);
+    fill.intensity = 1.15 - redBlend * 0.3;
     renderer.render(scene, camera);
     draft.sync();
     raf = requestAnimationFrame(tick);
