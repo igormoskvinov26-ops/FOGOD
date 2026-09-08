@@ -251,23 +251,42 @@
      .hero — своя локальная укладка слоёв, отдельная от сайтовой сетки
      #grid: фото перекрывает её здесь полностью, сетка остаётся видна
      и интерактивна на всех секциях ниже героя, как было. */
+  /* Значения сняты computed style с живого макета (getComputedStyle на
+     .hero-water-background/.hero-water-bluewash), не с текста CSS — тот
+     же урок, что со шрифтом: в покое фото НЕ затемнено (filter: none,
+     opacity .98), гасится только в инженерном режиме. Первая версия этой
+     правки затемняла фото всегда — так фон не совпадал даже приблизительно. */
   .hero-water-bg {
     position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%;
-    object-fit: cover; object-position: center 42%;
-    filter: saturate(.82) brightness(.6) contrast(1.05);
-    transition: opacity .5s ease, filter .5s ease;
+    object-fit: cover; object-position: center 44%;
+    opacity: .98; filter: none; transform: scale(1.01);
+    transition: opacity .28s ease, filter .28s ease, transform .48s cubic-bezier(.22,1,.36,1);
   }
   .hero-water-wash {
     position: absolute; inset: 0; z-index: 1; pointer-events: none;
     background:
-      linear-gradient(100deg, var(--paper) 0%, rgba(9,12,15,.86) 34%, rgba(9,12,15,.42) 62%, rgba(9,12,15,.7) 100%),
-      linear-gradient(0deg, var(--paper) 0%, transparent 16%, transparent 84%, var(--paper) 100%);
+      radial-gradient(ellipse at 50% 0%, rgba(10,60,79,.72), transparent 34%),
+      linear-gradient(180deg, rgba(1,7,10,.18) 0%, rgba(1,5,7,.08) 46%, rgba(1,5,7,.24) 100%);
+    transition: background .3s ease;
+  }
+  /* Их аналог .hero-water-hero::after — плавный переход в следующую
+     секцию по нижней кромке героя, отдельно от радиального блика сверху. */
+  .hero::after {
+    content: ""; position: absolute; z-index: 1; right: 0; bottom: 0; left: 0;
+    height: 168px; pointer-events: none;
+    background: linear-gradient(180deg, transparent 0%, rgba(3,13,19,.56) 62%, var(--paper) 100%);
   }
   /* Инженерный режим гасит фото так же, как материал модели: осмотр —
      это уже не сцена с продуктом, а чертёж, фото там лишнее. Браузер без
      :has() просто оставляет фото как есть — деградация не ломает вид. */
   .hero:has(.hero-stage.is-insp) .hero-water-bg {
-    opacity: .3; filter: saturate(.25) brightness(.42) contrast(1.1);
+    opacity: .3; filter: grayscale(.82) saturate(.35) brightness(.58) contrast(1.08);
+    transform: scale(1.035);
+  }
+  .hero:has(.hero-stage.is-insp) .hero-water-wash {
+    background:
+      radial-gradient(ellipse at 70% 42%, rgba(27,94,121,.35), transparent 46%),
+      linear-gradient(180deg, rgba(1,8,12,.72), rgba(2,11,17,.9));
   }
 
   /* Высота героя больше не подобрана на глаз под один вариант текста:
