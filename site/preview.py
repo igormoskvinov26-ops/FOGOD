@@ -10,9 +10,18 @@
 """
 import os, re, json, base64, posixpath, sys
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tools'))
+import three_bundle
+
 ROOT = os.path.dirname(os.path.abspath(__file__))
 PUB  = os.path.join(ROOT, 'public')
 OUT  = os.path.join(ROOT, 'preview')
+
+# Модели, которые кладём в превью целиком (base64). Герой показывает одно
+# исполнение — переключателя в нём нет с 08.09.2026, — поэтому второй GLB
+# в превью не тащим: это лишние 800 КБ на странице, которую открывают с
+# телефона. На боевой сборке грузятся оба, там они лежат файлами.
+PREVIEW_MODELS = ['ovgd-pp.glb']
 
 MIME = {'.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
         '.svg': 'image/svg+xml', '.webp': 'image/webp'}
@@ -62,19 +71,66 @@ def strip_body(page, src):
     body = re.sub(r'src=(["\'])(.*?)\1', fix_src, body)
     return body
 
+def hero3d():
+    """hero3d.js для превью: без ES-импорта и без сети.
+
+    В боевой сборке он тянет three.js через `import()` и модель через
+    `fetch()`. Внутри одного файла превью ни того, ни другого нет — раньше
+    из-за этого скрипт просто выбрасывался, и в превью показывалась
+    статичная картинка. Проверить драг было негде: Игорь тестировал
+    вращение именно там и, естественно, ничего не получил.
+
+    Две подмены снимают обе зависимости: three.js приходит из собранного
+    классического бандла (tools/three_bundle.py), модель — из base64 в
+    `window.__GLB__`, декодируется в ArrayBuffer прямо на месте. Ключ
+    карты — тот же путь, что в CFG.model, поэтому сам CFG не трогаем.
+
+    Через data:-URI это не сделать: и `import('data:…')`, и `blob:` режет
+    CSP страницы-артефакта, причём молча — страница осталась бы без 3D
+    без единой ошибки в консоли.
+    """
+    js = open(os.path.join(ROOT, 'js', 'hero3d.js'), encoding='utf-8').read()
+
+    src_import = "const THREE = await import('./' + CFG.three.replace('assets/js/', ''));"
+    src_fetch = "const buf = await (await fetch(url)).arrayBuffer();"
+    for needle in (src_import, src_fetch):
+        if needle not in js:
+            raise SystemExit('preview.py: в hero3d.js больше нет строки:\n  ' + needle)
+
+    js = js.replace(src_import, "const THREE = window.__THREE_NS__;")
+    js = js.replace(src_fetch,
+                    "const b64 = window.__GLB__ && window.__GLB__[url];\n"
+                    "  const buf = b64 ? Uint8Array.from(atob(b64), c => c.charCodeAt(0)).buffer\n"
+                    "                  : await (await fetch(url)).arrayBuffer();")
+
+    glb = {}
+    for name in PREVIEW_MODELS:
+        raw = open(os.path.join(PUB, 'assets', 'model', name), 'rb').read()
+        glb['assets/model/' + name] = base64.b64encode(raw).decode()
+
+    three = three_bundle.build(os.path.join(PUB, 'assets', 'js', 'vendor'))
+    # оба уезжают внутрь <script> в srcdoc: закрывающий тег в теле убил бы
+    # разметку страницы целиком
+    for blob, what in ((three, 'бандл three.js'), (js, 'hero3d.js')):
+        if '</script' in blob:
+            raise SystemExit('preview.py: %s содержит </script — превью так не собрать' % what)
+    return three, js, glb
+
+
 def collect():
-    bodies, scripts, per_page = {}, {}, {}
+    bodies, scripts, per_page, hero_on = {}, {}, {}, {}
     for p in pages():
         src = open(os.path.join(PUB, p), encoding='utf-8').read()
         bodies[p] = strip_body(p, src)
         # у страницы может быть несколько скриптов: свой и общий слой сетки
         per_page[p] = [n for n in re.findall(r'<script src="[^"]*?/([\w.-]+\.js)"', src)
                        if n != 'hero3d.js']
+        # hero3d подключён как type="module", регулярка выше его не ловит —
+        # и не должна: у него свой порядок загрузки, три скрипта подряд
+        hero_on[p] = 'hero3d.js' in src
     js_dir = os.path.join(PUB, 'assets', 'js')
     for name in sorted(os.listdir(js_dir)):
-        # vendor/ — папка, а hero3d.js это ES-модуль с импортами и загрузкой
-        # модели по сети: внутри одного файла превью он работать не может.
-        # Там остаётся тот же рендер, что и без WebGL.
+        # vendor/ — папка, hero3d.js собирается отдельно (см. hero3d())
         if name == 'hero3d.js' or not os.path.isfile(os.path.join(js_dir, name)):
             continue
         js = open(os.path.join(js_dir, name), encoding='utf-8').read()
@@ -99,10 +155,10 @@ def collect():
     css = re.sub(r'url\((["\']?)([^)"\']*/)?([\w.\-]+\.(?:png|jpe?g|svg))\1\)',
                  lambda m: 'url(' + imgs.get(m.group(3), m.group(0)) + ')'
                  if m.group(3) in imgs else m.group(0), css)
-    return bodies, scripts, per_page, css, imgs
+    return bodies, scripts, per_page, css, imgs, hero_on
 
 
-SHELL = r'''<title>Превью wfogod.ru</title>
+SHELL = r'''<meta charset="utf-8"><title>Превью wfogod.ru</title>
 <style>
 :root{ --navy:#123A63; --blue:#1268C3; }
 *{box-sizing:border-box}
@@ -184,6 +240,17 @@ body.is-inline #inline{display:block}
 
   var inline = false, loaded = {};
 
+  // Три скрипта строго по порядку: бандл three.js -> модель в base64 ->
+  // сам hero3d. Порядок важен: hero3d читает window.__THREE_NS__ сразу,
+  // а не ждёт события.
+  function heroTags(page){
+    if (!D.hero[page]) return '';
+    var S = '<' + 'script>', E = '<' + '/script>';
+    return S + D.three + E +
+           S + 'window.__GLB__=' + JSON.stringify(D.glb) + ';' + E +
+           S + D.hero3d + E;
+  }
+
   function showInline(page, frag){
     window.__TURN__ = D.turn;
     var host = document.getElementById('inline');
@@ -195,6 +262,15 @@ body.is-inline #inline{display:block}
       sc.textContent = D.scripts[n] || '';
       document.body.appendChild(sc);
     });
+    if (D.hero[page] && !loaded['__hero__']) {
+      loaded['__hero__'] = true;
+      window.__GLB__ = D.glb;
+      [D.three, D.hero3d].forEach(function (code) {
+        var sc = document.createElement('script');
+        sc.textContent = code;
+        document.body.appendChild(sc);
+      });
+    }
     if (frag) {
       var t = document.getElementById(frag);
       if (t) t.scrollIntoView();
@@ -236,6 +312,7 @@ body.is-inline #inline{display:block}
         '<' + 'script>window.__TURN__=' + JSON.stringify(D.turn) + ';<' + '/script>' +
         imgs(D.bodies[page]) +
         '<' + 'script>' + js + '<' + '/script>' +
+        heroTags(page) +
         '<' + 'script>' + hook(page) + (frag ? scrollTo_(frag) : '') + '<' + '/script>' +
         '</body></html>';
       cur = page;
@@ -284,10 +361,12 @@ body.is-inline #inline{display:block}
 
 
 def main():
-    bodies, scripts, per_page, css, imgs = collect()
+    bodies, scripts, per_page, css, imgs, hero_on = collect()
+    three, hero_js, glb = hero3d()
     turn = {os.path.splitext(k)[0]: v for k, v in imgs.items() if k.endswith('.webp')}
     payload = json.dumps({'bodies': bodies, 'scripts': scripts, 'perPage': per_page,
-                          'css': css, 'imgs': imgs, 'titles': TITLES, 'turn': turn},
+                          'css': css, 'imgs': imgs, 'titles': TITLES, 'turn': turn,
+                          'hero': hero_on, 'three': three, 'hero3d': hero_js, 'glb': glb},
                          ensure_ascii=False).replace('</', r'<\/')
     os.makedirs(OUT, exist_ok=True)
     path = os.path.join(OUT, 'wfogod-preview.html')
