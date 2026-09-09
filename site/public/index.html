@@ -59,10 +59,6 @@ try { if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'Intersecti
       </div>
       <h1>Промышленная<br><span class="thin">фильтрация</span></h1>
       <p class="lede">Гидродинамические фильтры для воды, масла и СОЖ.</p>
-      <div class="cta">
-        <a class="btn lg" href="podbor.html">Подобрать фильтр</a>
-        <a class="btn lg ghost" href="katalog.html">Смотреть каталог</a>
-      </div>
     </div>
 
     <div class="hero-coord" aria-hidden="true"><span>47°14′ N</span><span>39°42′ E</span></div>
@@ -476,6 +472,12 @@ try { if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'Intersecti
     <div>
       <h2>Расчёт под ваше ТЗ</h2>
       <p>Среда, расход, тонкость, давление — и опросный лист с предложением в ответ.</p>
+      <!-- Оба перехода стоят здесь, а не в герое: первый экран остаётся
+           изделием, а выбор пути — там, где посетитель дочитал страницу. -->
+      <div class="quote-cta">
+        <a class="btn on-dark" href="podbor.html">Подобрать фильтр</a>
+        <a class="btn on-dark" href="katalog.html">Смотреть каталог</a>
+      </div>
     </div>
     <form class="qform" onsubmit="return false">
       <input type="text" placeholder="Имя" aria-label="Имя">

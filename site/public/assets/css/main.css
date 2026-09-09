@@ -309,15 +309,14 @@
   /* pointer-events: none на всём блоке, auto — только на кнопках. Копирайт
      лежит поверх сцены (z-index выше), и без этого прямоугольник блока
      перехватывал курсор: модель не бралась мышью там, где над ней стоит
-     текст, хотя визуально холст открыт. Текст ничего не ловит по смыслу —
-     ловить должны только кнопки. */
+     текст, хотя визуально холст открыт. Ловить в копирайте нечего — после
+     переноса кнопок вниз страницы это только заголовок и лид. */
   .hero-copy {
     position: absolute; z-index: 3; top: 74px; left: 50%;
     width: min(680px, calc(100% - 48px)); text-align: center;
     transform: translateX(-50%); pointer-events: none;
     transition: opacity .3s ease, transform .42s cubic-bezier(.22,1,.36,1), filter .3s ease;
   }
-  .hero-copy .cta .btn { pointer-events: auto; }
   .hero:has(.hero-stage.is-insp) .hero-copy {
     opacity: 0; visibility: hidden;
     transform: translate3d(-50%, -18px, 0) scale(.96);
@@ -338,11 +337,9 @@
   }
   .hero-copy h1 .thin { font-weight: 600; color: var(--ink); }
   .hero-copy .lede {
-    font-size: 16px; color: var(--ink-2); max-width: 46ch; margin: 0 auto 26px;
+    font-size: 16px; color: var(--ink-2); max-width: 46ch; margin: 0 auto;
     text-shadow: 0 3px 16px rgba(0,0,0,.72);
   }
-  .hero-copy .cta { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
-  .hero-copy .btn.lg { height: 48px; padding: 0 24px; font-size: 15px; }
 
   /* Скрыт целиком, как у них: .hero-water-hero .hero-coordinate {
      display: none }. Разметка остаётся — потерь для контента нет, это
@@ -584,7 +581,7 @@
        Ниже 980px сцена уже не полноэкранная (см. комментарий выше), поэтому
        текст возвращается к обычному для стековой раскладки чтению слева. */
     .hero-copy { text-align: left; }
-    .hero-copy .eyebrow, .hero-copy .cta { justify-content: flex-start; }
+    .hero-copy .eyebrow { justify-content: flex-start; }
     .hero-copy .lede { margin-left: 0; margin-right: 0; }
     .hero-coord { display: none; }
     .hero-specs-panel { margin-top: 30px; padding: 26px 0 0; border-top: 1px solid var(--rule); }
@@ -819,6 +816,9 @@
   .quote .shell { padding: 64px 32px 64px; display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
   .quote h2 { font-size: clamp(30px, 3.4vw, 42px); margin: 0 0 16px; color: #FFFFFF; }
   .quote p { margin: 0 0 8px; color: var(--on-dark-2); font-size: 16px; max-width: 44ch; }
+  /* Переходы «подобрать» и «каталог» переехали сюда из героя: первый экран
+     остался изделием, а развилка стоит там, где страницу дочитали. */
+  .quote-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
   .qform {
     display: grid; gap: 16px;
     background: var(--navy-deep); border: 1px solid var(--dark-rule);

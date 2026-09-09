@@ -31,7 +31,75 @@ const CFG = {
   yaw: 0.58,          // предел поворота по горизонтали, рад
   pitch: 0.24,        // предел по вертикали от экватора
   start: -0.32,
+  /* Запас кадра. 1.0 — изделие впритык по кромкам при любом повороте,
+     дальше — воздух вокруг. Это и есть ручка «крупнее/мельче». */
+  fit: 1.6,
+  /* Угол залома для нормалей. Всё, что положе, сглаживается (шаг
+     тесселяции цилиндров тут 9–30°), круче — остаётся ребром. */
+  crease: 35,
 };
+
+/* Нормали по углу залома.
+ *
+ * В GLB нормалей нет вовсе — конвертер их не пишет, и сцена жила на
+ * `flatShading`: каждый треугольник своим тоном. На цилиндрах это читается
+ * гранёностью, тем сильнее чем мельче деталь.
+ *
+ * Просто сгладить всё нельзя: вершины сварены и через острые рёбра — по
+ * замеру на ovgd-pp.glb 21 % общих рёбер круче 45°, — и фланцы, косынки,
+ * лапы расплылись бы. Поэтому нормаль вершины собирается только из тех
+ * смежных граней, которые лежат к текущей положе `CFG.crease`.
+ *
+ * Считается здесь, а не пишется в файл, нарочно: нормаль — это +12 байт на
+ * вершину, около полумегабайта к каждой модели и столько же в base64 внутри
+ * превью. Здесь это доли секунды один раз, на десктопе, после первой
+ * отрисовки. Расплата — геометрия становится неиндексированной (втрое
+ * больше вершин в памяти, ~5 МБ на модель); на GPU это ничто, а код взамен
+ * укладывается в тридцать строк без разрезания вершин по группам.
+ */
+function creasedNormals(pos, idx, deg) {
+  const tri = idx.length / 3, nv = pos.length / 3;
+  const raw = new Float32Array(tri * 3);    // длина ∝ площади: весом при усреднении
+  const unit = new Float32Array(tri * 3);   // единичная: ею меряется угол
+  for (let f = 0; f < tri; f++) {
+    const a = idx[f * 3] * 3, b = idx[f * 3 + 1] * 3, c = idx[f * 3 + 2] * 3;
+    const ux = pos[b] - pos[a], uy = pos[b + 1] - pos[a + 1], uz = pos[b + 2] - pos[a + 2];
+    const vx = pos[c] - pos[a], vy = pos[c + 1] - pos[a + 1], vz = pos[c + 2] - pos[a + 2];
+    const x = uy * vz - uz * vy, y = uz * vx - ux * vz, z = ux * vy - uy * vx;
+    const l = Math.hypot(x, y, z) || 1;
+    raw[f * 3] = x; raw[f * 3 + 1] = y; raw[f * 3 + 2] = z;
+    unit[f * 3] = x / l; unit[f * 3 + 1] = y / l; unit[f * 3 + 2] = z / l;
+  }
+
+  // грани при вершине, CSR: счётчик -> смещения -> данные. Хеш-карта на
+  // двухстах тысячах углов заметно дороже
+  const at = new Int32Array(nv + 1);
+  for (let i = 0; i < idx.length; i++) at[idx[i] + 1]++;
+  for (let v = 0; v < nv; v++) at[v + 1] += at[v];
+  const adj = new Int32Array(idx.length);
+  const cur = at.slice(0, nv);
+  for (let f = 0; f < tri; f++)
+    for (let k = 0; k < 3; k++) adj[cur[idx[f * 3 + k]]++] = f;
+
+  const cos = Math.cos(deg * Math.PI / 180);
+  const P = new Float32Array(tri * 9), N = new Float32Array(tri * 9);
+  for (let f = 0; f < tri; f++) {
+    const fx = unit[f * 3], fy = unit[f * 3 + 1], fz = unit[f * 3 + 2];
+    for (let k = 0; k < 3; k++) {
+      const v = idx[f * 3 + k];
+      let nx = 0, ny = 0, nz = 0;
+      for (let p = at[v]; p < at[v + 1]; p++) {
+        const g = adj[p] * 3;
+        if (fx * unit[g] + fy * unit[g + 1] + fz * unit[g + 2] < cos) continue;
+        nx += raw[g]; ny += raw[g + 1]; nz += raw[g + 2];
+      }
+      const l = Math.hypot(nx, ny, nz) || 1, o = (f * 3 + k) * 3, s = v * 3;
+      P[o] = pos[s]; P[o + 1] = pos[s + 1]; P[o + 2] = pos[s + 2];
+      N[o] = nx / l; N[o + 1] = ny / l; N[o + 2] = nz / l;
+    }
+  }
+  return { position: P, normal: N };
+}
 
 function hasWebGL() {
   try {
@@ -70,8 +138,9 @@ async function loadGLB(url, THREE) {
   const redMats = [];
   for (const prim of json.meshes[0].primitives) {
     const g = new THREE.BufferGeometry();
-    g.setAttribute('position', new THREE.BufferAttribute(read(prim.attributes.POSITION), 3));
-    g.setIndex(new THREE.BufferAttribute(read(prim.indices), 1));
+    const nrm = creasedNormals(read(prim.attributes.POSITION), read(prim.indices), CFG.crease);
+    g.setAttribute('position', new THREE.BufferAttribute(nrm.position, 3));
+    g.setAttribute('normal', new THREE.BufferAttribute(nrm.normal, 3));
     const m = json.materials[prim.material];
     const pbr = m.pbrMetallicRoughness || {};
     const c = pbr.baseColorFactor || [1, 1, 1, 1];
@@ -79,9 +148,9 @@ async function loadGLB(url, THREE) {
       color: new THREE.Color().setRGB(c[0], c[1], c[2], THREE.SRGBColorSpace),
       metalness: pbr.metallicFactor ?? 0.2,
       roughness: pbr.roughnessFactor ?? 0.6,
-      // нормалей в файле нет: плоская заливка считается в шейдере через
-      // производные. Это и есть вид CAD-рендеров компании
-      flatShading: true,
+      // нормали посчитаны по углу залома выше: цилиндры гладкие, рёбра
+      // острые. flatShading здесь был причиной «ребристости»
+      flatShading: false,
       side: THREE.DoubleSide,
     });
     // корпус, а не крепёж и не сталь: только его красят инженерным режимом.
@@ -156,10 +225,27 @@ async function boot() {
   slide.add(pivot); scene.add(slide);
 
   const cache = {};
-  let current = null, radius = 1;
+  let current = null;
+  // половина габарита: по высоте и по радиусу в плане. Радиус, а не ширина,
+  // потому что аппарат вращается вокруг вертикали — в кадр должна влезать
+  // самая широкая его проекция, а не та, что видна в стартовом повороте
+  let half = { y: 1, r: 1 };
 
   const marks = CFG.at.map(() => new THREE.Object3D());
   marks.forEach(m => pivot.add(m));
+
+  /* Посадка кадра. Расстояние считается из обоих углов обзора: вертикальный
+     задан fov, горизонтальный получается из него через соотношение сторон.
+     Берётся большее из двух — иначе изделие вылезает по той оси, которую не
+     считали. Прежняя версия ставила камеру на 2.75 радиуса «на глаз» и на
+     широкой сцене резала аппарат сверху и снизу. */
+  function fitCamera() {
+    const t = Math.tan(camera.fov * Math.PI / 360);
+    const a = Math.max(camera.aspect, 0.01);
+    const d = Math.max(half.y / t, half.r / (t * a)) * CFG.fit;
+    camera.position.set(0, half.y * 0.18, d);
+    camera.lookAt(0, 0, 0);
+  }
 
   function frame() {
     if (!current) return;
@@ -172,9 +258,8 @@ async function boot() {
     const size = box.getSize(new THREE.Vector3());
     const centre = box.getCenter(new THREE.Vector3());
     current.position.sub(centre);
-    radius = Math.max(Math.hypot(size.x, size.z) * 0.5, size.y * 0.5);
-    camera.position.set(0, radius * 0.16, radius * 2.75);
-    camera.lookAt(0, 0, 0);
+    half = { y: size.y * 0.5, r: Math.hypot(size.x, size.z) * 0.5 };
+    fitCamera();
     marks.forEach((m, i) => m.position.set(
       CFG.at[i][0] * size.x, CFG.at[i][1] * size.y, CFG.at[i][2] * size.z));
   }
@@ -323,6 +408,7 @@ async function boot() {
     renderer.setSize(r.width, r.height, false);
     camera.aspect = r.width / r.height;
     camera.updateProjectionMatrix();
+    fitCamera();                       // соотношение сторон изменилось — сажаем заново
   }
 
   let raf = 0, t0 = performance.now();
@@ -344,7 +430,22 @@ async function boot() {
     raf = requestAnimationFrame(tick);
   }
 
-  addEventListener('resize', () => { size(); draft.measure(); });
+  /* Сцена меняет размер не только вместе с окном: при входе в инженерный
+     режим `.hero-stage` переезжает и сужается своим CSS-переходом. Раньше
+     это никто не отслеживал — буфер холста оставался прежним, и браузер
+     просто растягивал его под новую коробку: изделие ехало по пропорциям и
+     выглядело обрезанным. Ресайз коробки ловится наблюдателем и сводится к
+     одному пересчёту на кадр — за переход их прилетает под сотню, а каждый
+     перевыделяет буфер. */
+  let rraf = 0;
+  const resized = () => {
+    rraf = 0;
+    size();
+    draft.measure();
+  };
+  const schedule = () => { if (!rraf) rraf = requestAnimationFrame(resized); };
+  addEventListener('resize', schedule);
+  if (window.ResizeObserver) new ResizeObserver(schedule).observe(stage);
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) { cancelAnimationFrame(raf); raf = 0; }
     else if (!raf) { t0 = performance.now(); raf = requestAnimationFrame(tick); }
