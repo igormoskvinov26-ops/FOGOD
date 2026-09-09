@@ -39,8 +39,8 @@
     if (kn.length) h += head('Подходит') + kn.map(line).join('');
     else h += '<div class="res-empty">Под эти параметры готовой позиции в линейке нет.</div>';
     if (un.length) h += head('Требуют уточнения характеристик') + un.map(line).join('');
-    h += '<div class="res-note"><p><b>Не нашлось точного совпадения?</b> Изготовление под конкретное ТЗ — наша обычная практика, а не исключение. ' +
-         '<a href="podbor.html" style="color:#fff;text-decoration:underline">Пройдите полный подбор</a> или оставьте параметры объекта.</p></div>';
+    h += '<div class="res-note"><p><b>Нет точного совпадения?</b> Изготовим по ТЗ. ' +
+         '<a href="podbor.html" style="color:#fff;text-decoration:underline">Полный подбор</a> или оставьте параметры объекта.</p></div>';
     out.innerHTML = h;
   }
 
