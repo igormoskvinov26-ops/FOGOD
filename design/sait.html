@@ -296,54 +296,56 @@
       linear-gradient(180deg, rgba(1,8,12,.72), rgba(2,11,17,.9));
   }
 
-  /* Высота героя больше не подобрана на глаз под один вариант текста:
-     копирайт живёт в обычном потоке и сам решает, сколько ему нужно
-     места, а padding-bottom резервирует зазор для полосы фактов,
-     которая приколота к низу героя абсолютно. Первая версия зашивала
-     фиксированную высоту (78vh/720px) под конкретную длину заголовка —
-     на длинном варианте кнопки съезжали под полосу фактов и гасли под
-     её полупрозрачной заливкой. min-height здесь — нижняя граница на
-     случай короткого текста и большого экрана, а не потолок. */
+  /* Композиция героя переведена на буквальное совпадение с .hero-water-hero
+     макета v17 (то, что реально рендерит их npm run dev, а не более ранний
+     снятый слепок) — 09.09.2026, по прямому требованию Игоря повторять
+     точно, а не «в теме». Копирайт центрирован и лежит поверх сцены
+     модели, координатный угол и полоса фактов скрыты в самом герое —
+     ровно так же, как у них (`hero-coordinate`, `hero-facts { display:
+     none }` внутри `.hero-water-hero`). Раньше это было сознательным
+     отклонением («не наступать на их же баг с перехлёстом») — теперь
+     перехлёст воспроизведён нарочно, тем же способом (широкая центральная
+     колонка текста поверх сцены на всю ширину), а не как ошибка. */
   .hero-experience {
-    position: relative; z-index: 2; min-height: min(64vh, 560px);
-    padding: 84px 0 148px;
+    position: relative; z-index: 2; min-height: max(720px, calc(100svh - 200px));
+    padding: 0 0 148px;
   }
 
   .hero-copy {
-    position: relative; z-index: 3;
-    width: min(430px, 36vw);
-    transition: opacity .4s ease, transform .5s ease, filter .4s ease;
+    position: absolute; z-index: 3; top: 74px; left: 50%;
+    width: min(680px, calc(100% - 48px)); text-align: center;
+    transform: translateX(-50%);
+    transition: opacity .3s ease, transform .42s cubic-bezier(.22,1,.36,1), filter .3s ease;
   }
   .hero:has(.hero-stage.is-insp) .hero-copy {
-    opacity: 0; transform: translate3d(-24px, 0, 0); filter: blur(6px);
+    opacity: 0; visibility: hidden;
+    transform: translate3d(-50%, -18px, 0) scale(.96);
     pointer-events: none;
   }
   .hero-copy .eyebrow {
-    display: flex; align-items: center; gap: 12px; margin-bottom: 22px;
+    display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 22px;
   }
   .hero-copy .eyebrow .bar { width: 26px; height: 2px; background: var(--red); flex: 0 0 26px; }
   .hero-copy h1 {
-    font-size: clamp(36px, 3.6vw, 52px); line-height: 1.08; margin: 0 0 20px;
+    font-size: clamp(36px, 4.6vw, 68px); line-height: 1.08; margin: 0 0 20px;
     color: var(--ink);
   }
   .hero-copy h1 .thin { font-weight: 600; color: var(--ink-2); }
-  .hero-copy .lede { font-size: 16px; color: var(--ink-2); max-width: 40ch; margin: 0 0 26px; }
-  .hero-copy .cta { display: flex; gap: 12px; flex-wrap: wrap; }
+  .hero-copy .lede { font-size: 16px; color: var(--ink-2); max-width: 46ch; margin: 0 auto 26px; }
+  .hero-copy .cta { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
   .hero-copy .btn.lg { height: 48px; padding: 0 24px; font-size: 15px; }
 
-  .hero-coord {
-    position: absolute; z-index: 3; top: 84px; right: var(--gut);
-    display: grid; gap: 4px; text-align: right;
-    font-family: "IBM Plex Mono", monospace; font-size: 11px;
-    letter-spacing: .1em; color: var(--ink-3); pointer-events: none;
-  }
+  /* Скрыт целиком, как у них: .hero-water-hero .hero-coordinate {
+     display: none }. Разметка остаётся — потерь для контента нет, это
+     была декоративная метка, не источник данных. */
+  .hero-coord { display: none; }
 
   /* Панель характеристик заняла место копирайта: когда модель берут
-     мышью, ей нужно поле слева, и это то же поле, что держит h1 в
-     покое. Именно поэтому копирайт гасится синхронно (:has() выше). */
+     мышью, ей нужно поле слева. Позиция и ширина — как у их
+     .filter3d-specifications (left:0, top:47%, width:37%). */
   .hero-specs-panel {
-    position: absolute; z-index: 4; left: var(--gut); top: 50%;
-    width: min(360px, 34vw); padding: 26px 0;
+    position: absolute; z-index: 4; left: 0; top: 48%;
+    width: min(380px, 37%); padding: 26px 0;
     transform: translate3d(-24px, -50%, 0) scale(.97);
     opacity: 0; visibility: hidden; pointer-events: none;
     transition: opacity .32s ease, transform .4s cubic-bezier(.22,1,.36,1), visibility 0s .4s;
@@ -360,14 +362,19 @@
   .hero-specs-panel h2 { font-size: clamp(26px, 2.6vw, 36px); line-height: 1.1; margin: 0 0 22px; color: var(--ink); }
   .hero-specs-panel .btn { margin-top: 22px; height: 46px; padding: 0 22px; font-size: 14px; }
 
-  /* Модель не подъезжает под копирайт: левая кромка сцены останавливается
-     там же, где кончается колонка текста (и панели характеристик — они
-     делят одну и ту же полосу слева, поэтому сцене не нужно сдвигаться
-     между состояниями). В макете текст на широких экранах наезжает на
-     верхний фланец модели — эта правка нарочно её не повторяет. */
+  /* Сцена — почти во всю ширину героя, ровно как у них
+     (.filter3d-stage: top:112px, right:7%, bottom:48px, left:7%),
+     а не в отдельной правой колонке. Текст теперь ложится поверх
+     верхней части модели на широких экранах — это их собственная
+     композиция, воспроизведена буквально, а не наша поправка к ней. */
   .hero-stage {
     position: absolute; z-index: 2;
-    top: 0; right: 0; bottom: 148px; left: min(430px, 36vw);
+    top: 112px; right: 7%; bottom: 48px; left: 7%;
+    transition: left .34s cubic-bezier(.22,1,.36,1), right .34s cubic-bezier(.22,1,.36,1),
+                top .34s cubic-bezier(.22,1,.36,1);
+  }
+  .hero:has(.hero-stage.is-insp) .hero-stage {
+    top: 62px; right: -6%; bottom: 34px; left: 44%;
   }
   .hero-shots {
     position: absolute; inset: 0; display: grid; place-items: center;
@@ -452,8 +459,12 @@
   }
   .hero-params .v.good { color: var(--ink); font-weight: 500; }
 
-  /* Факты — полоса по нижней кромке героя, поверх фото, полупрозрачная.
-     Аналог их hero-facts: первый экран перестаёт быть только картинкой. */
+  /* Скрыта в самом герое целиком — как у них, .hero-water-hero .hero-facts
+     { display: none }. Не потеря контента: все четыре факта уже сказаны
+     текстом в другом месте страницы («25 лет» в eyebrow героя,
+     «Собственная запатентованная разработка» и «Изготовление под ТЗ» —
+     в секции «Производство»), полоса была декоративным дублем. */
+  .hero-facts { display: none; }
   .hero-facts {
     position: absolute; z-index: 3; left: 0; right: 0; bottom: 0;
     border-top: 1px solid var(--rule); background: rgba(9,12,15,.6);
@@ -560,6 +571,12 @@
       opacity: 1; visibility: visible; pointer-events: auto;
       transform: none; filter: none;
     }
+    /* Центрирование — часть композиции полноэкранного кадра с 3D-сценой.
+       Ниже 980px сцена уже не полноэкранная (см. комментарий выше), поэтому
+       текст возвращается к обычному для стековой раскладки чтению слева. */
+    .hero-copy { text-align: left; }
+    .hero-copy .eyebrow, .hero-copy .cta { justify-content: flex-start; }
+    .hero-copy .lede { margin-left: 0; margin-right: 0; }
     .hero-coord { display: none; }
     .hero-specs-panel { margin-top: 30px; padding: 26px 0 0; border-top: 1px solid var(--rule); }
     /* CTA уже есть в копирайте выше — здесь он был бы вторым подряд */
@@ -568,7 +585,10 @@
     /* relative, не static: иначе .hero-shots (inset:0) ищет ближайшего
        позиционированного предка выше по дереву и раздувается на всю
        высоту .hero-experience — модель на телефоне становится огромной */
-    .hero-stage { position: relative; height: 300px; margin-top: 30px; }
+    .hero-stage {
+      position: relative; height: 300px; margin-top: 30px;
+      top: auto; right: auto; bottom: auto; left: auto;
+    }
     .hero-facts {
       position: static; margin-top: 30px; background: transparent; backdrop-filter: none;
     }
