@@ -360,11 +360,24 @@ async function boot() {
     return { retitle, sync, measure, insp };
   })();
 
-  // Осмотр включается наведением на холст и держится, пока модель тянут:
-  // увести курсор во время вращения — обычное дело, и слой не должен
-  // мигать на полпути
-  cv.addEventListener('pointerenter', () => draft.insp(true));
-  cv.addEventListener('pointerleave', () => { if (!drag) draft.insp(false); });
+  /* Режим осмотра — по кнопке, а не по наведению.
+   *
+   * Наведением он и включался раньше: курсор входил на холст — гасился
+   * копирайт, выезжала панель характеристик, корпус перекрашивался в
+   * графит. На практике это срабатывало от любого движения мыши через
+   * герой и так же внезапно откатывалось; на тач-экране режима не было
+   * вовсе. Явное переключение предсказуемо и одинаково работает пальцем.
+   *
+   * Так же устроено и в макете v17: там осмотр держится на состоянии
+   * `pinned`, которое ставит кнопка, а наведение — только надстройка.
+   */
+  const modeBtn = document.getElementById('hero-mode');
+  if (modeBtn) modeBtn.addEventListener('click', () => {
+    const on = !inspOn;
+    draft.insp(on);
+    modeBtn.setAttribute('aria-expanded', on ? 'true' : 'false');
+    modeBtn.textContent = on ? 'Свернуть' : 'Характеристики';
+  });
 
   cv.addEventListener('pointerdown', e => {
     drag = true; lx = e.clientX; ly = e.clientY;
@@ -378,7 +391,6 @@ async function boot() {
   });
   const stop = e => {
     drag = false; cv.classList.remove('is-drag');
-    if (!cv.matches(':hover')) draft.insp(false);
   };
   cv.addEventListener('pointerup', stop);
   cv.addEventListener('pointercancel', stop);
@@ -446,10 +458,36 @@ async function boot() {
   const schedule = () => { if (!rraf) rraf = requestAnimationFrame(resized); };
   addEventListener('resize', schedule);
   if (window.ResizeObserver) new ResizeObserver(schedule).observe(stage);
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) { cancelAnimationFrame(raf); raf = 0; }
-    else if (!raf) { t0 = performance.now(); raf = requestAnimationFrame(tick); }
-  });
+  /* Сцена считается только пока герой на экране.
+     Раньше цикл крутился всю сессию: посетитель читает каталог в самом низу
+     страницы, а наверху продолжает рендериться модель на 67 тысяч
+     треугольников. Замер на этой же странице: 4 кадра в секунду против 62
+     на пустой — почти весь бюджет уходил в невидимый герой.
+     Вкладка в фоне — тот же выключатель, он был и раньше. */
+  let onScreen = true;
+  function pump() {
+    const run = onScreen && !document.hidden;
+
+    /* Мало остановить цикл — холст надо убрать из отрисовки.
+       Замер по прокрутке главной: 4–5 кадров в секунду на всём пути от
+       верха до «Принципа работы» и ровно 62 дальше. Граница — та, на
+       которой браузер перестаёт держать слой холста, а не та, где
+       останавливается цикл: остановленный, но живой слой WebGL стоил
+       столько же. Тот же замер с `display:none` на холсте: 62 вместо 5.
+       На машине с GPU это дешевле, но платить незачем и там. */
+    cv.style.display = run ? '' : 'none';
+
+    if (run && !raf && !reduced) { t0 = performance.now(); raf = requestAnimationFrame(tick); }
+    if (!run && raf) { cancelAnimationFrame(raf); raf = 0; }
+    // без движения цикла нет: вернувшийся холст рисуем разово, иначе он
+    // покажет пустоту — буфер после композиции не сохраняется
+    if (run && reduced) { renderer.render(scene, camera); draft.sync(); }
+  }
+  document.addEventListener('visibilitychange', pump);
+  if (window.IntersectionObserver) {
+    new IntersectionObserver(e => { onScreen = e[0].isIntersecting; pump(); },
+                             { rootMargin: '120px 0px' }).observe(stage);
+  }
 
   // Герой показывает представительную модель без выбора исполнения —
   // выбор происходит ниже, в разделе «Оборудование». Как и в макете,

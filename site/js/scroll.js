@@ -15,6 +15,20 @@
  */
 (function () {
   var root = document.documentElement;
+
+  /* Ужатие липкой шапки. Стоит ДО проверки has-reveal: та отвечает за
+     проявление блоков, а шапка нужна одинаково всем — и там, где движение
+     выключено. Класс, а не инлайн-стиль: высоту задаёт таблица стилей. */
+  var sraf = 0;
+  var mark = function () {
+    sraf = 0;
+    root.classList.toggle('is-scrolled', (scrollY || pageYOffset) > 40);
+  };
+  addEventListener('scroll', function () {
+    if (!sraf) sraf = requestAnimationFrame(mark);
+  }, { passive: true });
+  mark();
+
   if (!root.classList.contains('has-reveal')) return;   // флаг ставит голова страницы
 
   var io = new IntersectionObserver(function (entries) {

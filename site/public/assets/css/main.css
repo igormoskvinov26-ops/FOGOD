@@ -81,6 +81,12 @@
      Лежит над фоном страницы и под содержимым, поэтому все полосы
      должны быть либо прозрачными, либо полупрозрачными: непрозрачный
      фон секции просто закроет её. */
+  /* Слой гаснет за пределами своей секции — см. grid.js. Плавность там же,
+     внутри отрисовки: прозрачностью элемента это не сделать. CSS-переход
+     `opacity` на полноэкранном fixed-холсте зависает в состоянии running с
+     currentTime 0 — не тикает вовсе, а поскольку переход в каскаде выше
+     авторских правил, он перебивает и класс, и инлайн-стиль. Проверено
+     через getAnimations(). */
   #grid {
     position: fixed; inset: 0; z-index: 0; pointer-events: none; display: block;
   }
@@ -172,14 +178,28 @@
   .topbar .city { color: var(--on-dark); font-weight: 500; }
   .topbar .drop::after { content: "▾"; margin-left: 5px; font-size: 10px; opacity: .7; }
 
+  /* Шапка держится у верхней кромки всю прокрутку: на длинных страницах
+     каталога и подбора возврат к меню и телефону не должен стоить
+     промотки в начало. Уезжает только тонкая полоса контактов над ней —
+     она справочная, держать её постоянно незачем.
+     z-index выше слоёв героя (копирайт 3, панель характеристик 4). */
   header.main {
     background: var(--surface);
     border-bottom: 1px solid var(--rule);
-    position: relative; z-index: 5;
+    position: sticky; top: 0; z-index: 20;
   }
   header.main .shell {
     display: flex; align-items: center; gap: 40px; height: 80px;
+    transition: height .22s ease;
   }
+  /* Прокрутили — шапка ужимается. 80px постоянного места на ноутбуке
+     заметно, 60 хватает: логотип, меню и телефон те же. */
+  html.is-scrolled header.main .shell { height: 60px; }
+  html.is-scrolled header.main .logo .word { font-size: 26px; }
+  header.main .logo .word { transition: font-size .22s ease; }
+
+  /* Якоря внутри страницы приезжают под липкую шапку, если не отступить */
+  :target, [id] { scroll-margin-top: 96px; }
 
   .logo { display: flex; align-items: center; gap: 12px; }
   .logo .mark { width: 46px; height: 46px; flex: 0 0 46px; }
@@ -395,12 +415,29 @@
   .hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: grab; }
   .hero-canvas.is-drag { cursor: grabbing; }
   .hero-shots.is-3d .hero-shot { opacity: 0; }
+  /* Кнопка режима и подсказка про вращение. Обе живут только при поднятой
+     сцене: без WebGL и на узком экране их нечему обслуживать. */
+  .hero-tools {
+    position: absolute; right: 0; bottom: 0; z-index: 4;
+    display: none; align-items: center; gap: 18px;
+  }
+  .hero-shots.is-3d ~ .hero-tools { display: flex; }
   .hero-drag {
-    position: absolute; right: 0; bottom: 0; display: none; white-space: nowrap;
+    white-space: nowrap;
     font-family: "IBM Plex Mono", monospace; font-size: 11px;
     letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3);
   }
-  .hero-shots.is-3d + .hero-drag, .is-3d ~ .hero-drag { display: block; }
+  .hero-mode {
+    height: 34px; padding: 0 16px; cursor: pointer;
+    background: rgba(6,13,19,.72); color: var(--ink-2);
+    border: 1px solid var(--rule); border-radius: 0;
+    font-family: "IBM Plex Mono", monospace; font-size: 11px;
+    letter-spacing: .06em; text-transform: uppercase;
+    backdrop-filter: blur(6px);
+    transition: color .18s ease, border-color .18s ease;
+  }
+  .hero-mode:hover { color: var(--ink); border-color: var(--ink-3); }
+  .hero:has(.hero-stage.is-insp) .hero-mode { color: var(--ink); border-color: var(--ink-3); }
 
   /* ── Чертёжный слой героя ─────────────────────────────────────────────
      Появляется только когда трёхмерная сцена действительно запустилась:

@@ -100,7 +100,16 @@ try { if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'Intersecti
       <div class="hero-shots">
         <img class="hero-shot" id="shot-pp" src="assets/img/turn/pp-00.webp" alt="ОВГД полнопоточный" width="643" height="402">
       </div>
-      <span class="hero-drag">Зажмите и вращайте</span>
+      <!-- Режим осмотра переключается кнопкой, а не наведением: наведение
+           меняло полкадра от случайного движения мыши и не существует на
+           тач-экранах. Оба элемента показываются только когда сцена
+           действительно поднялась (класс is-3d ставит hero3d.js). -->
+      <div class="hero-tools">
+        <button class="hero-mode" id="hero-mode" type="button" aria-expanded="false" aria-controls="hero-draft">
+          Характеристики
+        </button>
+        <span class="hero-drag">Зажмите и вращайте</span>
+      </div>
     </div>
   </div>
 
@@ -264,7 +273,10 @@ try { if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'Intersecti
   </div>
 </section>
 
-<section class="band" id="princip">
+<!-- data-grid-host: кинетическая сетка проступает только здесь. Возмущение
+     потока — предмет именно этой секции; фоном на всех страницах она была
+     обоями, см. grid.js -->
+<section class="band" id="princip" data-grid-host>
   <div class="shell">
     <div class="sec-head">
       <span class="label">Принцип работы</span>
